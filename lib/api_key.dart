@@ -4,4 +4,4 @@
 
 // TODO: Install a Google Maps API key that has Google Maps Web Services enabled
 // See https://developers.google.com/places/web-service/get-api-key
-const String googleMapsApiKey = 'AIzaSyC-OqZaQBWWRFi415UVqyiZlk-iB26rumI';
+const String googleMapsApiKey = 'AIzaSyDGiAXusfesRoqC7Nmanca3F1bHY0poyxc';

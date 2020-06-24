@@ -34,7 +34,7 @@ class MapPageState extends State<MapPage> {
   final Set<Polyline> _polylines = Set<Polyline>();
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints;
-  String googleAPIKey = 'AIzaSyC-OqZaQBWWRFi415UVqyiZlk-iB26rumI';
+  String googleAPIKey = 'AIzaSyDGiAXusfesRoqC7Nmanca3F1bHY0poyxc';
 // for my custom marker pins
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
