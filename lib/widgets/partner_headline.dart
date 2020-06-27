@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:Arrival/screens/details.dart';
-import 'package:Arrival/styles.dart';
+import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/screens/details.dart';
+import 'package:arrival_kc/styles.dart';
 
 class ZoomClipAssetImage extends StatelessWidget {
   const ZoomClipAssetImage(

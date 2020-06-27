@@ -6,12 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:Arrival/data/preferences.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:Arrival/data/local_saved_businesses.dart';
-import 'package:Arrival/styles.dart';
-import 'package:Arrival/widgets/settings_group.dart';
-import 'package:Arrival/widgets/settings_item.dart';
+import 'package:arrival_kc/data/preferences.dart';
+import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/data/local_saved_businesses.dart';
+import 'package:arrival_kc/styles.dart';
+import 'package:arrival_kc/widgets/settings_group.dart';
+import 'package:arrival_kc/widgets/settings_item.dart';
 
 class SourceIndustrySettingsScreen extends StatelessWidget {
   @override

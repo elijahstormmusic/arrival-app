@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:arrival_kc/data/partners.dart';
 
 class LocalIndustries {
   static List<Industry> all = [

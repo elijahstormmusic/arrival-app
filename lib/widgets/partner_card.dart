@@ -5,10 +5,10 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:Arrival/screens/details.dart';
-import 'package:Arrival/styles.dart';
-import 'package:Arrival/widgets/cards.dart';
+import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/screens/details.dart';
+import 'package:arrival_kc/styles.dart';
+import 'package:arrival_kc/widgets/cards.dart';
 
 class BusinessCard extends StatelessWidget {
   BusinessCard(this.biz, this.isNear, this.isFavIndustry);

@@ -6,9 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
-import 'package:Arrival/data/app_state.dart';
-import 'package:Arrival/data/preferences.dart';
-import 'package:Arrival/screens/home.dart';
+import 'package:arrival_kc/data/app_state.dart';
+import 'package:arrival_kc/data/preferences.dart';
+import 'package:arrival_kc/screens/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

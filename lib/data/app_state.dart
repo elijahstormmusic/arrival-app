@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:scoped_model/scoped_model.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:Arrival/data/local_saved_businesses.dart';
+import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/data/local_saved_businesses.dart';
 
 class AppState extends Model {
   final List<Business> _businesses;

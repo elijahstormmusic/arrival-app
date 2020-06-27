@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:Arrival/styles.dart';
+import 'package:arrival_kc/styles.dart';
 
 import 'settings_item.dart';
 

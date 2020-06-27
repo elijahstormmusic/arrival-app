@@ -8,14 +8,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 
-import 'package:Arrival/data/app_state.dart';
-import 'package:Arrival/data/preferences.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:Arrival/data/local_saved_businesses.dart';
-import 'package:Arrival/styles.dart';
-import 'package:Arrival/widgets/close_button.dart';
-import 'package:Arrival/widgets/cards.dart';
-import 'package:Arrival/maps/arrival_map.dart';
+import 'package:arrival_kc/data/app_state.dart';
+import 'package:arrival_kc/data/preferences.dart';
+import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/data/local_saved_businesses.dart';
+import 'package:arrival_kc/styles.dart';
+import 'package:arrival_kc/widgets/close_button.dart';
+import 'package:arrival_kc/widgets/cards.dart';
+import 'package:arrival_kc/maps/maps.dart';
 
 class BuyingCards extends StatelessWidget {
   const BuyingCards(this.biz, this.prefs);
@@ -25,7 +25,6 @@ class BuyingCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = CupertinoTheme.of(context);
     return FrostyBackground(
       color: Color(0x90ffffff),
       child: Padding(
@@ -174,11 +173,8 @@ class InfoView extends StatelessWidget {
               ],
             ),
             onTap: () {
-//              ArrivalMapData.destLocation = biz.location;
-              var map = MapPage();
-              map.updateTargetLocation(biz.location);
               Navigator.of(context).push<void>(CupertinoPageRoute(
-                builder: (context) => map,
+                builder: (context) => Maps.directions(biz.name),
                 fullscreenDialog: true,
               ));
             },

@@ -5,7 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:Arrival/data/partners.dart';
+import 'package:arrival_kc/data/partners.dart';
 
 
 // Title RED -> 243, 72, 62, 1

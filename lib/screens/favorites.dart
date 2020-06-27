@@ -5,10 +5,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:Arrival/data/app_state.dart';
-import 'package:Arrival/data/partners.dart';
-import 'package:Arrival/styles.dart';
-import 'package:Arrival/widgets/partner_headline.dart';
+import 'package:arrival_kc/data/app_state.dart';
+import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/styles.dart';
+import 'package:arrival_kc/widgets/partner_headline.dart';
 
 class FavoritesScreen extends StatelessWidget {
   @override

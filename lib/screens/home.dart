@@ -4,11 +4,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:Arrival/screens/favorites.dart';
-import 'package:Arrival/screens/list.dart';
-import 'package:Arrival/screens/search.dart';
-import 'package:Arrival/screens/settings.dart';
-import 'package:Arrival/styles.dart';
+import 'package:arrival_kc/maps/maps.dart';
+import 'package:arrival_kc/screens/list.dart';
+//import 'package:arrival_kc/screens/favorites.dart';
+import 'package:arrival_kc/screens/search.dart';
+import 'package:arrival_kc/screens/settings.dart';
+import 'package:arrival_kc/styles.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -20,7 +21,7 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(CupertinoIcons.home, size: 42.0),
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.heart, size: 42.0),
+            icon: Icon(CupertinoIcons.location, size: 42.0),
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.search, size: 42.0),
@@ -37,7 +38,7 @@ class HomeScreen extends StatelessWidget {
         if (index == 0) {
           return ListScreen();
         } else if (index == 1) {
-          return FavoritesScreen();
+          return Maps();
         } else if (index == 2) {
           return SearchScreen();
         } else {
