@@ -83,13 +83,13 @@ class _PressableCardState extends State<PressableCard> {
       onTapDown: (details) => setState(() => cardIsDown = true),
       onTapCancel: () => setState(() => cardIsDown = false),
       child: AnimatedPhysicalModel(
-        elevation: cardIsDown ? widget.downElevation : widget.upElevation,
-        borderRadius: widget.borderRadius,
-        shape: BoxShape.rectangle,
-        shadowColor: widget.shadowColor,
-        duration: widget.duration,
-        color: CupertinoColors.lightBackgroundGray,
-        child: ClipRRect(
+    elevation: cardIsDown ? widget.downElevation : widget.upElevation,
+    borderRadius: widget.borderRadius,
+    shape: BoxShape.rectangle,
+    shadowColor: widget.shadowColor,
+    duration: widget.duration,
+    color: CupertinoColors.lightBackgroundGray,
+    child: ClipRRect(
           borderRadius: widget.borderRadius,
           child: widget.child,
         ),

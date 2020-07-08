@@ -4,30 +4,25 @@
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:arrival_kc/data/partners.dart';
-import 'package:arrival_kc/data/local_saved_businesses.dart';
+import 'package:arrival_kc/data/link.dart';
 
 class AppState extends Model {
-  final List<Business> _businesses;
+  List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);
 
-    // this is the list getter
-  AppState() : _businesses = LocalSavedBusinesses.biz;
-
-  List<Business> get allBusinesses => List<Business>.from(_businesses);
-
-  Business getBusiness(int id) => _businesses.singleWhere((v) => v.id == id);
+  Business getBusiness(int id) => ArrivalData.partners.singleWhere((v) => v.id == id);
 
   List<Business> get availableBusinesses {
-    return _businesses.where((v) => v.isOpen()).toList();
+    return ArrivalData.partners.where((v) => v.isOpen()).toList();
   }
 
   List<Business> get unavailableBusinesses {
-    return _businesses.where((v) => !v.isOpen()).toList();
+    return ArrivalData.partners.where((v) => !v.isOpen()).toList();
   }
 
   List<Business> get favoriteBusinesses =>
-      _businesses.where((v) => v.isFavorite).toList();
+      ArrivalData.partners.where((v) => v.isFavorite).toList();
 
-  List<Business> searchBusinesses(String terms) => _businesses
+  List<Business> searchBusinesses(String terms) => ArrivalData.partners
       .where((v) => v.name.toLowerCase().contains(terms.toLowerCase()))
       .toList();
 

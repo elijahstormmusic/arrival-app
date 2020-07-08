@@ -8,7 +8,7 @@ import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:arrival_kc/data/app_state.dart';
 import 'package:arrival_kc/data/preferences.dart';
-import 'package:arrival_kc/screens/home.dart';
+import 'package:arrival_kc/login/login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ void main() {
         model: Preferences()..load(),
         child: CupertinoApp(
           debugShowCheckedModeBanner: false,
-          home: HomeScreen(),
+          home: LoginPage(),
         ),
       ),
     ),

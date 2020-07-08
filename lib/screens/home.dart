@@ -4,14 +4,20 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:arrival_kc/maps/maps.dart';
 import 'package:arrival_kc/screens/list.dart';
 //import 'package:arrival_kc/screens/favorites.dart';
+import 'package:arrival_kc/maps/maps.dart';
 import 'package:arrival_kc/screens/search.dart';
 import 'package:arrival_kc/screens/settings.dart';
 import 'package:arrival_kc/styles.dart';
+import 'package:arrival_kc/data/link.dart';
 
 class HomeScreen extends StatelessWidget {
+
+  void initState() {
+    Data.partners('');
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
