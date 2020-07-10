@@ -39,10 +39,10 @@ class Maps extends StatefulWidget {
   static MyLocation myself = MyLocation();
   String _query;
   Maps() {
-    this._query = "";
+    this._query = "?m:"+myself.lat.toString()+":"+myself.lng.toString();
   }
   Maps.partners(String _q) {
-    this._query = "?p:"+_q;
+    this._query = "?p:"+_q+":"+myself.lat.toString()+":"+myself.lng.toString();
   }
   Maps.directions(String _q) {
     this._query = "?d:"+_q+":"+myself.lat.toString()+":"+myself.lng.toString();
@@ -79,7 +79,6 @@ class _MapState extends State<Maps> {
         JavascriptChannel(
             name: 'AppAndPageCommunication',
             onMessageReceived: (JavascriptMessage message) {
-              print(message.message);
               if(message.message=='reached dest') {
                 print('you have reached your destination!');
               }

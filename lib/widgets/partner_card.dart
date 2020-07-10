@@ -59,7 +59,7 @@ class BusinessCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   colorFilter:
                       isNear ? null : Styles.desaturatedColorFilter,
-                  image: AssetImage(
+                  image: NetworkImage(
                     biz.images.storefront,
                   ),
                 ),

@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:arrival_kc/data/app_state.dart';
 import 'package:arrival_kc/data/preferences.dart';
 import 'package:arrival_kc/data/partners.dart';
-import 'package:arrival_kc/data/local_saved_businesses.dart';
 import 'package:arrival_kc/styles.dart';
 import 'package:arrival_kc/widgets/close_button.dart';
 import 'package:arrival_kc/widgets/cards.dart';
@@ -266,7 +265,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           Positioned(
             right: 0,
             left: 0,
-            child: Image.asset(
+            child: Image.network(
               biz.images.logo,
               fit: BoxFit.cover,
               semanticLabel: 'A background image of ',

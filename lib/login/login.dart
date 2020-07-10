@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:arrival_kc/screens/home.dart';
+import 'package:arrival_kc/data/link.dart';
 
 class ArrivalLogin {
   static String cryptlink;
@@ -36,13 +36,15 @@ class _LoginState extends State<LoginPage> {
         JavascriptChannel(
             name: 'AppAndPageCommunication',
             onMessageReceived: (JavascriptMessage message) {
-              print(message.message);
               if(message.message=='connect') {
-                print('inside the connect function');
+
+                // pop off this login page
                 Navigator.pop(context);
+
+                // load up data download page
                 Navigator.of(context).push<void>(CupertinoPageRoute(
-                  builder: (context) => HomeScreen(),
-                  fullscreenDialog: true,
+                  builder: (context) => Data.partners(''),
+                  fullscreenDialog: false,
                 ));
               }
               else if(message.message=='disconnect') {

@@ -79,9 +79,9 @@ class BusinessHeadline extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ZoomClipAssetImage(
-            imageAsset: biz.images.logo,
-            zoom: 2.4,
+          Image.network(
+            biz.images.logo,
+            fit: BoxFit.fitHeight,
             height: 72,
             width: 72,
           ),

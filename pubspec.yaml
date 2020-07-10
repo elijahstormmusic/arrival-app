@@ -53,9 +53,7 @@ flutter:
   assets:
     - assets/images/logo.jpg
     - assets/images/stft.jpg
-    - assets/icon/destination_map_marker.png
-    - assets/icon/driving_pin.png
-    - assets/icon/friend.png
+    - assets/empty.jpg
 
   fonts:
     - family: NotoSans

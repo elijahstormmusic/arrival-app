@@ -10,7 +10,6 @@ import 'package:arrival_kc/data/preferences.dart';
 import 'package:arrival_kc/data/partners.dart';
 import 'package:arrival_kc/styles.dart';
 import 'package:arrival_kc/widgets/partner_card.dart';
-import 'package:arrival_kc/data/link.dart';
 
 class ListScreen extends StatelessWidget {
   Widget _generateBusinessRow(Business biz, Preferences prefs,

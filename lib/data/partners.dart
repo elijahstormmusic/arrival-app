@@ -22,16 +22,20 @@ enum SourceIndustry {
   music,
 }
 class StoreImages {
-    // Strings are asset paths
-  // final String path;
-  final String logo;
-  final String storefront;
-  List extras;
+  static const String source = 'https://arrival-app.herokuapp.com/partners/';
 
-  StoreImages({
-    @required this.logo,
-    @required this.storefront,
-  });
+    // Strings are asset paths
+  String href;
+  String logo;
+  String storefront;
+  List<String> extras;
+
+  StoreImages(String _href) {
+    href = StoreImages.source + _href;
+    logo = href + '/logo.jpg';
+    storefront = href + '/stft.jpg';
+    extras = List<String>();
+  }
 }
 class Industry {
   final String name;
@@ -52,6 +56,46 @@ Industry blankIndustry = Industry(
   type: SourceIndustry.none,
   essential: false,
 );
+
+class LocalIndustries {
+  static List<Industry> all = [
+    Industry(
+      name: 'Cosmetics',
+      type: SourceIndustry.cosmetics,
+      essential: false,
+    ),
+    Industry(
+      name: 'Entertainment',
+      type: SourceIndustry.entertainment,
+      essential: true,
+    ),
+    Industry(
+      name: 'Media',
+      type: SourceIndustry.media,
+      essential: true,
+    ),
+    Industry(
+      name: 'Food',
+      type: SourceIndustry.food,
+      essential: true,
+    ),
+    Industry(
+      name: 'Music',
+      type: SourceIndustry.music,
+      essential: true,
+    ),
+  ];
+
+  static Industry industryGrabber(SourceIndustry index) {
+    for (var i=0;i<all.length;i++) {
+      if(all[i].type==index)
+      {
+        return all[i];
+      }
+    }
+    return blankIndustry;
+  }
+}
 
 
 class ContactList {
@@ -102,7 +146,7 @@ class Business {
   final ContactList contact;
   final String shortDescription;
   final String cryptlink;
-  String sales;
+  SalesList sales;
   bool isFavorite;
 
   String toString() {
@@ -133,13 +177,12 @@ Business blankBusiness = Business(
   rating: 0,
   ratingAmount: 0,
   location: LatLng(0, 0),
-  images: StoreImages(
-    logo: 'empty.jpg',
-    storefront: 'empty.jpg',
-  ),
+  images: StoreImages('empty'),
   industry: SourceIndustry.none,
   contact: ContactList(),
   shortDescription: 'description',
+  sales: SalesList(),
+  cryptlink: "",
 );
 
 

@@ -1,7 +1,9 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/screens/home.dart';
 
 class ArrivalData {
   static String result;
@@ -36,6 +38,7 @@ class _DataState extends State<Data> {
   @override
   void initState() {
     ArrivalData.server = this;
+    ArrivalData.partners = List<Business>();
     super.initState();
   }
 
@@ -61,11 +64,10 @@ class _DataState extends State<Data> {
   {
     int equalsLoc = message.indexOf('=');
     if(equalsLoc==-1) return List<String>();
-    if(message.indexOf(':')==-1) return message.split('=');
-    List<String> result;
+    if(message.indexOf(';')==-1) return message.split('=');
+    List<String> result = List<String>();
     result.add(message.substring(0, equalsLoc));
-    String args = message.substring(equalsLoc);
-    return result + args.split(':');
+    return result + message.substring(equalsLoc+1).split(';');
   }
   Business _parseData(String input)
   {
@@ -73,53 +75,68 @@ class _DataState extends State<Data> {
         location, images, industry, contact,
         shortDescription, sales, cryptlink;
 
+//    int id;
+//    String name;
+//    double rating;
+//    int ratingAmount;
+//    double lat,lng;
+//    LatLng location;
+//    StoreImages images;
+//    SourceIndustry industry; // an enum link to the Industy index
+//    ContactList contact;
+//    String shortDescription;
+//    String cryptlink;
+//    SalesList sales;
+
     var startDataLoc, endDataLoc = 0;
 
-    startDataLoc = input.indexOf('name');
+    startDataLoc = input.indexOf('name')            + 5;
     endDataLoc = input.indexOf(',', startDataLoc);
-    name = input.substring(startDataLoc+1, endDataLoc);
+    name = input.substring(startDataLoc, endDataLoc);
 
-    startDataLoc = input.indexOf('images');
+    startDataLoc = input.indexOf('images')          + 7;
     endDataLoc = input.indexOf(',', startDataLoc);
-    images = input.substring(startDataLoc+1, endDataLoc);
+    images = StoreImages(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('lat');
+    startDataLoc = input.indexOf('lat')             + 4;
     endDataLoc = input.indexOf(',', startDataLoc);
-    lat = double.parse(input.substring(startDataLoc+1, endDataLoc));
+    lat = double.parse(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('lng');
+    startDataLoc = input.indexOf('lng')             + 4;
     endDataLoc = input.indexOf(',', startDataLoc);
-    lng = double.parse(input.substring(startDataLoc+1, endDataLoc));
+    lng = double.parse(input.substring(startDataLoc, endDataLoc));
 
     location = LatLng(lat, lng);
 
-    startDataLoc = input.indexOf('info');
+    startDataLoc = input.indexOf('info')            + 5;
     endDataLoc = input.indexOf(',', startDataLoc);
-    shortDescription = input.substring(startDataLoc+1, endDataLoc);
+    shortDescription = input.substring(startDataLoc, endDataLoc).
+      replaceAll('~', ',');
 
-    startDataLoc = input.indexOf('rating');
+    startDataLoc = input.indexOf('rating')          + 7;
     endDataLoc = input.indexOf(',', startDataLoc);
-    rating = double.parse(input.substring(startDataLoc+1, endDataLoc));
+    rating = double.parse(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('ratingAmount');
+    startDataLoc = input.indexOf('ratingAmount')    + 13;
     endDataLoc = input.indexOf(',', startDataLoc);
-    ratingAmount = int.parse(input.substring(startDataLoc+1, endDataLoc));
+    ratingAmount = int.parse(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('icon');
+    startDataLoc = input.indexOf('icon')            + 5;
     endDataLoc = input.indexOf(',', startDataLoc);
-    industry = int.parse(input.substring(startDataLoc+1, endDataLoc));
+    industry = SourceIndustry.values[int.parse(input.substring(
+        startDataLoc, endDataLoc))];
 
-    startDataLoc = input.indexOf('cryptlink');
+    startDataLoc = input.indexOf('cryptlink')       + 10;
     endDataLoc = input.indexOf(',', startDataLoc);
-    cryptlink = input.substring(startDataLoc+1, endDataLoc);
+    cryptlink = input.substring(startDataLoc, endDataLoc);
 
-    startDataLoc = input.indexOf('contact');
-    endDataLoc = input.indexOf(',', startDataLoc);
-    contact = _parseContact(input.substring(startDataLoc+1, endDataLoc));
+    startDataLoc = input.indexOf('contact')         + 9;
+    endDataLoc = input.indexOf('}', startDataLoc);
+    contact = _parseContact(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('sales');
-    endDataLoc = input.indexOf(',', startDataLoc);
-    sales = _parseSales(input.substring(startDataLoc+1, endDataLoc));
+    startDataLoc = input.indexOf('sales')           + 6;
+    endDataLoc = input.indexOf(']', startDataLoc);
+    sales = _parseSales(input.substring(startDataLoc, endDataLoc));
 
     return Business(
       id: id,
@@ -139,7 +156,7 @@ class _DataState extends State<Data> {
   {
     ContactList contactData = ContactList();
     List<String> curData;
-    List<String> list = input.substring(1, input.length-1).split(',');
+    List<String> list = input.split(',');
     for(var i=0;i<list.length;i++) {
       curData = list[i].split(':');
       if(curData[0]=='phoneNumber') {
@@ -182,7 +199,7 @@ class _DataState extends State<Data> {
   {
     SalesList salesData = SalesList();
     List<String> curData;
-    List<String> list = input.substring(1, input.length-1).split(',');
+    List<String> list = input.split(',');
     for(var i=0;i<list.length;i++) {
       curData = list[i].split(':');
       if(curData[0]=='name') {
@@ -193,57 +210,6 @@ class _DataState extends State<Data> {
       }
     }
     return salesData;
-  }
-  List<String> _parseGroups(String input)
-  {
-    List<String> list = new List<String>();
-    var groupStartLoc = input.indexOf('{'),
-      groupEndLoc;
-    while(groupStartLoc!=-1) {
-      groupEndLoc = input.indexOf('}', groupStartLoc);
-      list.add(input.substring(groupStartLoc+1, groupEndLoc));
-      groupStartLoc = input.indexOf('{', groupEndLoc);
-    }
-    return list;
-  }
-  void _parseList(String input)
-  {
-    var startBusinessLoc = 0, endBusinessLoc, innerBrackets;
-    var recursionBreak = 20;
-    while(true) {
-      if(recursionBreak--<0) return;
-      endBusinessLoc = -1;
-      startBusinessLoc = input.indexOf('{', startBusinessLoc)+1;
-      innerBrackets = 1;
-      for(var i=startBusinessLoc;i<input.length;i++) {
-        if(input[i]=='{') {
-          innerBrackets++;
-        }
-        else if(input[i]=='}') {
-          innerBrackets--;
-          if(innerBrackets==0) {
-            endBusinessLoc = i;
-            break;
-          }
-        }
-      }
-      var found  = false;
-      Business newPartner = _parseData(input.substring(
-              startBusinessLoc, endBusinessLoc));
-      if(endBusinessLoc!=-1) {
-        for(var i=0;i<ArrivalData.partners.length;i++) {
-          if(ArrivalData.partners[i].cryptlink==newPartner.cryptlink) {
-            found = true;
-            break;
-          }
-        }
-        if(found) {
-          continue;
-        }
-        ArrivalData.partners.add(newPartner);
-      }
-      else break;
-    }
   }
 
 
@@ -260,11 +226,18 @@ class _DataState extends State<Data> {
               if(split.length==0) return;
               if(split[0]=='response') {
                 for(int i=1;i<split.length;i++) {
-                  print("***** PRINTING NEXT ******");
-                  print(split[i]);
-                  _parseList(split[i]);
+                  ArrivalData.partners.add(_parseData(split[i]));
                 }
               }
+
+              // pop off this data pull page
+              Navigator.pop(context);
+
+              // display home screen
+              Navigator.of(context).push<void>(CupertinoPageRoute(
+                builder: (context) => HomeScreen(),
+                fullscreenDialog: true,
+              ));
             }),
         JavascriptChannel(
             name: 'AppAndUserdataCommunication',
