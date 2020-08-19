@@ -34,6 +34,8 @@ dependencies:
   shared_preferences: ^0.5.7
   uuid: ^2.0.4
   url_launcher: ^5.4.10
+  path_provider: ^1.6.11
+  adobe_xd: 1.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +56,7 @@ flutter:
     - assets/images/logo.jpg
     - assets/images/stft.jpg
     - assets/empty.jpg
+    - assets/icon/default-profile-pic.png
 
   fonts:
     - family: NotoSans

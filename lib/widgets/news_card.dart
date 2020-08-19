@@ -10,10 +10,10 @@ import '../screens/details.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
 
-class BusinessCard extends StatelessWidget {
-  BusinessCard(this.biz, this.isNear, this.isFavIndustry);
+class NewsCard extends StatelessWidget {
+  NewsCard(this.news, this.isNear, this.isFavIndustry);
 
-  final Business biz;
+  final Business news;
   final bool isNear;
   final bool isFavIndustry;
 
@@ -26,11 +26,11 @@ class BusinessCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              biz.name,
+              news.name,
               style: Styles.cardTitleText,
             ),
             Text(
-              biz.shortDescription,
+              news.shortDescription,
               style: Styles.cardDescriptionText,
             ),
           ],
@@ -44,14 +44,14 @@ class BusinessCard extends StatelessWidget {
     return PressableCard(
       onPressed: () {
         Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => DetailsScreen(biz.id),
+          builder: (context) => DetailsScreen(news.id),
           fullscreenDialog: true,
         ));
       },
       child: Stack(
         children: [
           Semantics(
-            label: 'Logo for ${biz.name}',
+            label: 'A card background featuring ${news.name}',
             child: Container(
               height: isNear ? 300 : 150,
               decoration: BoxDecoration(
@@ -60,7 +60,7 @@ class BusinessCard extends StatelessWidget {
                   colorFilter:
                       isNear ? null : Styles.desaturatedColorFilter,
                   image: NetworkImage(
-                    biz.images.storefront,
+                    news.images.storefront,
                   ),
                 ),
               ),

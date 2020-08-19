@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:scoped_model/scoped_model.dart';
-import 'package:arrival_kc/data/partners.dart';
-import 'package:arrival_kc/data/link.dart';
+import '../data/partners.dart';
+import '../data/link.dart';
 
 class AppState extends Model {
   List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);

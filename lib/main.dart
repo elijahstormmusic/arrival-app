@@ -6,16 +6,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
-import 'package:arrival_kc/data/app_state.dart';
-import 'package:arrival_kc/data/preferences.dart';
-import 'package:arrival_kc/login/login.dart';
+import 'data/app_state.dart';
+import 'data/preferences.dart';
 
-void main() {
+import 'screens/home.dart';
+import 'users/data.dart';
+import 'data/link.dart';
+import 'login/login.dart';
+
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  Widget launchState = HomeScreen();
+  await UserData.load();
+  await ArrivalData.load();
+  if(UserData.username==null || UserData.username=='null') {
+    launchState = LoginPage();
+  }
+  else if(ArrivalData.partners.length<5) {
+    launchState = Data.partners('');
+  }
 
   runApp(
     ScopedModel<AppState>(
@@ -24,7 +39,7 @@ void main() {
         model: Preferences()..load(),
         child: CupertinoApp(
           debugShowCheckedModeBanner: false,
-          home: LoginPage(),
+          home: launchState,
         ),
       ),
     ),

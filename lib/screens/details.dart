@@ -8,13 +8,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 
-import 'package:arrival_kc/data/app_state.dart';
-import 'package:arrival_kc/data/preferences.dart';
-import 'package:arrival_kc/data/partners.dart';
-import 'package:arrival_kc/styles.dart';
-import 'package:arrival_kc/widgets/close_button.dart';
-import 'package:arrival_kc/widgets/cards.dart';
-import 'package:arrival_kc/maps/maps.dart';
+import '../data/app_state.dart';
+import '../data/preferences.dart';
+import '../data/partners.dart';
+import '../styles.dart';
+import '../widgets/close_button.dart';
+import '../widgets/cards.dart';
+import '../maps/maps.dart';
 
 class BuyingCards extends StatelessWidget {
   const BuyingCards(this.biz, this.prefs);
