@@ -166,6 +166,19 @@ abstract class Styles {
     fontWeight: FontWeight.bold,
   );
 
+  static const noTextInput = TextStyle(
+    color: Color.fromRGBO(106, 106, 106, 1),
+    fontFamily: 'BebasNeue',
+    fontSize: 20,
+    fontStyle: FontStyle.italic,
+  );
+  static const shortBio = TextStyle(
+    color: Color.fromRGBO(0, 0, 0, 1),
+    fontFamily: 'BebasNeue',
+    fontSize: 20,
+    fontStyle: FontStyle.normal,
+  );
+
   static TextStyle detailsServingLabelText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,

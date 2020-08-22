@@ -12,6 +12,7 @@ import 'data/preferences.dart';
 import 'screens/home.dart';
 import 'users/data.dart';
 import 'data/link.dart';
+import 'data/arrival.dart';
 import 'login/login.dart';
 
 
@@ -25,6 +26,7 @@ void main() async {
   Widget launchState = HomeScreen();
   await UserData.load();
   await ArrivalData.load();
+  ArrivalData.carry = true;
   if(UserData.username==null || UserData.username=='null') {
     launchState = LoginPage();
   }

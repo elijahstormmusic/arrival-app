@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../data/preferences.dart';
 import '../data/partners.dart';
+import '../login/login.dart';
 import '../styles.dart';
 import '../widgets/settings_group.dart';
 import '../widgets/settings_item.dart';
@@ -36,391 +39,645 @@ class SubSettings extends StatefulWidget {
      *
      */
 
-  static Widget Billing(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    final _screenSize = MediaQuery.of(context).size;
+   static Widget Billing(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     final _screenSize = MediaQuery.of(context).size;
 
-    double rowH = 80;
-    double rowW = 100;
-    double vInset = 10.0;
+     double rowH = 80;
+     double rowW = 100;
+     double vInset = 10.0;
 
-    int _cardNumber = 0;
+     double billingFontSize = 18.0;
 
-    ArrivalTextInput arrival = ArrivalTextInput();
+     int _cardNumber = 0;
+
+     ArrivalTextInput arrival = ArrivalTextInput();
+
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+         child: Material(
+         child: ListView(
+           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+               .onDrag, // Make this behave such that touching outside of text field dismisses keyboard
+           children: [
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   child: Text(
+                     'Card Number:',
+                     textAlign: TextAlign.left,
+                     style: TextStyle(
+                         fontSize: billingFontSize, fontWeight: FontWeight.bold),
+                   ),
+                   padding: EdgeInsets.fromLTRB(32.0, 18.0, 25.0, 5.0),
+                 ),
+               ),
+             ),
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   height: 70,
+                   child: CupertinoTextField(
+                     selectionHeightStyle: BoxHeightStyle.max,
+                     controller: arrival.controller,
+                     placeholder: '1234 5678 1234 5678',
+                     placeholderStyle: TextStyle(fontSize: 16.0, color: Colors.black54),
+                     decoration: BoxDecoration(
+                       border: Border.all(
+                         color: Colors.black12,
+                         width: 1,
+                       ),
+                       borderRadius: BorderRadius.circular(4.0),
+                     ),
+                     onChanged: (String str) {
+                       // here you write code that activates when the user types in
+                       print(str);
+                     },
+                     onSubmitted: (String str) {
+                       // here you write code that activates when the presses enter
+                       print(str);
+                     },
+                   ),
+                   padding: EdgeInsets.fromLTRB(30, 10, 30, 15),
+                 ),
+               ),
+             ),
+             Container(
+               child: Material(
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                   //crossAxisAlignment: CrossAxisAlignment.center,
+                   children: <Widget>[
+                     Container(
+                       child: Column(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Container(
+                             height: rowH / 2,
+                             width: rowW,
+                             child: Text(
+                               'Exp Date:',
+                               textAlign: TextAlign.left,
+                               style: TextStyle(
+                                   fontSize: 18.0,
+                                   fontWeight: FontWeight.bold),
+                             ),
+                             padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                           ),
+                           Container(
+                             height: rowH / 2 + 20,
+                             width: rowW,
+                             child: CupertinoTextField(
+                               placeholder: 'MM/YY',
+                               placeholderStyle: TextStyle(fontSize: 14.0, color: Colors.black54),
+                               decoration: BoxDecoration(
+                                 border: Border.all(
+                                   color: Colors.black12,
+                                   width: 1,
+                                 ),
+                                 borderRadius: BorderRadius.circular(4.0),
+                               ),
+                               keyboardType: TextInputType.datetime,
+                             ),
+                             padding: EdgeInsets.fromLTRB(2,2,2,18),
+                           ),
+                         ]
+                       ),
+                     ),
+                     Container(
+                       child: Column(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                           children: [
+                           Container(
+                             height: rowH / 2,
+                             width: rowW,
+                             child: Text(
+                               'CVV:',
+                               textAlign: TextAlign.left,
+                               style: TextStyle(
+                                   fontSize: 18.0, fontWeight: FontWeight.bold),
+                             ),
+                             padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                           ),
+                           Container(
+                             height: rowH / 2 + 20,
+                             width: rowW,
+                             child: CupertinoTextField(
+                               placeholder: '000',
+                               placeholderStyle: TextStyle(fontSize: 14.0, color: Colors.black54),
+                               decoration: BoxDecoration(
+                                 border: Border.all(
+                                   color: Colors.black12,
+                                   width: 1,
+                                 ),
+                                 borderRadius: BorderRadius.circular(4.0),
+                               ),
+                               keyboardType: TextInputType.number,
+                             ),
+                             padding: EdgeInsets.fromLTRB(2,2,2,18),
+                           ),
+                         ],
+                       ),
+                     ),
+                     Container(
+                       child: Column(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                           children: [
+                           Container(
+                             height: rowH / 2,
+                             width: rowW,
+                             child: Text(
+                               'ZIP Code:',
+                               textAlign: TextAlign.left,
+                               style: TextStyle(
+                                   fontSize: 18.0, fontWeight: FontWeight.bold),
+                             ),
+                             padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                           ),
+                           Container(
+                             height: rowH / 2 + 20,
+                             width: rowW,
+                             child: CupertinoTextField(
+                               placeholder: '11111',
+                               placeholderStyle: TextStyle(fontSize: 14.0, color: Colors.black54),
+                               decoration: BoxDecoration(
+                                 border: Border.all(
+                                   color: Colors.black12,
+                                   width: 1,
+                                 ),
+                                 borderRadius: BorderRadius.circular(4.0),
+                               ),
+                               keyboardType: TextInputType.number,
+                             ),
+                             padding: EdgeInsets.fromLTRB(2,2,2,18),
+                           ),
+                         ],
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
+   }
+
+   static Widget Membership(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+
+     int currentMemberTier = 0;
+
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       //child: Material(
+       child: ListView(
+         children: [
+           Container(
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+               crossAxisAlignment: CrossAxisAlignment.center,
+               children: [
+                 Container(
+                   height: 120,
+                     child: Container(
+                       height: 80,
+                       width: 350, // TODO: Use method to make this a function of screen width
+                       decoration: BoxDecoration(
+                         color: Colors.amber,
+                         border: Border.all(
+                           color: Colors.black12,
+                           width: 5,
+                         ),
+                         borderRadius: BorderRadius.circular(15.0),
+                       ),
+                         child: Center(
+                           child: Text(
+                           'Free',
+                           textAlign: TextAlign.center,
+                           style: TextStyle(
+                               fontSize: 18.0, fontWeight: FontWeight.bold),
+                           ),
+                         ),
+                       //padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 5.0),
+                     ),
+                 ),
+                 Container(
+                   height: 80,
+                   width: 350,
+                   decoration: BoxDecoration(
+                     color: Colors.amber,    // TODO: Add logic to change color if this is current tier
+                     border: Border.all(
+                       color: Colors.black12,
+                       width: 5,
+                     ),
+                     borderRadius: BorderRadius.circular(15.0),
+                   ),
+                   child: Center(
+                     child: Text(
+                       'Lite',
+                       textAlign: TextAlign.center,
+                       style: TextStyle(
+                           fontSize: 18.0, fontWeight: FontWeight.bold),
+                     ),
+                   ),
+                   //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                 ),
+                 Container(
+                   height: 80,
+                   width: 350,
+                   decoration: BoxDecoration(
+                     color: Colors.amber,    // TODO: Add logic to change color if this is current tier
+                     border: Border.all(
+                       color: Colors.black12,
+                       width: 5,
+                     ),
+                     borderRadius: BorderRadius.circular(15.0),
+                   ),
+                   child: Center(
+                     child: Text(
+                       'Max',
+                       textAlign: TextAlign.center,
+                       style: TextStyle(
+                           fontSize: 18.0, fontWeight: FontWeight.bold),
+                     ),
+                   ),
+                   //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                 ),
+               ],
+             ),
+           ),
+         ],
+       ),
+     );
+   }
+   /*
+   static Widget Membership(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+         //child: Material(
+           child: ListView(
+             children: [
+               Container(
+                 height: 80,
+                 width: 150,
+                 decoration: BoxDecoration(
+                   border: Border.all(
+                     color: Colors.blue,
+                   ),
+                   borderRadius: BorderRadius.circular(10.0),
+                 ),
+                 child: Material(
+                   child: Text(
+                     'ZIP Code:',
+                     textAlign: TextAlign.left,
+                     style: TextStyle(
+                       fontSize: 18.0, fontWeight: FontWeight.bold),
+                   ),
+                 ),
+               padding: EdgeInsets.all(20),
+             ),
+           ],
+         ),
+     );
+   }
+   */
+
+   static Widget Tipping(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       child: ListView(
+         children: [
+           Text('tipping'),
+         ],
+       ),
+     );
+   }
+
+     /***
+      * ------ Account Settings ------
+      *
+      * All sub classes that handle your account information
+      *
+      */
+
+   static Widget Password(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     ArrivalTextInput arrival = ArrivalTextInput();
+
+     double passwordFontSize = 16.0;
+
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       child: Material(
+         child: ListView(
+           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+           children: [
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   height: 65.0,
+                   child: CupertinoTextField(
+                     controller: arrival.controller,
+                     placeholder: 'Current Password',
+                     placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                     decoration: BoxDecoration(
+                       border: Border.all(
+                         color: Colors.black38,
+                         width: 1,
+                       ),
+                       borderRadius: BorderRadius.circular(4.0),
+                     ),
+                     onChanged: (String str) {
+                       // here you write code that activates when the user types in
+                       print(str);
+                     },
+                     onSubmitted: (String str) {
+                       // here you write code that activates when the presses enter
+                       print(str);
+                     },
+                   ),
+                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+                 ),
+               ),
+             ),
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   height: 65.0,
+                   child: CupertinoTextField(
+                     controller: arrival.controller,
+                     placeholder: 'New Password',
+                     placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                     decoration: BoxDecoration(
+                       border: Border.all(
+                         color: Colors.black38,
+                         width: 1,
+                       ),
+                       borderRadius: BorderRadius.circular(4.0),
+                     ),
+                     onChanged: (String str) {
+                       // here you write code that activates when the user types in
+                       print(str);
+                     },
+                     onSubmitted: (String str) {
+                       // here you write code that activates when the presses enter
+                       print(str);
+                     },
+                   ),
+                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+                 ),
+               ),
+             ),
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   height: 65.0,
+                   child: CupertinoTextField(
+                     controller: arrival.controller,
+                     placeholder: 'Confirm New Password',
+                     placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                     decoration: BoxDecoration(
+                       border: Border.all(
+                         color: Colors.black38,
+                         width: 1,
+                       ),
+                       borderRadius: BorderRadius.circular(4.0),
+                     ),
+                     onChanged: (String str) {
+                       // here you write code that activates when the user types in
+                       print(str);
+                     },
+                     onSubmitted: (String str) {
+                       // here you write code that activates when the presses enter
+                       print(str);
+                     },
+                   ),
+                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+                 ),
+               ),
+             ),
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   child: Text(
+                     'Forgot your password?',
+                     textAlign: TextAlign.left,
+                     style: TextStyle(
+                         fontSize: passwordFontSize, fontWeight: FontWeight.bold, color: Colors.indigo),
+                 ),
+                   padding: EdgeInsets.fromLTRB(15.0,8.0,15.0,8.0),
+                 ),
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
+   }
+   static Widget Email(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     ArrivalTextInput arrival = ArrivalTextInput();
+
+     double emailFontSize = 16.0;
+
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       child: Material(
+         child: ListView(
+           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+           children: [
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   child: Text(
+                     'Current Email: ' +  "User's Existing Email",
+                     textAlign: TextAlign.left,
+                     style: TextStyle(
+                         fontSize: emailFontSize),
+                   ),
+                   padding: EdgeInsets.fromLTRB(15.0,15.0,15.0,6.0),
+                 ),
+               ),
+             ),
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   height: 65.0,
+                   child: CupertinoTextField(
+                     controller: arrival.controller,
+                     placeholder: 'New Password',
+                     placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
+                     decoration: BoxDecoration(
+                       border: Border.all(
+                         color: Colors.black38,
+                         width: 1,
+                       ),
+                       borderRadius: BorderRadius.circular(4.0),
+                     ),
+                     onChanged: (String str) {
+                       // here you write code that activates when the user types in
+                       print(str);
+                     },
+                     onSubmitted: (String str) {
+                       // here you write code that activates when the presses enter
+                       print(str);
+                     },
+                   ),
+                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+                 ),
+               ),
+             ),
+             Container(
+               //padding: EdgeInsets.all(12),
+               child: Material(
+                 child: Container(
+                   height: 65.0,
+                   child: CupertinoTextField(
+                     controller: arrival.controller,
+                     placeholder: 'Confirm New Password',
+                     placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
+                     decoration: BoxDecoration(
+                       border: Border.all(
+                         color: Colors.black38,
+                         width: 1,
+                       ),
+                       borderRadius: BorderRadius.circular(4.0),
+                     ),
+                     onChanged: (String str) {
+                       // here you write code that activates when the user types in
+                       print(str);
+                     },
+                     onSubmitted: (String str) {
+                       // here you write code that activates when the presses enter
+                       print(str);
+                     },
+                   ),
+                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+                 ),
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
+   }
+
+   static Widget Agreements(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       child: ListView(
+         children: [
+           Text('agreements'),
+         ],
+       ),
+     );
+   }
+   static Widget Location(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       child: ListView(
+         children: [
+           Text('location'),
+         ],
+       ),
+     );
+   }
+   static Widget Security(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
+     return CupertinoPageScaffold(
+       navigationBar: CupertinoNavigationBar(
+         previousPageTitle: 'Profile',
+       ),
+       backgroundColor: Styles.scaffoldBackground(brightness),
+       child: ListView(
+         children: [
+           Text('security'),
+         ],
+       ),
+     );
+   }
+   static Widget Logout(BuildContext context) {
+     var brightness = CupertinoTheme.brightnessOf(context);
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Profile',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
-            .onDrag, // Make this behave such that touching outside of text field dismisses keyboard
-        children: [
-          Container(
-            height: 120,
-            width: 400,
-            child: Text(
-              'Add Card Details',
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-            ),
-            padding: EdgeInsets.fromLTRB(30, 40, 50, 30),
-          ),
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  height: 20.0,
-                  width: 400,
-                  child: Text(
-                    'Card Number',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 15.0, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  height: 200,
-                  child: CupertinoTextField(
-                    controller: arrival.controller,
-                    placeholder: '1234 5678 1234 5678',
-                    placeholderStyle: TextStyle(fontSize: 14.0),
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            child: Material(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: rowH / 2,
-                          width: rowW,
-                          child: Text(
-                            'Exp Date',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          padding: EdgeInsets.all(vInset),
-                        ),
-                        Container(
-                          height: rowH / 2,
-                          width: rowW,
-                          child: CupertinoTextField(
-                            placeholder: 'MM/YY',
-                            placeholderStyle: TextStyle(fontSize: 14.0),
-                            keyboardType: TextInputType.datetime,
-                          ),
-                          padding: EdgeInsets.all(vInset),
-                        ),
-                      ]
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+
+          Navigator.of(context).push<void>(CupertinoPageRoute(
+            builder: (context) => LoginPage(),
+            fullscreenDialog: true,
+          ));
+        },
+        child: Material(
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              Container(
+                //padding: EdgeInsets.all(12),
+                child: Material(
+                  child: Container(
+                    child: Text(
+                      'Are you sure you want to log out?',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.red),
                     ),
+                    padding: EdgeInsets.fromLTRB(15.0,8.0,15.0,8.0),
                   ),
-                  Container(
-                    child: Column(children: [
-                      Container(
-                        height: rowH / 2,
-                        width: rowW,
-                        child: Text(
-                          'CVV',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                        padding: EdgeInsets.all(vInset),
-                      ),
-                      Container(
-                        height: rowH / 2,
-                        width: rowW,
-                        child: CupertinoTextField(
-                          placeholder: '000',
-                          placeholderStyle: TextStyle(fontSize: 14.0),
-                          keyboardType: TextInputType.number,
-                        ),
-                        padding: EdgeInsets.all(vInset),
-                      ),
-                    ]),
-                  ),
-                  Container(
-                    child: Column(children: [
-                      Container(
-                        height: rowH / 2,
-                        width: rowW,
-                        child: Text(
-                          'ZIP Code',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                        padding: EdgeInsets.all(vInset),
-                      ),
-                      Container(
-                        height: rowH / 2,
-                        width: rowW,
-                        child: CupertinoTextField(
-                          placeholder: '11111',
-                          placeholderStyle: TextStyle(fontSize: 14.0),
-                          keyboardType: TextInputType.number,
-                        ),
-                        padding: EdgeInsets.all(vInset),
-                      ),
-                    ]),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  static Widget Membership(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('membership tier'),
-        ],
-      ),
-    );
-  }
-  static Widget Tipping(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('tipping'),
-        ],
-      ),
-    );
-  }
-
-    /***
-     * ------ Account Settings ------
-     *
-     * All sub classes that handle your account information
-     *
-     */
-
-  static Widget Password(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    ArrivalTextInput arrival = ArrivalTextInput();
-
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        children: [
-          Container(
-            padding: EdgeInsets.all(12),
-            child: CupertinoTextField(
-              controller: arrival.controller,
-              placeholder: 'Current Password',
-              placeholderStyle: TextStyle(fontSize: 14),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Styles.mainColor,
-                  width: 1,
                 ),
-                borderRadius: BorderRadius.circular(15.0),
               ),
-              onChanged: (String str) {
-                // here you write code that activates when the user types in
-                print(str);
-              },
-              onSubmitted: (String str) {
-                // here you write code that activates when the presses enter
-                print(str);
-              },
-            ),
+            ],
           ),
-          Container(
-            padding: EdgeInsets.all(12),
-            child: CupertinoTextField(
-              controller: arrival.controller,
-              placeholder: 'New Password',
-              placeholderStyle: TextStyle(fontSize: 14),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Styles.mainColor,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              onChanged: (String str) {
-                // here you write code that activates when the user types in
-                print(str);
-              },
-              onSubmitted: (String str) {
-                // here you write code that activates when the presses enter
-                print(str);
-              },
-            ),
-          ),
-          //Add a transition for re-enter password once fields are filled out and
-          Container(
-            padding: EdgeInsets.all(12),
-            child: CupertinoTextField(
-              controller: arrival.controller,
-              placeholder: 'Confirm New Password',
-              placeholderStyle: TextStyle(fontSize: 14),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Styles.mainColor,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              onChanged: (String str) {
-                // here you write code that activates when the user types in
-                print(str);
-              },
-              onSubmitted: (String str) {
-                // here you write code that activates when the presses enter
-                print(str);
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
-  }
-  static Widget Email(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Container(
-            child: Material(
-              borderRadius: BorderRadius.circular(15.0),
-              child: Text(
-                'Existing Email:',
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-              ),
-            ),
-            padding: EdgeInsets.all(12),
-          ),
-          Container(
-            child: Material(
-              borderRadius: BorderRadius.circular(15.0),
-              child: Text(
-                "User's Existing Email",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-              ),
-            ),
-            padding: EdgeInsets.all(12),
-          ),
-          Container(
-            child: Material(
-              borderRadius: BorderRadius.circular(15.0),
-              child: CupertinoTextField(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Styles.mainColor,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                placeholder: 'New Email',
-                placeholderStyle: TextStyle(fontSize: 14),
-              ),
-            ),
-            padding: EdgeInsets.all(12),
-          ),
-          Container(
-            child: Material(
-              borderRadius: BorderRadius.circular(15.0),
-              child: CupertinoTextField(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Styles.mainColor,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                placeholder: 'Confirm New Email',
-                placeholderStyle: TextStyle(fontSize: 14),
-              ),
-            ),
-            padding: EdgeInsets.all(12),
-          ),
-        ],
-      ),
-    );
-  }
-  static Widget Agreements(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('agreements'),
-        ],
-      ),
-    );
-  }
-  static Widget Location(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('location'),
-        ],
-      ),
-    );
-  }
-  static Widget Security(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Profile',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('security'),
-        ],
-      ),
-    );
-  }
+   }
 
   @override
   _SubSettingsParent createState() => _SubSettingsParent();
@@ -708,6 +965,18 @@ class ProfileScreen extends StatelessWidget {
             CupertinoPageRoute(
               builder: (context) => SubSettings(buildPage: SubSettings.Security),
               title: 'Security Settings',
+            ),
+          );
+        },
+      ),
+      SettingsItem(
+        label: 'Log out',
+        content: SettingsNavigationIndicator(),
+        onPress: () {
+          Navigator.of(context).push<void>(
+            CupertinoPageRoute(
+              builder: (context) => SubSettings(buildPage: SubSettings.Logout),
+              title: 'Account logins',
             ),
           );
         },

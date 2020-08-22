@@ -3,63 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../data/partners.dart';
+import '../posts/post.dart';
+import '../posts/page.dart';
 import '../users/profile.dart';
 import '../users/data.dart';
 import '../screens/home.dart';
 import '../data/local.dart';
-
-class ArrivalData {
-  static _DataState server;
-  static String result;
-  static String sendMessage;
-  static List<Business> partners;
-  static List<String> partner_strings;
-
-  static void save() async {
-    ArrivalFiles file = ArrivalFiles('partners.json');
-
-    Map<String, dynamic> data = Map<String, dynamic>();
-
-    for(var i=0;i<ArrivalData.partners.length;i++) {
-      data[ArrivalData.partners[i].cryptlink] =
-        ArrivalData.partner_strings[i];
-    }
-
-    await file.write(data);
-  }
-  static void load() async {
-    ArrivalFiles file = ArrivalFiles('partners.json');
-
-    ArrivalData.partner_strings = List<String>();
-    ArrivalData.partners = List<Business>();
-
-    try {
-      Map<String, dynamic> data = await file.readAll();
-
-      data.forEach((String key, dynamic value) {
-        ArrivalData.partner_strings.add(value);
-        ArrivalData.partners.add(Business.parse(value));
-      });
-    } catch(e) {
-      print('-------');
-      print('Some error happened in link.dart @ 42');
-      print(e);
-      print('-------');
-    }
-  }
-  static void refresh() async {
-    ArrivalFiles file = ArrivalFiles('partners.json');
-
-    try {
-      file.delete();
-    } catch(e) {
-      print('-------');
-      print('Could not delete file in link.dart @ 47');
-      print(e);
-      print('-------');
-    }
-  }
-}
+import '../data/arrival.dart';
 
 class Data extends StatefulWidget {
   String _query;
@@ -72,18 +22,27 @@ class Data extends StatefulWidget {
   Data.partners(String _q) {
     this._query = '?p:'+_q;
   }
+  Data.posts(String _q) {
+    this._query = '?o:'+_q;
+  }
+  Data.post_data(String _link) {
+    this._query = '?d:'+_link;
+  }
+  Data.post_comments(String _link) {
+    this._query = '?c:'+_link;
+  }
   Data.radius(int lat, int lng) {
     this._query = '?r:'+lat.toString()+':'+lng.toString();
   }
 
   @override
-  _DataState createState() => _DataState(_query);
+  DataState createState() => DataState(_query);
 }
 
-class _DataState extends State<Data> {
+class DataState extends State<Data> {
   final String query;
   WebViewController _webViewController;
-  _DataState(this.query);
+  DataState(this.query);
 
   @override
   void initState() {
@@ -128,25 +87,49 @@ class _DataState extends State<Data> {
       javascriptMode: JavascriptMode.unrestricted,
       javascriptChannels: Set.from([
         JavascriptChannel(
-            name: 'AppAndPartnersCommunication',
+            name: 'AppAndPostsCommunication',
             onMessageReceived: (JavascriptMessage message) {
               List<String> split = _splitMessage(message.message);
               if(split.length==0) return;
-              if(split[0]=='response') {
+              if(split[0]=='links') {
                 for(int i=1;i<split.length;i++) {
-                  ArrivalData.partners.add(Business.parse(split[i]));
-                  ArrivalData.partner_strings.add(split[i]);
+                  ArrivalData.posts.add(Post.icon(
+                    cryptlink: split[i].substring(6, split[i].length-1)
+                  ));
                 }
-                ArrivalData.save();
 
                 // pop off this data pull page
                 Navigator.pop(context);
 
+                if(!ArrivalData.carry) return;
                 // display home screen
                 Navigator.of(context).push<void>(CupertinoPageRoute(
                   builder: (context) => HomeScreen(),
                   fullscreenDialog: true,
                 ));
+                ArrivalData.carry = false;
+              }
+              else if(split[0]=='data') {
+                var post = Post.parse(split[1]);
+                for(int i=0;i<ArrivalData.posts.length;i++) {
+                  if(ArrivalData.posts[i].cryptlink==
+                      post.cryptlink) {
+                    ArrivalData.posts[i] = post;
+                    break;
+                  }
+                }
+
+                // pop off this data pull page
+                Navigator.pop(context);
+
+                // display Post Page
+                Navigator.of(context).push<void>(CupertinoPageRoute(
+                  builder: (context) => PostDisplayPage(post),
+                  fullscreenDialog: true,
+                ));
+              }
+              else if(split[0]=='comments') {
+                Navigator.pop(context);
               }
             }),
         JavascriptChannel(
@@ -163,6 +146,7 @@ class _DataState extends State<Data> {
                 // pop off this data pull page
                 Navigator.pop(context);
 
+                if(!ArrivalData.carry) return;
                 // load up parnets data download page
                 Navigator.of(context).push<void>(CupertinoPageRoute(
                   builder: (context) => Data.partners(''),
@@ -170,6 +154,29 @@ class _DataState extends State<Data> {
                 ));
               }
             }),
+        JavascriptChannel(
+          name: 'AppAndPartnersCommunication',
+          onMessageReceived: (JavascriptMessage message) {
+            List<String> split = _splitMessage(message.message);
+            if(split.length==0) return;
+            if(split[0]=='response') {
+              for(int i=1;i<split.length;i++) {
+                ArrivalData.partners.add(Business.parse(split[i]));
+                ArrivalData.partner_strings.add(split[i]);
+              }
+              ArrivalData.save();
+
+              // pop off this data pull page
+              Navigator.pop(context);
+
+              if(!ArrivalData.carry) return;
+              // display home screen
+              Navigator.of(context).push<void>(CupertinoPageRoute(
+                builder: (context) => Data.posts(''),
+                fullscreenDialog: true,
+              ));
+            }
+          }),
         JavascriptChannel(
             name: 'AppAndInfoCommunication',
             onMessageReceived: (JavascriptMessage message) {
@@ -180,6 +187,9 @@ class _DataState extends State<Data> {
                   print(split[i]);
                 }
               }
+
+              // pop off this data pull page
+              Navigator.pop(context);
             }),
         JavascriptChannel(
             name: 'AppAndErrorCommunication',
@@ -191,6 +201,9 @@ class _DataState extends State<Data> {
                   print(split[i]);
                 }
               }
+
+              // pop off this data pull page
+              Navigator.pop(context);
             }),
       ]),
       onWebViewCreated: (WebViewController w) {

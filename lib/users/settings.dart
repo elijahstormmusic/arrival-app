@@ -16,6 +16,9 @@ class SettingsConfig {
   SettingsConfig({
     this.newsSub,
   });
+  static final SettingsConfig empty = SettingsConfig(
+    newsSub: false,
+  );
 
   static SettingsConfig parse(String input)
   {

@@ -78,7 +78,8 @@ class ListScreen extends StatelessWidget {
                 } else if (index <= appState.availableBusinesses.length + 1) {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                    child: Text('A fun trip',
+                    child: Text(appState.unavailableBusinesses.length==0 ? '' :
+                                'A fun trip',
                         style: Styles.headlineText(themeData)),
                   );
                 } else {

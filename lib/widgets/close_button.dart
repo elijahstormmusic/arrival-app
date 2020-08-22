@@ -116,7 +116,7 @@ class CloseButtonState extends State<ArrCloseButton> {
             ),
             child: Center(
               child: ColorChangingIcon(
-                CupertinoIcons.clear_thick,
+                CupertinoIcons.back,
                 duration: Duration(milliseconds: 300),
                 color: tapInProgress
                     ? Styles.closeButtonPressed

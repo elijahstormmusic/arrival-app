@@ -2,14 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
+import '../data/socket.dart';
+import '../data/link.dart';
 import '../data/app_state.dart';
 import '../data/partners.dart';
 import '../styles.dart';
 import '../widgets/search_bar.dart';
+import '../widgets/cards.dart';
 import '../widgets/partner_headline.dart';
+import '../posts/post.dart';
+import '../posts/page.dart';
+import '../data/arrival.dart';
+import '../users/data.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -19,17 +27,29 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final controller = TextEditingController();
   final focusNode = FocusNode();
+  final userstate = {
+    'link': UserData.client.cryptlink,
+  };
   String terms = '';
+  ArrivalSocket socket;
+  ScrollController _scrollController;
 
   @override
   void initState() {
-    super.initState();
     controller.addListener(_onTextChanged);
+    socket = ArrivalSocket();
+    socket.init();
+    socket.send('posts set state', userstate);
+    socket.source = this;
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    super.initState();
   }
 
   @override
   void dispose() {
     focusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -52,7 +72,60 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildSearchResults(List<Business> places) {
+  int _exploreFlow = ArrivalData.posts.length;
+  Future<Post> _fetchPostData(BuildContext context, String link) async {
+    return Post.empty;
+    // final response = await http.get(link);
+    //
+    // return Post.parse(response.body);
+  }
+  Widget _postImageBuilder(String link) {
+    return FutureBuilder(
+      future: _fetchPostData(context, link),
+      builder: (context, snap) {
+        if(snap.hasData) {
+          return snap.data.icon;
+        }
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+  String _getPostLink(int index) {
+    return Post.source + ArrivalData.posts[index].cryptlink;
+  }
+  Widget _buildExploreBoxes(List<Post> posts) {
+    return GridView.count(
+      shrinkWrap: true,
+      childAspectRatio: 1,
+      scrollDirection: Axis.vertical,
+      crossAxisCount: 3,
+      controller: _scrollController,
+      children: new List<Widget>.generate(_exploreFlow, (index) {
+        return PressableCard(
+          onPressed: () {
+              // request post data
+            Navigator.of(context).push<void>(CupertinoPageRoute(
+              builder: (context) => Data.post_data(
+                ArrivalData.posts[index].cryptlink
+              ),
+              fullscreenDialog: true,
+            ));
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(width: 1.0, color: const Color(0xff757575)),
+            ),
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: ArrivalData.posts[index].icon(),
+            ),
+          ),
+        );
+      },
+      ).toList(),
+    );
+  }
+  Widget _buildSearchLines(List<Business> places) {
     if (places.isEmpty) {
       return Center(
         child: Padding(
@@ -75,6 +148,35 @@ class _SearchScreenState extends State<SearchScreen> {
       },
     );
   }
+  Widget _buildSearch(AppState model, String terms) {
+    List<Post> posts = model.searchPosts(terms);
+    List<Business> businesses = model.searchBusinesses(terms);
+
+    if (!posts.isEmpty || terms=='') {
+      return _buildExploreBoxes(posts);
+    }
+    return _buildSearchLines(businesses);
+  }
+
+  void responded() {
+    _exploreFlow = ArrivalData.posts.length;
+    setState(() => terms = controller.text);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        socket.send('posts get', userstate);
+      });
+    }
+    if (_scrollController.offset <= _scrollController.position.minScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        // reached the top
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +190,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               _createSearchBox(),
               Expanded(
-                child: _buildSearchResults(model.searchBusinesses(terms)),
+                child: _buildSearch(model, terms),
               ),
             ],
           ),

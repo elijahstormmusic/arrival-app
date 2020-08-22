@@ -4,7 +4,9 @@
 
 import 'package:scoped_model/scoped_model.dart';
 import '../data/partners.dart';
+import '../posts/post.dart';
 import '../data/link.dart';
+import '../data/arrival.dart';
 
 class AppState extends Model {
   List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);
@@ -22,6 +24,9 @@ class AppState extends Model {
   List<Business> get favoriteBusinesses =>
       ArrivalData.partners.where((v) => v.isFavorite).toList();
 
+  List<Post> searchPosts(String terms) => ArrivalData.posts
+      .where((v) => v.caption.toLowerCase().contains(terms.toLowerCase()))
+      .toList();
   List<Business> searchBusinesses(String terms) => ArrivalData.partners
       .where((v) => v.name.toLowerCase().contains(terms.toLowerCase()))
       .toList();

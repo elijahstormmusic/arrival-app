@@ -6,8 +6,12 @@ import 'package:meta/meta.dart';
 import '../users/settings.dart';
 
 class Profile {
+  static final String default_img =
+    'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
+
   final String name;
   final String icon;
+  final String shortBio;
   final String email;
   final String cryptlink;
   final int level;
@@ -18,6 +22,7 @@ class Profile {
     String str = '';
     str += 'name:' + name + ',';
     str += 'icon:' + icon + ',';
+    str += 'bio:' + shortBio + ',';
     str += 'email:' + email + ',';
     str += 'cryptlink:' + cryptlink + ',';
     str += 'level:' + level.toString() + ',';
@@ -30,18 +35,28 @@ class Profile {
     @required this.name,
     @required this.icon,
     @required this.email,
+    @required this.shortBio,
     @required this.cryptlink,
     @required this.level,
     @required this.points,
     @required this.settings,
   });
+  static final Profile empty = Profile(
+    name: '',
+    icon: '',
+    email: '',
+    shortBio: '',
+    cryptlink: '',
+    level: 0,
+    points: 0,
+    settings: SettingsConfig.empty,
+  );
 
-  static Profile parse(String input)
-  {
+  static Profile parse(String input) {
     if(input.substring(0, 1)=='{')
       input = input.substring(1, input.length-1);
 
-    var name, icon, email, level,
+    var name, icon, email, level, shortBio,
         points, settings, cryptlink;
 
     var startDataLoc, endDataLoc = 0;
@@ -53,6 +68,11 @@ class Profile {
     startDataLoc = input.indexOf('icon')            + 5;
     endDataLoc = input.indexOf(',', startDataLoc);
     icon = input.substring(startDataLoc, endDataLoc);
+    icon = icon=='' ? Profile.default_img : icon;
+
+    startDataLoc = input.indexOf('bio')           + 4;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    shortBio = input.substring(startDataLoc, endDataLoc);
 
     startDataLoc = input.indexOf('email')           + 6;
     endDataLoc = input.indexOf(',', startDataLoc);
@@ -78,10 +98,17 @@ class Profile {
       name: name,
       icon: icon,
       email: email,
+      shortBio: shortBio,
       cryptlink: cryptlink,
       level: level,
       points: points,
       settings: settings,
     );
+  }
+  static Profile link(String input) {
+    return Profile.empty;
+    // await Data.profile(input);  // still to make
+    // String result = UserData.get(input);  // still to make
+    // return Profile.parse(result);
   }
 }
