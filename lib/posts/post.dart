@@ -59,6 +59,15 @@ class Post {
     return Image.network(Post.source + cryptlink + '/i.jpg');
   }
 
+  static Post json(var input) {
+    return Post(
+      caption: input['caption'],
+      cryptlink: input['cryptlink'],
+      likes: input['likes'],
+      comments: input['comments'],
+      user: input['user'],
+    );
+  }
   static Post parse(String input) {
     if(input.substring(0, 1)=='{')
       input = input.substring(1, input.length-1);

@@ -19,7 +19,7 @@ class ArrivalSocket {
     socket.subscribe('message', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
 
-      if(data['type']==800) {
+      if(data['type']==800) { // icons download
         var list = data['response'];
 
         for(int i=0;i<list.length;i++) {
@@ -27,19 +27,39 @@ class ArrivalSocket {
             cryptlink: list[i]['link']
           ));
         }
+
 for(int i=0;i<list.length;i++) {
 ArrivalData.posts.add(Post.icon(
 cryptlink: list[i]['link']
-));
+)); // remove this
 }
         source.responded();
+      }
+      if(data['type']==801) { // post data
+        var post = Post.json(data['response']);
+        for(int i=0;i<ArrivalData.posts.length;i++) {
+          if(ArrivalData.posts[i].cryptlink==
+              post.cryptlink) {
+            ArrivalData.posts[i] = post;
+            break;
+          }
+        }
+      }
+      if(data['type']==802) { // comments
+        for(int i=0;i<ArrivalData.posts.length;i++) {
+          if(ArrivalData.posts[i].cryptlink==
+              data['link']) {
+            // ArrivalData.posts[i].comments.add(data['comments']);
+            break;
+          }
+        }
       }
     });
 
     socket.connect();
   }
 
-  void send(String _req, var _data) {
+  void emit(String _req, var _data) {
     socket.sendMessage(
       _req, json.encode(_data),
     );

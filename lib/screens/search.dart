@@ -39,7 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
     controller.addListener(_onTextChanged);
     socket = ArrivalSocket();
     socket.init();
-    socket.send('posts set state', userstate);
+    socket.emit('posts set state', userstate);
     socket.source = this;
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
@@ -103,11 +103,12 @@ class _SearchScreenState extends State<SearchScreen> {
       children: new List<Widget>.generate(_exploreFlow, (index) {
         return PressableCard(
           onPressed: () {
-              // request post data
+            socket.emit('posts get data', {
+              'link': ArrivalData.posts[index].cryptlink,
+            });
+              // display post
             Navigator.of(context).push<void>(CupertinoPageRoute(
-              builder: (context) => Data.post_data(
-                ArrivalData.posts[index].cryptlink
-              ),
+              builder: (context) => PostDisplayPage(ArrivalData.posts[index]),
               fullscreenDialog: true,
             ));
           },
@@ -167,7 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        socket.send('posts get', userstate);
+        socket.emit('posts get', userstate);
       });
     }
     if (_scrollController.offset <= _scrollController.position.minScrollExtent &&

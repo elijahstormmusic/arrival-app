@@ -29,8 +29,12 @@ class _PostDisPState extends State<PostDisplayPage> {
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
+    final themeData = CupertinoTheme.of(context);
 
     return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        previousPageTitle: 'Back',
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -38,17 +42,15 @@ class _PostDisPState extends State<PostDisplayPage> {
           Expanded(
             child: ListView(
               children: [
-                Positioned(
-                  top: 16,
-                  left: 16,
-                  child: SafeArea(
-                    child: ArrCloseButton(() {
-                      Navigator.of(context).pop();
-                    }),
-                  ),
-                ),
                 SizedBox(height: 20),
                 widget.post.image(),
+                SizedBox(height: 20),
+                Text(
+                  'Likes: ' + widget.post.likes.toString() + '    '
+                  'Comments: ' + widget.post.comments.toString(),
+                  style: Styles.headlineText(themeData)),
+                SizedBox(height: 20),
+                Text(widget.post.caption),
               ],
             ),
           ),
