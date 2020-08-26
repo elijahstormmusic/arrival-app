@@ -3,14 +3,17 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import '../users/settings.dart';
 
 class Profile {
   static final String default_img =
     'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
+  static final String source =
+    'https://arrival-app.herokuapp.com/user/data/';
 
   final String name;
-  final String icon;
   final String shortBio;
   final String email;
   final String cryptlink;
@@ -21,7 +24,6 @@ class Profile {
   String toString() {
     String str = '';
     str += 'name:' + name + ',';
-    str += 'icon:' + icon + ',';
     str += 'bio:' + shortBio + ',';
     str += 'email:' + email + ',';
     str += 'cryptlink:' + cryptlink + ',';
@@ -33,7 +35,6 @@ class Profile {
 
   Profile({
     @required this.name,
-    @required this.icon,
     @required this.email,
     @required this.shortBio,
     @required this.cryptlink,
@@ -41,9 +42,17 @@ class Profile {
     @required this.points,
     @required this.settings,
   });
+  Profile.lite({
+    @required this.cryptlink,
+    @required this.name,
+    this.email = '',
+    this.shortBio = '',
+    this.level = 0,
+    this.points = 0,
+    this.settings = null,
+  }) {}
   static final Profile empty = Profile(
-    name: '',
-    icon: '',
+    name: 'no user',
     email: '',
     shortBio: '',
     cryptlink: '',
@@ -52,11 +61,58 @@ class Profile {
     settings: SettingsConfig.empty,
   );
 
+  Widget iconBySize(double height) {
+    if(cryptlink=='') {
+      return Image.network(
+        Profile.default_img,
+        fit: BoxFit.cover,
+        semanticLabel: 'Profile image for ' + name,
+        height: height,
+      );
+    }
+
+      // remove when profile pics are set up
+    return Image.network(
+      Profile.default_img,
+      fit: BoxFit.cover,
+      semanticLabel: 'Profile image for ' + name,
+      height: height,
+    );
+
+    return Image.network(
+      Profile.source + cryptlink + '/i.jpg',
+      fit: BoxFit.cover,
+      semanticLabel: 'Profile image for ' + name,
+    );
+  }
+  Widget icon() {
+    if(cryptlink=='') {
+      return Image.network(
+        Profile.default_img,
+        fit: BoxFit.cover,
+        semanticLabel: 'Profile image for ' + name,
+      );
+    }
+
+      // remove when profile pics are set up
+    return Image.network(
+      Profile.default_img,
+      fit: BoxFit.cover,
+      semanticLabel: 'Profile image for ' + name,
+    );
+
+    return Image.network(
+      Profile.source + cryptlink + '/i.jpg',
+      fit: BoxFit.cover,
+      semanticLabel: 'Profile image for ' + name,
+    );
+  }
+
   static Profile parse(String input) {
     if(input.substring(0, 1)=='{')
       input = input.substring(1, input.length-1);
 
-    var name, icon, email, level, shortBio,
+    var name, email, level, shortBio,
         points, settings, cryptlink;
 
     var startDataLoc, endDataLoc = 0;
@@ -64,11 +120,6 @@ class Profile {
     startDataLoc = input.indexOf('name')            + 5;
     endDataLoc = input.indexOf(',', startDataLoc);
     name = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('icon')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    icon = input.substring(startDataLoc, endDataLoc);
-    icon = icon=='' ? Profile.default_img : icon;
 
     startDataLoc = input.indexOf('bio')           + 4;
     endDataLoc = input.indexOf(',', startDataLoc);
@@ -96,7 +147,6 @@ class Profile {
 
     return Profile(
       name: name,
-      icon: icon,
       email: email,
       shortBio: shortBio,
       cryptlink: cryptlink,

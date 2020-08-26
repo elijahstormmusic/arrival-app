@@ -103,13 +103,17 @@ class _SearchScreenState extends State<SearchScreen> {
       children: new List<Widget>.generate(_exploreFlow, (index) {
         return PressableCard(
           onPressed: () {
+
+              // request data
             socket.emit('posts get data', {
               'link': ArrivalData.posts[index].cryptlink,
             });
+
               // display post
             Navigator.of(context).push<void>(CupertinoPageRoute(
-              builder: (context) => PostDisplayPage(ArrivalData.posts[index]),
-              fullscreenDialog: true,
+              builder: (context) => PostDisplayPage(
+                                  ArrivalData.posts[index], socket
+              ), fullscreenDialog: true,
             ));
           },
           child: Container(

@@ -12,7 +12,7 @@ import '../data/partners.dart';
 import '../styles.dart';
 import '../widgets/partner_card.dart';
 // import '../widgets/news_card.dart';
-import '../adobe/UserProfilePlacard.dart';
+import '../widgets/profile_stats_card.dart';
 
 class ListScreen extends StatelessWidget {
   Widget _generateBusinessRow(Business biz, Preferences prefs,

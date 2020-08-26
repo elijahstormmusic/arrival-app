@@ -38,11 +38,11 @@ class Post {
   });
   Post.icon({
     @required this.cryptlink,
-    this.caption = '',
+    this.caption = 'loading...',
     this.likes = 0,
     this.comments = 0,
-    this.user = null,
     this.full = false,
+    this.user = null,
   }) {}
   static final Post empty = Post(
     caption: '',
@@ -59,13 +59,16 @@ class Post {
     return Image.network(Post.source + cryptlink + '/i.jpg');
   }
 
-  static Post json(var input) {
+  static Post json(var input, var user) {
     return Post(
       caption: input['caption'],
       cryptlink: input['cryptlink'],
       likes: input['likes'],
       comments: input['comments'],
-      user: input['user'],
+      user: Profile.lite(
+        name: user['name'],
+        cryptlink: user['cryptlink'],
+      ),
     );
   }
   static Post parse(String input) {

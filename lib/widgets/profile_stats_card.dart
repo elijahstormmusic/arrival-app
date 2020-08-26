@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../styles.dart';
-import './nextLevelProgressBar.dart';
-import '../widgets/cards.dart';
+import './level_progress_bar.dart';
+import './cards.dart';
 import '../users/data.dart';
 import '../users/screen.dart';
 
@@ -71,7 +71,7 @@ class UserProfilePlacard extends StatelessWidget {
                   ),
                 ),
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(10.0, 54.0, 185.0, 34.0),
+                  bounds: Rect.fromLTWH(10.0, 46.0, 185.0, 34.0),
                   size: Size(387.0, 205.0),
                   pinLeft: true,
                   fixedWidth: true,
@@ -121,7 +121,7 @@ class UserProfilePlacard extends StatelessWidget {
                     )),
                 ),
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(298.0, 86.0, 23.0, 18.0),
+                  bounds: Rect.fromLTWH(330.0, 86.0, 23.0, 18.0),
                   size: Size(387.0, 205.0),
                   fixedWidth: true,
                   fixedHeight: true,
@@ -140,7 +140,7 @@ class UserProfilePlacard extends StatelessWidget {
                     )),
                 ),
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(22.0, 110.0, 105.0, 34.0),
+                  bounds: Rect.fromLTWH(20.0, 123.0, 105.0, 34.0),
                   size: Size(387.0, 205.0),
                   pinLeft: true,
                   fixedWidth: true,
@@ -159,7 +159,7 @@ class UserProfilePlacard extends StatelessWidget {
                   ),
                 ),
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(37.0, 137.0, 132.0, 64.0),
+                  bounds: Rect.fromLTWH(32.0, 157.0, 132.0, 64.0),
                   size: Size(387.0, 205.0),
                   pinLeft: true,
                   pinBottom: true,
@@ -240,7 +240,7 @@ class UserProfilePlacard extends StatelessWidget {
                   // Adobe XD layer: 'amountSaved' (text)
                   SingleChildScrollView(
                     child: Text(
-                      '\$69.42',
+                      '\$420.69',
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 42,

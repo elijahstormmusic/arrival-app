@@ -9,7 +9,7 @@ import '../posts/post.dart';
 
 class ArrivalSocket {
   SocketIO socket;
-  var source;
+  var source, target;
 
   void init() {
     socket = SocketIOManager().createSocketIO(
@@ -24,35 +24,39 @@ class ArrivalSocket {
 
         for(int i=0;i<list.length;i++) {
           ArrivalData.posts.add(Post.icon(
-            cryptlink: list[i]['link']
+            cryptlink: list[i]['link'],
           ));
         }
 
 for(int i=0;i<list.length;i++) {
 ArrivalData.posts.add(Post.icon(
-cryptlink: list[i]['link']
+cryptlink: list[i]['link'],
 )); // remove this
 }
+
         source.responded();
       }
+
       if(data['type']==801) { // post data
-        var post = Post.json(data['response']);
+        var post = Post.json(data['response'], data['user']);
         for(int i=0;i<ArrivalData.posts.length;i++) {
-          if(ArrivalData.posts[i].cryptlink==
-              post.cryptlink) {
+          if(ArrivalData.posts[i].cryptlink==post.cryptlink) {
             ArrivalData.posts[i] = post;
             break;
           }
         }
+        target.responded();
       }
+
       if(data['type']==802) { // comments
         for(int i=0;i<ArrivalData.posts.length;i++) {
-          if(ArrivalData.posts[i].cryptlink==
-              data['link']) {
+          if(ArrivalData.posts[i].cryptlink==data['link']) {
             // ArrivalData.posts[i].comments.add(data['comments']);
             break;
           }
         }
+
+        target.responded();
       }
     });
 

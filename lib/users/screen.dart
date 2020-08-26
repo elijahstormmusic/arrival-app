@@ -68,11 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Positioned(
             right: 0,
             left: 0,
-            child: Image.network(
-              widget.profile.icon,
-              fit: BoxFit.cover,
-              semanticLabel: 'Profile image for ' + widget.profile.name,
-            ),
+            child: widget.profile.icon(),
           ),
           Positioned(
             right: 20,

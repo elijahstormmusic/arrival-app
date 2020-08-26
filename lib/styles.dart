@@ -32,6 +32,19 @@ abstract class Styles {
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
       );
+  static TextStyle profileName = TextStyle(
+        color: Color.fromRGBO(55, 55, 55, 1),
+        fontFamily: 'Helvetica Neue',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
+  static TextStyle postText = TextStyle(
+        fontFamily: 'Helvetica Neue',
+        fontSize: 18,
+        color: const Color(0xff5f5f5f),
+        height: 1.5,
+      );
   static const Color mainColor = Color.fromRGBO(243, 72, 62, 1);
   static const Color activeColor = Color.fromRGBO(255, 196, 60, 1);
   static const Color inactiveColor = Color.fromRGBO(250, 250, 250, 1);
@@ -383,6 +396,19 @@ abstract class Styles {
     fontFamily: CupertinoIcons.iconFont,
     fontPackage: CupertinoIcons.iconFontPackage,
   );
+
+  static const heart = const IconData(0xf442,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
+  static const heart_full = const IconData(0xf443,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
+  static const comment = const IconData(0xf3fb,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
+  static const share = const IconData(0xf473,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
 
   static const servingInfoBorderColor = Color(0xffb0b0b0);
 

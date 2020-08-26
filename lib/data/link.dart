@@ -123,10 +123,10 @@ class DataState extends State<Data> {
                 Navigator.pop(context);
 
                 // display Post Page
-                Navigator.of(context).push<void>(CupertinoPageRoute(
-                  builder: (context) => PostDisplayPage(post),
-                  fullscreenDialog: true,
-                ));
+                // Navigator.of(context).push<void>(CupertinoPageRoute(
+                //   builder: (context) => PostDisplayPage(post),
+                //   fullscreenDialog: true,
+                // ));
               }
               else if(split[0]=='comments') {
                 Navigator.pop(context);
