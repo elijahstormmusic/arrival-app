@@ -14,6 +14,7 @@ import '../styles.dart';
 import '../widgets/close_button.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
+import '../users/page.dart';
 import '../data/socket.dart';
 
 class PostDisplayPage extends StatefulWidget {
@@ -33,33 +34,41 @@ class PostDisplayPage extends StatefulWidget {
 class _PostDisPState extends State<PostDisplayPage> {
   bool response = false;
 
-  void responded() {
-    setState(() => response = true);
+  void responded(Post input) {
+    setState(() => widget.post = input);
   }
 
   Widget profileDisplay(Profile user) {
-    return SizedBox(
-      height: 50,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 8,
-            left: 8,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(9999.0),
-              child: user.iconBySize(35.0),
+    return GestureDetector(
+      child: SizedBox(
+        height: 50,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 8,
+              left: 8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(9999.0),
+                child: user.iconBySize(35.0),
+              ),
             ),
-          ),
-          Positioned(
-            top: 14,
-            left: 50,
-            child: Text(
-              user.name,
-              style: Styles.profileName
+            Positioned(
+              top: 14,
+              left: 50,
+              child: Text(
+                user.name,
+                style: Styles.profileName
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      onTap: () {
+        Navigator.of(context).push<void>(CupertinoPageRoute(
+          builder: (context) => ProfilePage.user(user),
+          fullscreenDialog: true,
+        ));
+      },
     );
   }
 
@@ -108,7 +117,7 @@ class _PostDisPState extends State<PostDisplayPage> {
                               ),
                               onTap: () {
                                 print(
-                                  'in here'
+                                  'liking post'
                                 );
                                 if(clientHasLikedPost) {
                                   ClientHeartStyle = Styles.heart;

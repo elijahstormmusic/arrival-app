@@ -7,9 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'data/partners.dart';
 
-
-// Title RED -> 243, 72, 62, 1
-
 class ArrivalTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,10 +20,35 @@ class ArrivalTitle extends StatelessWidget {
   }
 }
 
-
 abstract class Styles {
+
+  static const ArrivalPalletteRed = Color(0xffF15D5D);
+  static const ArrivalPalletteWhite = Color(0xffF8F8F9);
+  static const ArrivalPalletteCream = Color(0xffF9EDD3);
+  static const ArrivalPalletteGrey = Color(0xffD9D5D3);
+  static const ArrivalPalletteBlack = Color(0xff231F20);
+  static const ArrivalPalletteBlue = Color(0xff5AA6DC);
+  static const ArrivalPalletteYellow = Color(0xffFFCF01);
+  static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
+  static const _oldArrivalPalletteYellow = Color.fromRGBO(255, 196, 60, 1);
+  static const _oldArrivalPalletteCream = Color.fromRGBO(250, 250, 250, 1);
+
+  static const Color mainColor = Styles.ArrivalPalletteRed;
+  static const Color activeColor = Styles.ArrivalPalletteYellow;
+  static const Color inactiveColor = Styles.ArrivalPalletteWhite;
+
+  static const TextStyle arrTitleText = TextStyle(
+        color: Color.fromRGBO(255, 255, 255, 1),
+        fontFamily: 'UraeNium',
+        fontSize: 42,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 3,
+  );
+
+
   static TextStyle headlineText(CupertinoThemeData themeData) => TextStyle(
-        color: themeData.textTheme.textStyle.color,
+        color: Styles.ArrivalPalletteBlack,
         fontFamily: 'UraeNium',
         fontSize: 32,
         fontStyle: FontStyle.normal,
@@ -44,17 +66,6 @@ abstract class Styles {
         fontSize: 18,
         color: const Color(0xff5f5f5f),
         height: 1.5,
-      );
-  static const Color mainColor = Color.fromRGBO(243, 72, 62, 1);
-  static const Color activeColor = Color.fromRGBO(255, 196, 60, 1);
-  static const Color inactiveColor = Color.fromRGBO(250, 250, 250, 1);
-  static const TextStyle arrTitleText = TextStyle(
-        color: Color.fromRGBO(255, 255, 255, 1),
-        fontFamily: 'UraeNium',
-        fontSize: 42,
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 3,
       );
 
   static const minorText = TextStyle(
@@ -81,7 +92,7 @@ abstract class Styles {
       );
 
   static const cardTitleText = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 0.9),
+    color: Styles.ArrivalPalletteBlack,
     fontFamily: 'Helvetica',
     fontSize: 32,
     fontStyle: FontStyle.normal,
@@ -97,7 +108,7 @@ abstract class Styles {
   );
 
   static const cardDescriptionText = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 0.9),
+    color: Styles.ArrivalPalletteBlack,
     fontFamily: 'BebasNeue',
     fontSize: 16,
     fontStyle: FontStyle.normal,
@@ -140,7 +151,7 @@ abstract class Styles {
       );
 
   static const detailsBoldDescriptionText = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 0.9),
+    color: Styles.ArrivalPalletteBlack,
     fontFamily: 'BebasNeue',
     fontSize: 16,
     fontStyle: FontStyle.normal,
@@ -155,7 +166,7 @@ abstract class Styles {
     fontWeight: FontWeight.bold,
   );
   static const detailsLinkText = TextStyle(
-    color: Styles.mainColor,//Color.fromRGBO(0, 0, 255, 0.9),
+    color: Styles.mainColor,
     fontFamily: 'BebasNeue',
     fontSize: 16,
     fontStyle: FontStyle.normal,
@@ -163,7 +174,7 @@ abstract class Styles {
     decoration: TextDecoration.underline,
   );
   static const detailsBigLinkText = TextStyle(
-    color: Styles.mainColor,//Color.fromRGBO(0, 0, 255, 0.9),
+    color: Styles.mainColor,
     fontFamily: 'BebasNeue',
     fontSize: 24,
     fontStyle: FontStyle.normal,
@@ -186,7 +197,7 @@ abstract class Styles {
     fontStyle: FontStyle.italic,
   );
   static const shortBio = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 1),
+    color: Styles.ArrivalPalletteBlack,
     fontFamily: 'BebasNeue',
     fontSize: 20,
     fontStyle: FontStyle.normal,
@@ -246,7 +257,7 @@ abstract class Styles {
         fontWeight: FontWeight.normal,
       );
 
-  static const appBackground = Color(0xffd0d0d0);
+  static const appBackground = Styles.ArrivalPalletteCream;
 
   static Color scaffoldBackground(Brightness brightness) =>
       brightness == Brightness.light
@@ -332,6 +343,12 @@ abstract class Styles {
     1: Color(0xf8F18604),
     2: Color(0xddA15A02),
   };
+
+  static const cloud = IconData(
+    0xf398,
+    fontFamily: CupertinoIcons.iconFont,
+    fontPackage: CupertinoIcons.iconFontPackage,
+  );
 
   static const uncheckedIcon = IconData(
     0xf372,

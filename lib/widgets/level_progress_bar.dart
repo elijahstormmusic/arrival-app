@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
+import '../styles.dart';
 
 class nextLevelProgressBar extends StatelessWidget {
   nextLevelProgressBar({
@@ -20,7 +21,7 @@ class nextLevelProgressBar extends StatelessWidget {
               // Adobe XD layer: 'nextLevelRequiredPo…' (shape)
               Container(
             decoration: BoxDecoration(
-              color: const Color(0xffffffff),
+              color: Styles.ArrivalPalletteWhite,
               border: Border.all(width: 1.0, color: const Color(0xff707070)),
             ),
           ),
@@ -36,7 +37,7 @@ class nextLevelProgressBar extends StatelessWidget {
               // Adobe XD layer: 'nextLevelPointsProg…' (shape)
               Container(
             decoration: BoxDecoration(
-              color: const Color(0xffd33731),
+              color: Styles.ArrivalPalletteRed,
               border: Border.all(width: 1.0, color: const Color(0xff707070)),
             ),
           ),

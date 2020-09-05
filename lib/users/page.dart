@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import '../data/app_state.dart';
 import '../data/preferences.dart';
+import '../data/socket.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
 import '../users/data.dart';
@@ -44,20 +45,36 @@ class Other extends StatelessWidget {
   }
 }
 
-class ProfileScreen extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   Profile profile;
 
-  ProfileScreen() {
+  ProfilePage() {
     this.profile = UserData.client;
   }
-  ProfileScreen.user(this.profile);
+  ProfilePage.user(this.profile);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfilePageState extends State<ProfilePage> {
   int _selectedViewIndex = 0;
+  ArrivalSocket socket;
+
+  @override
+  void initState() {
+    socket = ArrivalSocket();
+    socket.init();
+    socket.source = this;
+    socket.emit('profile get', {
+      'link': widget.profile.cryptlink,
+    });
+    super.initState();
+  }
+
+  void responded(Profile _input) {
+    setState(() => widget.profile = _input);
+  }
 
   Widget _buildPersonalDetails(BuildContext context, AppState model) {
     final themeData = CupertinoTheme.of(context);
@@ -93,8 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             left: 60,
             top: 90,
             child: Text(
-              widget.profile.shortBio=='' ? 'no short bio yet' :
-                widget.profile.shortBio,
+              widget.profile.shortBio,
               style: widget.profile.shortBio=='' ?
                Styles.noTextInput : Styles.shortBio
             ),

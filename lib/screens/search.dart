@@ -39,7 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
     controller.addListener(_onTextChanged);
     socket = ArrivalSocket();
     socket.init();
-    socket.emit('posts set state', userstate);
+    socket.emit('posts get', userstate);
     socket.source = this;
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
@@ -75,6 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
   int _exploreFlow = ArrivalData.posts.length;
   Future<Post> _fetchPostData(BuildContext context, String link) async {
     return Post.empty;
+
     // final response = await http.get(link);
     //
     // return Post.parse(response.body);
@@ -136,7 +137,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            'No locations match your search.',
+            'Try simplifiying your search.',
             style: Styles.headlineDescription(CupertinoTheme.of(context)),
           ),
         ),

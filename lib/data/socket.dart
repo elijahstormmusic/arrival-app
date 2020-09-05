@@ -1,3 +1,6 @@
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
@@ -6,6 +9,7 @@ import 'dart:convert';
 import '../users/data.dart';
 import '../data/arrival.dart';
 import '../posts/post.dart';
+import '../users/profile.dart';
 
 class ArrivalSocket {
   SocketIO socket;
@@ -25,27 +29,23 @@ class ArrivalSocket {
         for(int i=0;i<list.length;i++) {
           ArrivalData.posts.add(Post.icon(
             cryptlink: list[i]['link'],
+            cloudlink: list[i]['cloud'],
           ));
         }
-
-for(int i=0;i<list.length;i++) {
-ArrivalData.posts.add(Post.icon(
-cryptlink: list[i]['link'],
-)); // remove this
-}
 
         source.responded();
       }
 
       if(data['type']==801) { // post data
-        var post = Post.json(data['response'], data['user']);
+        Post post = Post.json(data['response'], data['user']);
         for(int i=0;i<ArrivalData.posts.length;i++) {
           if(ArrivalData.posts[i].cryptlink==post.cryptlink) {
             ArrivalData.posts[i] = post;
             break;
           }
         }
-        target.responded();
+
+        target.responded(post);
       }
 
       if(data['type']==802) { // comments
@@ -57,6 +57,12 @@ cryptlink: list[i]['link'],
         }
 
         target.responded();
+      }
+
+      if(data['type']==803) { // profile page download
+        Profile profile = Profile.json(data['response']);
+
+        source.responded(profile);
       }
     });
 

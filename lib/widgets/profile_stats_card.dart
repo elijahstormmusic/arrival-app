@@ -6,7 +6,7 @@ import '../styles.dart';
 import './level_progress_bar.dart';
 import './cards.dart';
 import '../users/data.dart';
-import '../users/screen.dart';
+import '../users/page.dart';
 
 class UserProfilePlacard extends StatelessWidget {
   UserProfilePlacard({
@@ -18,7 +18,7 @@ class UserProfilePlacard extends StatelessWidget {
       return PressableCard(
         onPressed: () {
           Navigator.of(context).push<void>(CupertinoPageRoute(
-            builder: (context) => ProfileScreen(),
+            builder: (context) => ProfilePage(),
             fullscreenDialog: true,
           ));
         },
@@ -43,7 +43,7 @@ class UserProfilePlacard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 32,
-                        color: Colors.black,
+                        color: Styles.ArrivalPalletteBlack,
                         fontWeight: FontWeight.w700,
                         height: 1.125,
                       ),
@@ -60,7 +60,7 @@ class UserProfilePlacard extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                      color: Colors.black,
+                      color: Styles.ArrivalPalletteBlack,
                       border: Border.all(width: 1.0, color: const Color(0xff757575)),
                     ),
                     child: ClipRRect(
@@ -83,7 +83,7 @@ class UserProfilePlacard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Helvetica Neue',
                       fontSize: 22,
-                      color: Colors.black,
+                      color: Styles.ArrivalPalletteBlack,
                       fontWeight: FontWeight.w700,
                       height: 1.6363636363636365,
                     ),
@@ -114,7 +114,7 @@ class UserProfilePlacard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 16,
-                        color: Colors.black,
+                        color: Styles.ArrivalPalletteBlack,
                         fontWeight: FontWeight.w700,
                       ),
                       textAlign: TextAlign.center,
@@ -133,7 +133,7 @@ class UserProfilePlacard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 16,
-                        color: Colors.black,
+                        color: Styles.ArrivalPalletteBlack,
                         fontWeight: FontWeight.w700,
                       ),
                       textAlign: TextAlign.center,
@@ -152,7 +152,7 @@ class UserProfilePlacard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Helvetica Neue',
                       fontSize: 22,
-                      color: Colors.black,
+                      color: Styles.ArrivalPalletteBlack,
                       fontWeight: FontWeight.w700,
                     ),
                     textAlign: TextAlign.center,
@@ -198,7 +198,7 @@ class UserProfilePlacard extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'Helvetica Neue',
                                     fontSize: 16,
-                                    color: Colors.black,
+                                    color: Styles.ArrivalPalletteBlack,
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
@@ -223,7 +223,7 @@ class UserProfilePlacard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Helvetica Neue',
                       fontSize: 24,
-                      color: Colors.black,
+                      color: Styles.ArrivalPalletteBlack,
                       fontWeight: FontWeight.w700,
                     ),
                     textAlign: TextAlign.left,
@@ -244,7 +244,7 @@ class UserProfilePlacard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 42,
-                        color: Colors.black,
+                        color: Styles.ArrivalPalletteBlack,
                         fontWeight: FontWeight.w700,
                       ),
                       textAlign: TextAlign.left,

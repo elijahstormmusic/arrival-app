@@ -9,6 +9,7 @@ import '../screens/list.dart';
 import '../maps/maps.dart';
 import '../screens/search.dart';
 import '../screens/settings.dart';
+import '../posts/upload.dart';
 import '../styles.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -22,6 +23,9 @@ class HomeScreen extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.location, size: 42.0),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Styles.cloud, size: 42.0),
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.search, size: 42.0),
@@ -40,6 +44,8 @@ class HomeScreen extends StatelessWidget {
         } else if (index == 1) {
           return Maps();
         } else if (index == 2) {
+          return PostUploadScreen();
+        } else if (index == 3) {
           return SearchScreen();
         } else {
           return SettingsScreen();

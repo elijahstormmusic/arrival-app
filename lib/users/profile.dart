@@ -52,7 +52,7 @@ class Profile {
     this.settings = null,
   }) {}
   static final Profile empty = Profile(
-    name: 'no user',
+    name: '',
     email: '',
     shortBio: '',
     cryptlink: '',
@@ -62,6 +62,14 @@ class Profile {
   );
 
   Widget iconBySize(double height) {
+              // remove when profile pics are set up
+              return Image.network(
+                Profile.default_img,
+                fit: BoxFit.cover,
+                semanticLabel: 'Profile image for ' + name,
+                height: height,
+              );
+
     if(cryptlink=='') {
       return Image.network(
         Profile.default_img,
@@ -71,14 +79,6 @@ class Profile {
       );
     }
 
-      // remove when profile pics are set up
-    return Image.network(
-      Profile.default_img,
-      fit: BoxFit.cover,
-      semanticLabel: 'Profile image for ' + name,
-      height: height,
-    );
-
     return Image.network(
       Profile.source + cryptlink + '/i.jpg',
       fit: BoxFit.cover,
@@ -86,6 +86,13 @@ class Profile {
     );
   }
   Widget icon() {
+            // remove when profile pics are set up
+            return Image.network(
+              Profile.default_img,
+              fit: BoxFit.cover,
+              semanticLabel: 'Profile image for ' + name,
+            );
+
     if(cryptlink=='') {
       return Image.network(
         Profile.default_img,
@@ -93,13 +100,6 @@ class Profile {
         semanticLabel: 'Profile image for ' + name,
       );
     }
-
-      // remove when profile pics are set up
-    return Image.network(
-      Profile.default_img,
-      fit: BoxFit.cover,
-      semanticLabel: 'Profile image for ' + name,
-    );
 
     return Image.network(
       Profile.source + cryptlink + '/i.jpg',
@@ -153,6 +153,16 @@ class Profile {
       level: level,
       points: points,
       settings: settings,
+    );
+  }
+  static Profile json(var input) {
+    return Profile(
+      name: input['username'],
+      cryptlink: input['cryptlink'],
+      email: input['email'],
+      shortBio: input['shortBio'],
+      level: input['level'],
+      points: input['points'],
     );
   }
   static Profile link(String input) {

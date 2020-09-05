@@ -1,6 +1,7 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,11 @@ import '../users/profile.dart';
 
 class Post {
   static final String source =
-    'https://arrival-app.herokuapp.com/posts/data/';
+    'https://res.cloudinary.com/arrival-kc/image/upload/';
 
   final String caption;
   final String cryptlink;
+  final String cloudlink;
   final int likes;
   final int comments;
   final Profile user;
@@ -22,6 +24,7 @@ class Post {
     String str = '';
     str += 'caption:' + caption + ',';
     str += 'cryptlink:' + cryptlink + ',';
+    str += 'cloudlink:' + cloudlink + ',';
     str += 'likes:' + likes.toString() + ',';
     str += 'comments:' + comments.toString() + ',';
     str += 'user:{' + user.toString() + '}';
@@ -31,6 +34,7 @@ class Post {
   Post({
     @required this.caption,
     @required this.cryptlink,
+    @required this.cloudlink,
     @required this.likes,
     @required this.comments,
     @required this.user,
@@ -38,6 +42,7 @@ class Post {
   });
   Post.icon({
     @required this.cryptlink,
+    @required this.cloudlink,
     this.caption = 'loading...',
     this.likes = 0,
     this.comments = 0,
@@ -47,22 +52,24 @@ class Post {
   static final Post empty = Post(
     caption: '',
     cryptlink: '',
+    cloudlink: 'v1599325166/sample.jpg',
     likes: 0,
     comments: 0,
     user: Profile.empty,
   );
 
   Widget image() {
-    return Image.network(Post.source + cryptlink + '/I.png');
+    return Image.network(Post.source + cloudlink);
   }
   Widget icon() {
-    return Image.network(Post.source + cryptlink + '/i.jpg');
+    return Image.network(Post.source + 'c_thumb,w_200,g_face/' + cloudlink);
   }
 
   static Post json(var input, var user) {
     return Post(
       caption: input['caption'],
       cryptlink: input['cryptlink'],
+      cloudlink: input['cloudlink'],
       likes: input['likes'],
       comments: input['comments'],
       user: Profile.lite(
@@ -76,7 +83,7 @@ class Post {
       input = input.substring(1, input.length-1);
 
     var caption, cryptlink, likes,
-        comments, user;
+        cloudlink, comments, user;
 
     var startDataLoc, endDataLoc = 0;
 
@@ -96,6 +103,10 @@ class Post {
     endDataLoc = input.indexOf(',', startDataLoc);
     cryptlink = input.substring(startDataLoc, endDataLoc);
 
+    startDataLoc = input.indexOf('cloudlink')       + 10;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    cloudlink = input.substring(startDataLoc, endDataLoc);
+
     startDataLoc = input.indexOf('user')           + 5;
     endDataLoc = input.indexOf(',', startDataLoc);
     user = Profile.link(input.substring(startDataLoc, endDataLoc));
@@ -103,6 +114,7 @@ class Post {
     return Post(
       caption: caption,
       cryptlink: cryptlink,
+      cloudlink: cloudlink,
       likes: likes,
       comments: comments,
       user: user,
