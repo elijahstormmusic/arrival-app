@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:arrival_kc/data/preferences.dart';
-import 'package:arrival_kc/data/partners.dart';
+import 'package:arrival_kc/data/cards/partners.dart';
 import 'package:arrival_kc/styles.dart';
 import 'package:arrival_kc/widgets/settings_group.dart';
 import 'package:arrival_kc/widgets/settings_item.dart';

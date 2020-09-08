@@ -4,8 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import '../screens/list.dart';
-//import '../screens/favorites.dart';
+import '../foryou/list.dart';
 import '../maps/maps.dart';
 import '../screens/search.dart';
 import '../screens/settings.dart';

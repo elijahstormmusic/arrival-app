@@ -58,6 +58,10 @@ class Post {
     user: Profile.empty,
   );
 
+  NetworkImage card_image() {
+    return NetworkImage('https://arrival-app.herokuapp.com/partners/partners/logo.jpg');
+    // return NetworkImage(Post.source + 'partners/logo.jpg');
+  }
   Widget image() {
     return Image.network(Post.source + cloudlink);
   }
@@ -126,4 +130,5 @@ class Post {
     // String result = UserData.get(input);  // still to make
     // return Post.parse(result);
   }
+  static int index = 0;
 }

@@ -1,6 +1,6 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
@@ -172,6 +172,21 @@ class ContactList {
     this.website,
   });
 
+  static ContactList json(var data) {
+    return ContactList(
+      phoneNumber: data['phoneNumber'],
+      address: data['address'],
+      city: data['city'],
+      state: data['state'],
+      zip: data['zip'],
+      website: data['website'],
+      email: data['email'],
+      facebook: data['facebook'],
+      twitter: data['twitter'],
+      instagram: data['instagram'],
+      pintrest: data['pintrest'],
+    );
+  }
   static ContactList parse(String input) {
     ContactList contactData = ContactList();
     List<String> curData;
@@ -232,6 +247,11 @@ class SalesList {
     this.info,
   });
 
+  static SalesList json(var data) {
+    return SalesList(
+
+    );
+  }
   static SalesList parse(String input)
   {
     SalesList salesData = SalesList();
@@ -269,7 +289,7 @@ class Business {
     double lat = location.lat;
     double lng = location.lng;
     str += 'name:' + name + ',';
-    str += 'shortDescription:' + shortDescription + ',';
+    str += 'info:' + shortDescription + ',';
     str += 'cryptlink:' + cryptlink + ',';
     str += 'lat:' + lat.toString() + ',';
     str += 'lng:' + lng.toString() + ',';
@@ -300,8 +320,22 @@ class Business {
     this.isFavorite = false,
   });
 
-  static Business parse(String input)
-  {
+  static Business json(var data) {
+    return Business(
+      id: Business.index++,
+      name: data['name'],
+      cryptlink: data['cryptlink'],
+      location: LatLng(data['lat'], data['lng']),
+      shortDescription: data['info'],
+      rating: data['rating'].toDouble(),
+      ratingAmount: data['ratingAmount'],
+      industry: SourceIndustry.values[data['icon']],
+      images: StoreImages(data['images']),
+      contact: ContactList(),
+      sales: SalesList.json(data['sales']),
+    );;
+  }
+  static Business parse(String input) {
     var id, name, rating, ratingAmount, lat, lng,
         location, images, industry, contact,
         shortDescription, sales, cryptlink;

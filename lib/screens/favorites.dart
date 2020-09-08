@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../data/app_state.dart';
-import '../data/partners.dart';
+import '../data/cards/partners.dart';
 import '../styles.dart';
 import '../widgets/partner_headline.dart';
 

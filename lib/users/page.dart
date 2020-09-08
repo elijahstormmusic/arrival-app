@@ -59,13 +59,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedViewIndex = 0;
-  ArrivalSocket socket;
 
   @override
   void initState() {
-    socket = ArrivalSocket();
-    socket.init();
-    socket.source = this;
     socket.emit('profile get', {
       'link': widget.profile.cryptlink,
     });

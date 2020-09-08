@@ -24,14 +24,12 @@ class PostUploadScreen extends StatefulWidget {
 class _PostUploadState extends State<PostUploadScreen> {
   var _image;
   bool isLoading;
-  ArrivalSocket socket;
-  CloudinaryClient cloudinary_client = new CloudinaryClient('868422847775537', 'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
+  CloudinaryClient cloudinary_client =
+    new CloudinaryClient('868422847775537', 'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
   String caption = 'upload test caption';
 
   @override
   void initState() {
-    socket = ArrivalSocket();
-    socket.init();
     isLoading = false;
   }
 

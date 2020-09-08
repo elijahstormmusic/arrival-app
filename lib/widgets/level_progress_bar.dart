@@ -3,9 +3,21 @@ import 'package:adobe_xd/pinned.dart';
 import '../styles.dart';
 
 class nextLevelProgressBar extends StatelessWidget {
-  nextLevelProgressBar({
+
+  double progress, barSize = 0.0;
+
+  void run() {
+    if(barSize>=progress) {
+      return;
+    }
+    barSize += progress / 10.0;
+  }
+
+  nextLevelProgressBar(
+    this.progress, {
     Key key,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -27,7 +39,7 @@ class nextLevelProgressBar extends StatelessWidget {
           ),
         ),
         Pinned.fromSize(
-          bounds: Rect.fromLTWH(0.0, 0.0, 146.0, 9.0),
+          bounds: Rect.fromLTWH(0.0, 0.0, progress * 215.0, 9.0),
           size: Size(215.0, 9.0),
           pinLeft: true,
           pinRight: true,

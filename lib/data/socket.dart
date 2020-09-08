@@ -11,16 +11,16 @@ import '../data/arrival.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 
-class ArrivalSocket {
-  SocketIO socket;
-  var source, target;
+class socket {
+  static SocketIO _socket;
+  static var search, post, foryou;
 
-  void init() {
-    socket = SocketIOManager().createSocketIO(
+  static void init() {
+    _socket = SocketIOManager().createSocketIO(
       'https://arrival-app.herokuapp.com', '/');
-    socket.init();
+    _socket.init();
 
-    socket.subscribe('message', (jsonData) {
+    _socket.subscribe('message', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
 
       if(data['type']==800) { // icons download
@@ -33,19 +33,19 @@ class ArrivalSocket {
           ));
         }
 
-        source.responded();
+        search.responded();
       }
 
       if(data['type']==801) { // post data
-        Post post = Post.json(data['response'], data['user']);
+        Post postData = Post.json(data['response'], data['user']);
         for(int i=0;i<ArrivalData.posts.length;i++) {
-          if(ArrivalData.posts[i].cryptlink==post.cryptlink) {
-            ArrivalData.posts[i] = post;
+          if(ArrivalData.posts[i].cryptlink==postData.cryptlink) {
+            ArrivalData.posts[i] = postData;
             break;
           }
         }
 
-        target.responded(post);
+        post.responded(postData);
       }
 
       if(data['type']==802) { // comments
@@ -56,21 +56,25 @@ class ArrivalSocket {
           }
         }
 
-        target.responded();
+        post.responded();
       }
 
       if(data['type']==803) { // profile page download
         Profile profile = Profile.json(data['response']);
 
-        source.responded(profile);
+        search.responded(profile);
+      }
+
+      if(data['type']==900) { // for you download
+        foryou.responded(data['response']);
       }
     });
 
-    socket.connect();
+    _socket.connect();
   }
 
-  void emit(String _req, var _data) {
-    socket.sendMessage(
+  static void emit(String _req, var _data) {
+    _socket.sendMessage(
       _req, json.encode(_data),
     );
   }

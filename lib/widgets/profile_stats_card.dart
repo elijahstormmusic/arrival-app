@@ -37,18 +37,17 @@ class UserProfilePlacard extends StatelessWidget {
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'usernameTitle' (text)
-                  SingleChildScrollView(
-                    child: Text(
-                      UserData.client.name+'\n',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica Neue',
-                        fontSize: 32,
-                        color: Styles.ArrivalPalletteBlack,
-                        fontWeight: FontWeight.w700,
-                        height: 1.125,
-                      ),
-                      textAlign: TextAlign.center,
-                    )),
+                  Text(
+                    UserData.client.name+'\n',
+                    style: TextStyle(
+                      fontFamily: 'Helvetica Neue',
+                      fontSize: 32,
+                      color: Styles.ArrivalPalletteBlack,
+                      fontWeight: FontWeight.w700,
+                      height: 1.125,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(291.0, 2.0, 67.0, 67.0),
@@ -98,7 +97,10 @@ class UserProfilePlacard extends StatelessWidget {
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'nextLevelProgressBar' (component)
-                  nextLevelProgressBar(),
+                  nextLevelProgressBar(
+                    0.7
+                    // (double)(UserData.client.points / UserData.client.pointsToNextLevel)
+                  ),
                 ),
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(20.0, 86.0, 23.0, 18.0),
@@ -108,36 +110,34 @@ class UserProfilePlacard extends StatelessWidget {
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'currentUserLevel' (text)
-                  SingleChildScrollView(
-                    child: Text(
-                      '14',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica Neue',
-                        fontSize: 16,
-                        color: Styles.ArrivalPalletteBlack,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.center,
-                    )),
+                  Text(
+                    UserData.client.level.toString(),
+                    style: TextStyle(
+                      fontFamily: 'Helvetica Neue',
+                      fontSize: 16,
+                      color: Styles.ArrivalPalletteBlack,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(330.0, 86.0, 23.0, 18.0),
+                  bounds: Rect.fromLTWH(346.0, 86.0, 23.0, 18.0),
                   size: Size(387.0, 205.0),
                   fixedWidth: true,
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'nextUserLevel' (text)
-                  SingleChildScrollView(
-                    child: Text(
-                      '15',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica Neue',
-                        fontSize: 16,
-                        color: Styles.ArrivalPalletteBlack,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.center,
-                    )),
+                  Text(
+                    (UserData.client.level+1).toString(),
+                    style: TextStyle(
+                      fontFamily: 'Helvetica Neue',
+                      fontSize: 16,
+                      color: Styles.ArrivalPalletteBlack,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(20.0, 123.0, 105.0, 34.0),
@@ -167,51 +167,49 @@ class UserProfilePlacard extends StatelessWidget {
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'userInterestsRepeat…' (none)
-                  SingleChildScrollView(
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 20,
-                      runSpacing: 0,
-                      children: [
-                        {
-                          'text': '- Music',
-                        },
-                        {
-                          'text': '- Photography',
-                        },
-                        {
-                          'text': '- Finance',
-                        }
-                      ].map((map) {
-                        final text = map['text'];
-                        return SizedBox(
-                          width: 132.0,
-                          height: 22.0,
-                          child: Stack(
-                            children: <Widget>[
-                              // Adobe XD layer: 'exampleUserInterest' (text)
-                              SizedBox(
-                                width: 132.0,
-                                height: 22.0,
-                                child: Text(
-                                  text,
-                                  style: TextStyle(
-                                    fontFamily: 'Helvetica Neue',
-                                    fontSize: 16,
-                                    color: Styles.ArrivalPalletteBlack,
-                                  ),
-                                  textAlign: TextAlign.left,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 20,
+                    runSpacing: 0,
+                    children: [
+                      {
+                        'text': '- Music',
+                      },
+                      {
+                        'text': '- Photography',
+                      },
+                      {
+                        'text': '- Finance',
+                      }
+                    ].map((map) {
+                      final text = map['text'];
+                      return SizedBox(
+                        width: 132.0,
+                        height: 22.0,
+                        child: Stack(
+                          children: <Widget>[
+                            // Adobe XD layer: 'exampleUserInterest' (text)
+                            SizedBox(
+                              width: 132.0,
+                              height: 22.0,
+                              child: Text(
+                                text,
+                                style: TextStyle(
+                                  fontFamily: 'Helvetica Neue',
+                                  fontSize: 16,
+                                  color: Styles.ArrivalPalletteBlack,
                                 ),
+                                textAlign: TextAlign.left,
                               ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(188.0, 120.0, 168.0, 30.0),
+                  bounds: Rect.fromLTWH(210.0, 120.0, 168.0, 30.0),
                   size: Size(387.0, 205.0),
                   pinRight: true,
                   fixedWidth: true,
@@ -238,17 +236,16 @@ class UserProfilePlacard extends StatelessWidget {
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'amountSaved' (text)
-                  SingleChildScrollView(
-                    child: Text(
-                      '\$420.69',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica Neue',
-                        fontSize: 42,
-                        color: Styles.ArrivalPalletteBlack,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.left,
-                    )),
+                  Text(
+                    '\$420.69',
+                    style: TextStyle(
+                      fontFamily: 'Helvetica Neue',
+                      fontSize: 42,
+                      color: Styles.ArrivalPalletteBlack,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
               ],
             ),

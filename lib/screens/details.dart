@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 import '../data/app_state.dart';
 import '../data/preferences.dart';
-import '../data/partners.dart';
+import '../data/cards/partners.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
 import '../widgets/cards.dart';

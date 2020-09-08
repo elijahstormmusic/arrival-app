@@ -14,7 +14,7 @@ import 'users/data.dart';
 import 'data/link.dart';
 import 'data/arrival.dart';
 import 'login/login.dart';
-
+import 'data/socket.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +26,7 @@ void main() async {
   Widget launchState = HomeScreen();
   await UserData.load();
   await ArrivalData.load();
+  socket.init();
   ArrivalData.carry = true;
   if(UserData.username==null || UserData.username=='null') {
     launchState = LoginPage();

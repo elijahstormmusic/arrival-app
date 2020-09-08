@@ -9,7 +9,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../data/socket.dart';
 import '../data/link.dart';
 import '../data/app_state.dart';
-import '../data/partners.dart';
+import '../data/cards/partners.dart';
 import '../styles.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/cards.dart';
@@ -31,16 +31,13 @@ class _SearchScreenState extends State<SearchScreen> {
     'link': UserData.client.cryptlink,
   };
   String terms = '';
-  ArrivalSocket socket;
   ScrollController _scrollController;
 
   @override
   void initState() {
     controller.addListener(_onTextChanged);
-    socket = ArrivalSocket();
-    socket.init();
     socket.emit('posts get', userstate);
-    socket.source = this;
+    socket.search = this;
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     super.initState();
@@ -113,7 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
               // display post
             Navigator.of(context).push<void>(CupertinoPageRoute(
               builder: (context) => PostDisplayPage(
-                                  ArrivalData.posts[index], socket
+                                  ArrivalData.posts[index]
               ), fullscreenDialog: true,
             ));
           },

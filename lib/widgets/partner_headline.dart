@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import '../data/partners.dart';
+import '../data/cards/partners.dart';
 import '../screens/details.dart';
 import '../styles.dart';
 

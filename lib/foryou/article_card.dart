@@ -1,21 +1,22 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
-import '../data/partners.dart';
+import 'package:flutter/widgets.dart';
+import '../data/cards/articles.dart';
 import '../screens/details.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
+import '../data/preferences.dart';
+import 'row_card.dart';
 
-class BusinessCard extends StatelessWidget {
-  BusinessCard(this.biz, this.isNear, this.isFavIndustry);
+class ArticleCard extends StatelessWidget {
+  ArticleCard(this.article, this.isNear);
 
-  final Business biz;
+  final Article article;
   final bool isNear;
-  final bool isFavIndustry;
 
   Widget _buildDetails() {
     return FrostyBackground(
@@ -26,12 +27,8 @@ class BusinessCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              biz.name,
+              'article ' + article.name,
               style: Styles.cardTitleText,
-            ),
-            Text(
-              biz.shortDescription,
-              style: Styles.cardDescriptionText,
             ),
           ],
         ),
@@ -44,14 +41,14 @@ class BusinessCard extends StatelessWidget {
     return PressableCard(
       onPressed: () {
         Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => DetailsScreen(biz.id),
+          builder: (context) => DetailsScreen(article.id),
           fullscreenDialog: true,
         ));
       },
       child: Stack(
         children: [
           Semantics(
-            label: 'Logo for ${biz.name}',
+            label: 'Logo for ${article.name}',
             child: Container(
               height: isNear ? 300 : 150,
               decoration: BoxDecoration(
@@ -59,9 +56,7 @@ class BusinessCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   colorFilter:
                       isNear ? null : Styles.desaturatedColorFilter,
-                  image: NetworkImage(
-                    biz.images.storefront,
-                  ),
+                  image: article.card_image(),
                 ),
               ),
             ),
@@ -74,6 +69,25 @@ class BusinessCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class RowArticle extends RowCard {
+
+  final Article post;
+  final bool isNear = true;
+
+  RowArticle(
+    @required this.post,
+    // this.isNear,
+  );
+
+  @override
+  Widget generate(Preferences prefs) {
+    return Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+      child: ArticleCard(post, isNear),
     );
   }
 }

@@ -3,12 +3,21 @@
 // found in the LICENSE file.
 
 import 'package:scoped_model/scoped_model.dart';
-import '../data/partners.dart';
+import 'arrival.dart';
+import 'link.dart';
+import 'cards/partners.dart';
+import 'cards/articles.dart';
+import 'cards/sales.dart';
 import '../posts/post.dart';
-import '../data/link.dart';
-import '../data/arrival.dart';
+import '../foryou/row_card.dart';
+import '../foryou/business_card.dart';
+import '../foryou/article_card.dart';
+import '../foryou/sale_card.dart';
 
 class AppState extends Model {
+
+  List<RowCard> forYou = List<RowCard>();
+
   List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);
 
   Business getBusiness(int id) => ArrivalData.partners.singleWhere((v) => v.id == id);

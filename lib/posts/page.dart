@@ -19,12 +19,10 @@ import '../data/socket.dart';
 
 class PostDisplayPage extends StatefulWidget {
   Post post;
-  ArrivalSocket socket;
 
-  PostDisplayPage(Post _p, ArrivalSocket _s) {
+  PostDisplayPage(Post _p) {
     this.post = _p;
-    this.socket = _s;
-    this.socket.target = this;
+    socket.post = this;
   }
 
   @override

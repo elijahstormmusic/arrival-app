@@ -1,5 +1,5 @@
 
-import '../data/partners.dart';
+import '../data/cards/partners.dart';
 import '../posts/post.dart';
 import '../posts/page.dart';
 import '../users/profile.dart';
