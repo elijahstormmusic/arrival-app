@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../posts/post.dart';
 import '../posts/page.dart';
-import '../screens/details.dart';
+import '../screens/biz_details.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
 import '../data/preferences.dart';

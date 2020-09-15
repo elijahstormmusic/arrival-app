@@ -6,7 +6,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../data/cards/sales.dart';
-import '../screens/details.dart';
+import '../screens/biz_details.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
 import '../data/preferences.dart';
@@ -45,7 +45,7 @@ class SaleCard extends StatelessWidget {
     return PressableCard(
       onPressed: () {
         Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => DetailsScreen(sale.id),
+          builder: (context) => BusinessDisplayPage(sale.biz),
           fullscreenDialog: true,
         ));
       },

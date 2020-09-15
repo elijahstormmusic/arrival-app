@@ -59,8 +59,7 @@ class Post {
   );
 
   NetworkImage card_image() {
-    return NetworkImage('https://arrival-app.herokuapp.com/partners/partners/logo.jpg');
-    // return NetworkImage(Post.source + 'partners/logo.jpg');
+    return NetworkImage(Post.source + cloudlink);
   }
   Widget image() {
     return Image.network(Post.source + cloudlink);

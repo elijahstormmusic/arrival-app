@@ -6,7 +6,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../data/cards/articles.dart';
-import '../screens/details.dart';
+import '../screens/article.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
 import '../data/preferences.dart';
@@ -41,7 +41,7 @@ class ArticleCard extends StatelessWidget {
     return PressableCard(
       onPressed: () {
         Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => DetailsScreen(article.id),
+          builder: (context) => ArticleDisplayPage(article),
           fullscreenDialog: true,
         ));
       },

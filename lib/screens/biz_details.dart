@@ -1,6 +1,6 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -243,16 +243,16 @@ class InfoView extends StatelessWidget {
   }
 }
 
-class DetailsScreen extends StatefulWidget {
+class BusinessDisplayPage extends StatefulWidget {
   final int id;
 
-  DetailsScreen(this.id);
+  BusinessDisplayPage(this.id);
 
   @override
-  _DetailsScreenState createState() => _DetailsScreenState();
+  _BusinessDisplayPageState createState() => _BusinessDisplayPageState();
 }
 
-class _DetailsScreenState extends State<DetailsScreen> {
+class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
   int _selectedViewIndex = 0;
 
   Widget _buildHeader(BuildContext context, AppState model) {

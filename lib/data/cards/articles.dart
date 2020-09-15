@@ -13,6 +13,7 @@ class Article {
   final String cryptlink;
   final String name;
   final String shortDescription;
+  String header_img = 'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
 
   String toString() {
     String str = '';
@@ -33,10 +34,10 @@ class Article {
   });
 
   NetworkImage card_image() {
-    return NetworkImage(Article.source + 'partners/logo.jpg');
+    return NetworkImage(Article.source + 'logo.jpg');
   }
   Widget image() {
-    return Image.network(Article.source + 'partners/logo.jpg');
+    return Image.network(Article.source + 'logo.jpg');
   }
 
   static Article json(var data) {

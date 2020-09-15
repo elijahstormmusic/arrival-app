@@ -4,7 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import '../data/cards/partners.dart';
-import '../screens/details.dart';
+import '../screens/biz_details.dart';
 import '../styles.dart';
 
 class ZoomClipAssetImage extends StatelessWidget {
@@ -73,7 +73,7 @@ class BusinessHeadline extends StatelessWidget {
     final themeData = CupertinoTheme.of(context);
     return GestureDetector(
       onTap: () => Navigator.of(context).push<void>(CupertinoPageRoute(
-        builder: (context) => DetailsScreen(biz.id),
+        builder: (context) => BusinessDisplayPage(biz.id),
         fullscreenDialog: true,
       )),
       child: Row(

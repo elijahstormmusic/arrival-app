@@ -1194,7 +1194,7 @@ class SettingsScreen extends StatelessWidget {
           return Row(
             children: [
               Text(
-                snapshot.data?.toString() + ' miles' ?? '',
+                snapshot.data.toString() + ' miles' ?? '',
                 style: CupertinoTheme.of(context).textTheme.textStyle,
               ),
               SizedBox(width: 8),

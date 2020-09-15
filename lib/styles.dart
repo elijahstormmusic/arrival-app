@@ -6,6 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'data/cards/partners.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/avd.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ArrivalTitle extends StatelessWidget {
   @override
@@ -45,6 +48,13 @@ abstract class Styles {
         fontWeight: FontWeight.bold,
         letterSpacing: 3,
   );
+
+
+  static Widget ArrivalBlobRed = SvgPicture.asset('assets/design/blobs/red.svg');
+  static Widget ArrivalBlobCream = SvgPicture.asset('assets/design/blobs/cream.svg');
+  static Widget ArrivalBlobBlack = SvgPicture.asset('assets/design/blobs/black.svg');
+  static Widget ArrivalBlobYellow = SvgPicture.asset('assets/design/blobs/yellow.svg');
+  static Widget ArrivalBlobBlue = SvgPicture.asset('assets/design/blobs/blue.svg');
 
 
   static TextStyle headlineText(CupertinoThemeData themeData) => TextStyle(

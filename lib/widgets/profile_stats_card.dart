@@ -1,6 +1,10 @@
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:adobe_xd/pinned.dart';
+import '../adobe/pinned.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../styles.dart';
 import './level_progress_bar.dart';
@@ -97,7 +101,7 @@ class UserProfilePlacard extends StatelessWidget {
                   fixedHeight: true,
                   child:
                   // Adobe XD layer: 'nextLevelProgressBar' (component)
-                  nextLevelProgressBar(
+                  LevelProgress(
                     0.7
                     // (double)(UserData.client.points / UserData.client.pointsToNextLevel)
                   ),

@@ -13,6 +13,7 @@ class Sale {
   final String cryptlink;
   final String name;
   final String shortDescription;
+  int biz = 0;
 
   String toString() {
     String str = '';
@@ -33,10 +34,10 @@ class Sale {
   });
 
   NetworkImage card_image() {
-    return NetworkImage(Sale.source + 'partners/logo.jpg');
+    return NetworkImage(Sale.source + 'logo.jpg');
   }
   Widget image() {
-    return Image.network(Sale.source + 'partners/logo.jpg');
+    return Image.network(Sale.source + 'logo.jpg');
   }
 
   static Sale json(var data) {

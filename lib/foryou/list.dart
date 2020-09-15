@@ -5,8 +5,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:adobe_xd/pinned.dart';
+import '../adobe/pinned.dart';
 import '../widgets/profile_stats_card.dart';
+import '../widgets/blobs.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
 import '../data/app_state.dart';
@@ -31,7 +32,8 @@ class _ListState extends State<ListScreen> {
 
   ScrollController _scrollController;
   var appState, prefs, themeData;
-  bool onetimeRefresh = true;
+  bool onetimeRefresh = true, firstBuild = true;
+  RowCard loading = RowLoading();
 
   @override
   void initState() {
@@ -106,10 +108,9 @@ class _ListState extends State<ListScreen> {
           prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
           themeData = CupertinoTheme.of(context);
         }
-        if(appState.forYou.length==0) {
-          for(var i=0;i<ArrivalData.partners.length;i++) {
-            appState.forYou.add(RowBusiness(ArrivalData.partners[i]));
-          }
+        if(firstBuild) {
+          refresh();
+          firstBuild = false;
         }
         return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
@@ -120,31 +121,38 @@ class _ListState extends State<ListScreen> {
             bottom: false,
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: appState.forYou.length + 1,
+              itemCount: appState.forYou.length + 3,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 265.0,
-                          child: Pinned.fromSize(
-                            bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
-                            size: Size(412.0, 1600.0),
-                            pinLeft: true,
-                            pinRight: true,
-                            pinTop: true,
-                            fixedHeight: true,
-                            child: UserProfilePlacard(),
-                          ),
+                  return Stack(
+                    children: <Widget>[
+                      Blob_Background(height: 305.0),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 265.0,
+                              child: Pinned.fromSize(
+                                bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
+                                size: Size(412.0, 1600.0),
+                                pinLeft: true,
+                                pinRight: true,
+                                pinTop: true,
+                                fixedHeight: true,
+                                child: UserProfilePlacard(),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 } else if (index <= appState.forYou.length) {
                   return appState.forYou[index-1].generate(prefs);
+                } else {
+                  return loading.generate(prefs);
                 }
               },
             ),
