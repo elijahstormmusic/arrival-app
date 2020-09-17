@@ -13,7 +13,7 @@ import '../users/profile.dart';
 
 class socket {
   static SocketIO _socket;
-  static var search, post, foryou;
+  static var search, post, profile, foryou;
 
   static void init() {
     _socket = SocketIOManager().createSocketIO(
@@ -24,19 +24,29 @@ class socket {
       Map<String, dynamic> data = json.decode(jsonData);
 
       if(data['type']==800) { // icons download
+        if(search==null) return;
         var list = data['response'];
 
-        for(int i=0;i<list.length;i++) {
-          ArrivalData.posts.add(Post.icon(
-            cryptlink: list[i]['link'],
-            cloudlink: list[i]['cloud'],
-          ));
+        try {
+          for(int i=0;i<list.length;i++) {
+            ArrivalData.posts.add(Post.icon(
+              cryptlink: list[i]['link'],
+              cloudlink: list[i]['cloud'],
+            ));
+          }
+        }
+        catch (e) {
+          print('arrival connection error 800');
+          search.responded([]);
+          return;
         }
 
-        search.responded();
+        search.responded(data['response']);
       }
 
       if(data['type']==801) { // post data
+        if(post==null) return;
+
         Post postData = Post.json(data['response'], data['user']);
         for(int i=0;i<ArrivalData.posts.length;i++) {
           if(ArrivalData.posts[i].cryptlink==postData.cryptlink) {
@@ -45,10 +55,12 @@ class socket {
           }
         }
 
-        post.responded(postData);
+        post.responded();
       }
 
       if(data['type']==802) { // comments
+        if(post==null) return;
+
         for(int i=0;i<ArrivalData.posts.length;i++) {
           if(ArrivalData.posts[i].cryptlink==data['link']) {
             // ArrivalData.posts[i].comments.add(data['comments']);
@@ -60,12 +72,23 @@ class socket {
       }
 
       if(data['type']==803) { // profile page download
-        Profile profile = Profile.json(data['response']);
+        if(profile==null) return;
 
-        search.responded(profile);
+        try {
+          Profile profile = Profile.json(data['response']);
+        }
+        catch (e) {
+          print('arrival connection error 803');
+          profile.responded(null);
+          return;
+        }
+
+        profile.responded(profile);
       }
 
       if(data['type']==900) { // for you download
+        if(foryou==null) return;
+
         foryou.responded(data['response']);
       }
     });

@@ -5,6 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../adobe/pinned.dart';
 import '../widgets/profile_stats_card.dart';
 import '../widgets/blobs.dart';
@@ -30,15 +31,20 @@ class ListScreen extends StatefulWidget {
 
 class _ListState extends State<ListScreen> {
 
+  List<RowCard> forYou;
   ScrollController _scrollController;
-  var appState, prefs, themeData;
-  bool onetimeRefresh = true, firstBuild = true;
-  RowCard loading = RowLoading();
+  RefreshController _refreshController;
+  RowCard _loadingCard;
+  bool _allowRequest = true, _requestFailed = false;
+  final REQUEST_AMOUNT = 10;
 
   @override
   void initState() {
+    forYou = List<RowCard>();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+    _refreshController = RefreshController(initialRefresh: true);
+    _loadingCard = RowLoading();
     socket.foryou = this;
     super.initState();
   }
@@ -48,54 +54,68 @@ class _ListState extends State<ListScreen> {
     super.dispose();
   }
 
-  void pullNext(int amount) {
+  void _pullNext(int amount) {
+    if(!_allowRequest) return;
+    _allowRequest = false;
     socket.emit('foryou ask', {
       'amount': amount,
     });
   }
-  void refresh() {
-    appState.forYou = List<RowCard>();
-    pullNext(10);
+  void _refresh() {
+    if(!_allowRequest) return;
+    forYou = List<RowCard>();
+    _pullNext(REQUEST_AMOUNT);
   }
-  void responded(var data) {
-    onetimeRefresh = true;
+  void _loadMore() {
+    if(!_allowRequest) return;
+    _pullNext(REQUEST_AMOUNT);
+  }
+  void responded(var data) async {
+    if(data.length==0) {
+      _requestFailed = true;
+      _refreshController.loadFailed();
+      return;
+    }
+
     List<RowCard> list = List<RowCard>();
     var card;
 
-    for(var i=0;i<data.length;i++) {
-      if(data[i]['type']==0) {
-        card = RowBusiness(Business.json(data[i]));
-      }
-      else if(data[i]['type']==1) {
-        card = RowArticle(Article.json(data[i]));
-      }
-      else if(data[i]['type']==2) {
-        card = RowPost(Post.json(data[i]['post'], data[i]['user']));
-      }
-      else if(data[i]['type']==3) {
-        card = RowSale(Sale.json(data[i]));
-      }
-      else continue;
+    try {
+      for(var i=0;i<data.length;i++) {
+        if(data[i]['type']==0) {
+          card = RowBusiness(Business.json(data[i]));
+        }
+        else if(data[i]['type']==1) {
+          card = RowArticle(Article.json(data[i]));
+        }
+        else if(data[i]['type']==2) {
+          card = RowPost(Post.json(data[i]['post'], data[i]['user']));
+        }
+        else if(data[i]['type']==3) {
+          card = RowSale(Sale.json(data[i]));
+        }
+        else continue;
 
-      list.add(card);
+        list.add(card);
+      }
+      _refreshController.loadComplete();
+      _refreshController.refreshCompleted();
+    }
+    catch (e) {
+      _requestFailed = true;
+      _refreshController.loadFailed();
+      return;
     }
 
-    setState(() => appState.forYou += list);
+    _requestFailed = false;
+    setState(() => forYou += list);
+    await Future.delayed(const Duration(seconds: 1));
+    _allowRequest = true;
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      setState(() {
-        pullNext(10);
-      });
-    }
-    if (_scrollController.offset + 40 <= _scrollController.position.minScrollExtent &&
-        onetimeRefresh) {
-      onetimeRefresh = false;
-      setState(() {
-        refresh();
-      });
+    if (_scrollController.offset + 400 >= _scrollController.position.maxScrollExtent) {
+      _pullNext(REQUEST_AMOUNT);
     }
   }
 
@@ -103,15 +123,9 @@ class _ListState extends State<ListScreen> {
   Widget build(BuildContext context) {
     return CupertinoTabView(
       builder: (context) {
-        if(appState==null) {
-          appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
-          prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
-          themeData = CupertinoTheme.of(context);
-        }
-        if(firstBuild) {
-          refresh();
-          firstBuild = false;
-        }
+        var appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
+        var prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
+        var themeData = CupertinoTheme.of(context);
         return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
             middle: ArrivalTitle(),
@@ -119,42 +133,74 @@ class _ListState extends State<ListScreen> {
           ),
           child: SafeArea(
             bottom: false,
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: appState.forYou.length + 3,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Stack(
-                    children: <Widget>[
-                      Blob_Background(height: 305.0),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 265.0,
-                              child: Pinned.fromSize(
-                                bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
-                                size: Size(412.0, 1600.0),
-                                pinLeft: true,
-                                pinRight: true,
-                                pinTop: true,
-                                fixedHeight: true,
-                                child: UserProfilePlacard(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+            child: SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode){
+                  Widget body;
+                  if(mode==LoadStatus.idle){
+                    body = Container();
+                  }
+                  else if(mode==LoadStatus.loading){
+                    body = CupertinoActivityIndicator();
+                  }
+                  else if(mode == LoadStatus.failed){
+                    body = Text("Network Error");
+                  }
+                  else if(mode == LoadStatus.canLoading){
+                    body = Container();
+                  }
+                  else {
+                    body = Container();
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
                   );
-                } else if (index <= appState.forYou.length) {
-                  return appState.forYou[index-1].generate(prefs);
-                } else {
-                  return loading.generate(prefs);
-                }
-              },
+                },
+              ),
+              controller: _refreshController,
+              onRefresh: _refresh,
+              onLoading: _loadMore,
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: forYou.length + 3,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Stack(
+                      children: <Widget>[
+                        Blob_Background(height: 305.0),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 265.0,
+                                child: Pinned.fromSize(
+                                  bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
+                                  size: Size(412.0, 1600.0),
+                                  pinLeft: true,
+                                  pinRight: true,
+                                  pinTop: true,
+                                  fixedHeight: true,
+                                  child: UserProfilePlacecard(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (index <= forYou.length) {
+                    return forYou[index-1].generate(prefs);
+                  } else {
+                    return _loadingCard.generate(prefs);
+                  }
+                },
+              ),
             ),
           ),
         );

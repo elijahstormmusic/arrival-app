@@ -62,6 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
+    socket.profile = this;
     socket.emit('profile get', {
       'link': widget.profile.cryptlink,
     });

@@ -9,14 +9,8 @@ import 'cards/partners.dart';
 import 'cards/articles.dart';
 import 'cards/sales.dart';
 import '../posts/post.dart';
-import '../foryou/row_card.dart';
-import '../foryou/business_card.dart';
-import '../foryou/article_card.dart';
-import '../foryou/sale_card.dart';
 
 class AppState extends Model {
-
-  List<RowCard> forYou = List<RowCard>();
 
   List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);
 

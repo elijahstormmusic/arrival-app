@@ -29,7 +29,7 @@ class RowLoading extends RowCard {
           Semantics(
             label: 'loading card',
             child: Container(
-              height: 300,
+              height: 60,
               decoration: BoxDecoration(
                 color: Styles.ArrivalPalletteGrey,
               ),

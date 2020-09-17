@@ -12,8 +12,8 @@ import './cards.dart';
 import '../users/data.dart';
 import '../users/page.dart';
 
-class UserProfilePlacard extends StatelessWidget {
-  UserProfilePlacard({
+class UserProfilePlacecard extends StatelessWidget {
+  UserProfilePlacecard({
     Key key,
   }) : super(key: key);
   @override

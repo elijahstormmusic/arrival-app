@@ -42,7 +42,7 @@ class PostCard extends StatelessWidget {
     return PressableCard(
       onPressed: () {
         Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => PostDisplayPage(post),
+          builder: (context) => PostDisplayPage(post.cryptlink),
           fullscreenDialog: true,
         ));
       },
