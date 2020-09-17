@@ -21,13 +21,21 @@ class SearchBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Styles.searchBackground(themeData),
-        borderRadius: BorderRadius.circular(10),
+        color: Styles.ArrivalPalletteWhite,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Styles.ArrivalPalletteGrey,
+            spreadRadius: 4,
+            blurRadius: 6,
+            offset: Offset(3, 3),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 4,
-          vertical: 8,
+          vertical: 4,
         ),
         child: Row(
           children: [
@@ -38,12 +46,15 @@ class SearchBar extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: CupertinoTextField(
-                controller: controller,
-                focusNode: focusNode,
-                decoration: null,
-                style: Styles.searchText(themeData),
-                cursorColor: Styles.searchCursorColor,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+                child: CupertinoTextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: null,
+                  style: Styles.searchText(themeData),
+                  cursorColor: Styles.searchCursorColor,
+                ),
               ),
             ),
             GestureDetector(

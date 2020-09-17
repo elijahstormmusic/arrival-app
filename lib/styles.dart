@@ -9,6 +9,7 @@ import 'data/cards/partners.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'widgets/close_button.dart';
 
 class ArrivalTitle extends StatelessWidget {
   @override
@@ -49,6 +50,43 @@ abstract class Styles {
         letterSpacing: 3,
   );
 
+  static Widget ArrivalErrorPage(BuildContext context, String err) => Padding(
+    padding: EdgeInsets.all(42),
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Styles.ArrivalPalletteRed,
+      ),
+      child: Container(
+        height: 300,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 16,
+              left: 16,
+              child: SafeArea(
+                child: ArrCloseButton(() {
+                  Navigator.of(context).pop();
+                }),
+              ),
+            ),
+            Center(
+              child: Text(
+                'error: ' + err,
+                style: TextStyle(
+                  color: Styles.ArrivalPalletteWhite,
+                  fontFamily: 'BebasNeue',
+                  fontSize: 42,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   static Widget ArrivalBlobRed = SvgPicture.asset('assets/design/blobs/red.svg');
   static Widget ArrivalBlobCream = SvgPicture.asset('assets/design/blobs/cream.svg');
@@ -284,9 +322,9 @@ abstract class Styles {
   static const closeButtonPressed = Color(0xff808080);
 
   static TextStyle searchText(CupertinoThemeData themeData) => TextStyle(
-        color: themeData.textTheme.textStyle.color,
+        color: Styles.ArrivalPalletteBlue,
         fontFamily: 'BebasNeue',
-        fontSize: 14,
+        fontSize: 24,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
       );
@@ -301,9 +339,9 @@ abstract class Styles {
         color: themeData.textTheme.textStyle.color,
       );
 
-  static const Color searchCursorColor = Color.fromRGBO(0, 122, 255, 1);
+  static const Color searchCursorColor = Styles.ArrivalPalletteBlue;
 
-  static const Color searchIconColor = Color.fromRGBO(128, 128, 128, 1);
+  static const Color searchIconColor = Styles.ArrivalPalletteBlue;
 
   static const seasonColors = <Season, Color>{
     Season.winter: Color(0xff336dcc),
@@ -353,6 +391,12 @@ abstract class Styles {
     1: Color(0xf8F18604),
     2: Color(0xddA15A02),
   };
+
+  static const sandwich = IconData(
+    0xf394,
+    fontFamily: CupertinoIcons.iconFont,
+    fontPackage: CupertinoIcons.iconFontPackage,
+  );
 
   static const cloud = IconData(
     0xf398,

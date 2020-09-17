@@ -142,14 +142,14 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void responded(var data) async {
-    if(data.length==0) {
+    if (data.length==0) {
       _requestFailed = true;
       _refreshController.loadFailed();
       return;
     }
 
     try {
-      for(int i=0;i<data.length;i++) {
+      for (int i=0;i<data.length;i++) {
         explorePosts.add(Post.icon(
           cryptlink: data[i]['link'],
           cloudlink: data[i]['cloud'],
@@ -169,17 +169,17 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _pullNext() {
-    if(!_allowRequest) return;
+    if (!_allowRequest) return;
     _allowRequest = false;
     socket.emit('posts get', userstate);
   }
   void _refresh() {
-    if(!_allowRequest) return;
+    if (!_allowRequest) return;
     explorePosts = List<Post>();
     _pullNext();
   }
   void _loadMore() {
-    if(!_allowRequest) return;
+    if (!_allowRequest) return;
     _pullNext();
   }
   void _onTextChanged() {
@@ -211,16 +211,16 @@ class _SearchScreenState extends State<SearchScreen> {
                   footer: CustomFooter(
                     builder: (BuildContext context, LoadStatus mode){
                       Widget body;
-                      if(mode==LoadStatus.idle){
+                      if (mode==LoadStatus.idle){
                         body = Container();
                       }
-                      else if(mode==LoadStatus.loading){
+                      else if (mode==LoadStatus.loading){
                         body = CupertinoActivityIndicator();
                       }
-                      else if(mode == LoadStatus.failed){
+                      else if (mode == LoadStatus.failed){
                         body = Text("Network Error");
                       }
-                      else if(mode == LoadStatus.canLoading){
+                      else if (mode == LoadStatus.canLoading){
                         body = Container();
                       }
                       else {

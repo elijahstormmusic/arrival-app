@@ -68,21 +68,18 @@ class Post {
     return Image.network(Post.source + 'c_thumb,w_200,g_face/' + cloudlink);
   }
 
-  static Post json(var input, var user) {
+  static Post json(var input) {
     return Post(
       caption: input['caption'],
       cryptlink: input['cryptlink'],
       cloudlink: input['cloudlink'],
       likes: input['likes'],
       comments: input['comments'],
-      user: Profile.lite(
-        name: user['name'],
-        cryptlink: user['cryptlink'],
-      ),
+      user: Profile.lite(input['user']),
     );
   }
   static Post parse(String input) {
-    if(input.substring(0, 1)=='{')
+    if (input.substring(0, 1)=='{')
       input = input.substring(1, input.length-1);
 
     var caption, cryptlink, likes,

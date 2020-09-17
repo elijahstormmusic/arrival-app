@@ -13,7 +13,7 @@ class ArrivalFiles {
   Map<String, dynamic> _contents;
 
   ArrivalFiles(String _file) {
-    if(_file=='') return;
+    if (_file=='') return;
 
     name = _file;
 
@@ -54,9 +54,9 @@ class ArrivalFiles {
     return file;
   }
   Future<dynamic> read(String key) async {
-    if(!_valid) return -1;
+    if (!_valid) return -1;
 
-    if(_contents==null) {
+    if (_contents==null) {
       try {
         final file = await _localFile;
 
@@ -71,9 +71,9 @@ class ArrivalFiles {
     return _contents[key];
   }
   Future<Map<String, dynamic>> readAll() async {
-    if(!_valid) return null;
+    if (!_valid) return null;
 
-    if(_contents==null) {
+    if (_contents==null) {
       try {
         final file = await _localFile;
 

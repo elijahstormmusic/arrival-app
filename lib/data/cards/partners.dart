@@ -94,7 +94,7 @@ class LocalIndustries {
 
   static Industry industryGrabber(SourceIndustry index) {
     for (var i=0;i<all.length;i++) {
-      if(all[i].type==index)
+      if (all[i].type==index)
       {
         return all[i];
       }
@@ -119,40 +119,40 @@ class ContactList {
 
   String toString() {
     String str = '';
-    if(phoneNumber!=null) {
+    if (phoneNumber!=null) {
       str += 'phoneNumber:' + phoneNumber + ',';
     }
-    if(address!=null) {
+    if (address!=null) {
       str += 'address:' + address + ',';
     }
-    if(city!=null) {
+    if (city!=null) {
       str += 'city:' + city + ',';
     }
-    if(state!=null) {
+    if (state!=null) {
       str += 'state:' + state + ',';
     }
-    if(zip!=null) {
+    if (zip!=null) {
       str += 'zip:' + zip + ',';
     }
-    if(website!=null) {
+    if (website!=null) {
       str += 'website:' + website + ',';
     }
-    if(email!=null) {
+    if (email!=null) {
       str += 'email:' + email + ',';
     }
-    if(facebook!=null) {
+    if (facebook!=null) {
       str += 'facebook:' + facebook + ',';
     }
-    if(twitter!=null) {
+    if (twitter!=null) {
       str += 'twitter:' + twitter + ',';
     }
-    if(instagram!=null) {
+    if (instagram!=null) {
       str += 'instagram:' + instagram + ',';
     }
-    if(pintrest!=null) {
+    if (pintrest!=null) {
       str += 'pintrest:' + pintrest + ',';
     }
-    if(str.substring(str.length-1, str.length)==',') {
+    if (str.substring(str.length-1, str.length)==',') {
       str = str.substring(0, str.length-1);
     }
     return str;
@@ -191,39 +191,39 @@ class ContactList {
     ContactList contactData = ContactList();
     List<String> curData;
     List<String> list = input.split(',');
-    for(var i=0;i<list.length;i++) {
+    for (var i=0;i<list.length;i++) {
       curData = list[i].split(':');
-      if(curData[0]=='phoneNumber') {
+      if (curData[0]=='phoneNumber') {
         contactData.phoneNumber = curData[1];
       }
-      else if(curData[0]=='address') {
+      else if (curData[0]=='address') {
         contactData.address = curData[1];
       }
-      else if(curData[0]=='city') {
+      else if (curData[0]=='city') {
         contactData.city = curData[1];
       }
-      else if(curData[0]=='state') {
+      else if (curData[0]=='state') {
         contactData.state = curData[1];
       }
-      else if(curData[0]=='zip') {
+      else if (curData[0]=='zip') {
         contactData.zip = curData[1];
       }
-      else if(curData[0]=='website') {
+      else if (curData[0]=='website') {
         contactData.website = curData[1];
       }
-      else if(curData[0]=='email') {
+      else if (curData[0]=='email') {
         contactData.email = curData[1];
       }
-      else if(curData[0]=='facebook') {
+      else if (curData[0]=='facebook') {
         contactData.facebook = curData[1];
       }
-      else if(curData[0]=='twitter') {
+      else if (curData[0]=='twitter') {
         contactData.twitter = curData[1];
       }
-      else if(curData[0]=='instagram') {
+      else if (curData[0]=='instagram') {
         contactData.instagram = curData[1];
       }
-      else if(curData[0]=='pintrest') {
+      else if (curData[0]=='pintrest') {
         contactData.pintrest = curData[1];
       }
     }
@@ -257,12 +257,12 @@ class SalesList {
     SalesList salesData = SalesList();
     List<String> curData;
     List<String> list = input.split(',');
-    for(var i=0;i<list.length;i++) {
+    for (var i=0;i<list.length;i++) {
       curData = list[i].split(':');
-      if(curData[0]=='name') {
+      if (curData[0]=='name') {
         salesData.name = curData[1];
       }
-      else if(curData[0]=='info') {
+      else if (curData[0]=='info') {
         salesData.info = curData[1];
       }
     }

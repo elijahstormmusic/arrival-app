@@ -6,6 +6,8 @@ import 'package:meta/meta.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import '../users/settings.dart';
+import '../data/arrival.dart';
+import '../data/socket.dart';
 
 class Profile {
   static final String default_img =
@@ -14,6 +16,7 @@ class Profile {
     'https://arrival-app.herokuapp.com/user/data/';
 
   final String name;
+  final String pic;
   final String shortBio;
   final String email;
   final String cryptlink;
@@ -24,6 +27,7 @@ class Profile {
   String toString() {
     String str = '';
     str += 'name:' + name + ',';
+    str += 'pic:' + pic + ',';
     str += 'bio:' + shortBio + ',';
     str += 'email:' + email + ',';
     str += 'cryptlink:' + cryptlink + ',';
@@ -35,6 +39,7 @@ class Profile {
 
   Profile({
     @required this.name,
+    @required this.pic,
     @required this.email,
     @required this.shortBio,
     @required this.cryptlink,
@@ -42,17 +47,9 @@ class Profile {
     @required this.points,
     @required this.settings,
   });
-  Profile.lite({
-    @required this.cryptlink,
-    @required this.name,
-    this.email = '',
-    this.shortBio = '',
-    this.level = 0,
-    this.points = 0,
-    this.settings = null,
-  }) {}
   static final Profile empty = Profile(
     name: '',
+    pic: '',
     email: '',
     shortBio: '',
     cryptlink: '',
@@ -62,15 +59,7 @@ class Profile {
   );
 
   Widget iconBySize(double height) {
-              // remove when profile pics are set up
-              return Image.network(
-                Profile.default_img,
-                fit: BoxFit.cover,
-                semanticLabel: 'Profile image for ' + name,
-                height: height,
-              );
-
-    if(cryptlink=='') {
+    if (pic=='') {
       return Image.network(
         Profile.default_img,
         fit: BoxFit.cover,
@@ -80,20 +69,13 @@ class Profile {
     }
 
     return Image.network(
-      Profile.source + cryptlink + '/i.jpg',
+      Profile.source + pic,
       fit: BoxFit.cover,
       semanticLabel: 'Profile image for ' + name,
     );
   }
   Widget icon() {
-            // remove when profile pics are set up
-            return Image.network(
-              Profile.default_img,
-              fit: BoxFit.cover,
-              semanticLabel: 'Profile image for ' + name,
-            );
-
-    if(cryptlink=='') {
+    if (pic=='') {
       return Image.network(
         Profile.default_img,
         fit: BoxFit.cover,
@@ -102,17 +84,17 @@ class Profile {
     }
 
     return Image.network(
-      Profile.source + cryptlink + '/i.jpg',
+      Profile.source + pic,
       fit: BoxFit.cover,
       semanticLabel: 'Profile image for ' + name,
     );
   }
 
   static Profile parse(String input) {
-    if(input.substring(0, 1)=='{')
+    if (input.substring(0, 1)=='{')
       input = input.substring(1, input.length-1);
 
-    var name, email, level, shortBio,
+    var name, email, level, shortBio, pic,
         points, settings, cryptlink;
 
     var startDataLoc, endDataLoc = 0;
@@ -121,7 +103,11 @@ class Profile {
     endDataLoc = input.indexOf(',', startDataLoc);
     name = input.substring(startDataLoc, endDataLoc);
 
-    startDataLoc = input.indexOf('bio')           + 4;
+    startDataLoc = input.indexOf('pic')             + 4;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    pic = input.substring(startDataLoc, endDataLoc);
+
+    startDataLoc = input.indexOf('bio')             + 4;
     endDataLoc = input.indexOf(',', startDataLoc);
     shortBio = input.substring(startDataLoc, endDataLoc);
 
@@ -147,6 +133,7 @@ class Profile {
 
     return Profile(
       name: name,
+      pic: pic,
       email: email,
       shortBio: shortBio,
       cryptlink: cryptlink,
@@ -158,6 +145,7 @@ class Profile {
   static Profile json(var input) {
     return Profile(
       name: input['username'],
+      pic: input['pic'],
       cryptlink: input['cryptlink'],
       email: input['email'],
       shortBio: input['shortBio'],
@@ -165,10 +153,59 @@ class Profile {
       points: input['points'],
     );
   }
+  static Profile litejson(var input) {
+    return Profile(
+      name: input['username'],
+      pic: input['pic'],
+      cryptlink: input['cryptlink'],
+      email: '',
+      shortBio: '',
+      level: 0,
+      points: 0,
+    );
+  }
+  static Profile lite(String input) {
+    for (var i=0;i<ArrivalData.profiles.length;i++) {
+      if (ArrivalData.profiles[i].cryptlink==input) {
+        return ArrivalData.profiles[i];
+      }
+    }
+    var P = Profile(
+      name: '',
+      pic: '',
+      email: '',
+      shortBio: '',
+      cryptlink: input,
+      level: 0,
+      points: 0,
+      settings: SettingsConfig.empty,
+    );
+    socket.emit('profile lite', {
+      'link': input,
+    });
+    ArrivalData.profiles.add(P);
+    return P;
+  }
   static Profile link(String input) {
-    return Profile.empty;
-    // await Data.profile(input);  // still to make
-    // String result = UserData.get(input);  // still to make
-    // return Profile.parse(result);
+    for (var i=0;i<ArrivalData.profiles.length;i++) {
+      if (ArrivalData.profiles[i].cryptlink==input) {
+        return ArrivalData.profiles[i];
+      }
+    }
+    var P = Profile(
+      name: '',
+      pic: '',
+      email: '',
+      shortBio: '',
+      cryptlink: input,
+      level: 0,
+      points: 0,
+      settings: SettingsConfig.empty,
+    );
+    socket.emit('profile get', {
+      'link': input,
+    });
+    ArrivalData.profiles.add(P);
+    return P;
   }
 }

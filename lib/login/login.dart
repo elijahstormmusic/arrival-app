@@ -32,8 +32,8 @@ class _LoginState extends State<LoginPage> {
   List<String> _splitMessage(String message)
   {
     int equalsLoc = message.indexOf('=');
-    if(equalsLoc==-1) return List<String>();
-    if(message.indexOf(';')==-1) return message.split('=');
+    if (equalsLoc==-1) return List<String>();
+    if (message.indexOf(';')==-1) return message.split('=');
     List<String> result = List<String>();
     result.add(message.substring(0, equalsLoc));
     return result + message.substring(equalsLoc+1).split(';');
@@ -50,8 +50,8 @@ class _LoginState extends State<LoginPage> {
             name: 'AppAndPageCommunication',
             onMessageReceived: (JavascriptMessage message) {
               List<String> split = _splitMessage(message.message);
-              if(split.length==0) return;
-              if(split[0]=='connect') {
+              if (split.length==0) return;
+              if (split[0]=='connect') {
                 UserData.username = split[1];
                 UserData.password = split[2];
 

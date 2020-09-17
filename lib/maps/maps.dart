@@ -14,7 +14,7 @@ class MyLocation {
     location = new Location();
     location.onLocationChanged.listen((LocationData cLoc) {
       currentLocation = cLoc;
-      if(_state != null) {
+      if (_state != null) {
         _state.relocate();
       }
     });
@@ -79,10 +79,10 @@ class _MapState extends State<Maps> {
         JavascriptChannel(
             name: 'AppAndPageCommunication',
             onMessageReceived: (JavascriptMessage message) {
-              if(message.message=='reached dest') {
+              if (message.message=='reached dest') {
                 print('you have reached your destination!');
               }
-              else if(message.message=='directions') {
+              else if (message.message=='directions') {
                 print('finding directions');
               }
               else print('function could not be found');

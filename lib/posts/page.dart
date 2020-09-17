@@ -124,18 +124,13 @@ class PostDisplayPage extends StatefulWidget {
   int postIndex;
 
   PostDisplayPage(String _cryptlink) {
-    for(int i=0;i<ArrivalData.posts.length;i++) {
-      if(ArrivalData.posts[i].cryptlink==_cryptlink) {
+    socket.post = this;
+    for (int i=0;i<ArrivalData.posts.length;i++) {
+      if (ArrivalData.posts[i].cryptlink==_cryptlink) {
         this.postIndex = i;
         break;
       }
     }
-    if(this.postIndex==null) {
-      throw('Arrival Error');
-      // Navigator.pop(context);
-      return;
-    }
-    socket.post = this;
   }
 
   @override
@@ -146,7 +141,7 @@ class _PostDisPState extends State<PostDisplayPage> {
   bool response = false;
   bool loaded = false;
 
-  void responded(Post input) {
+  void responded() {
     setState(() => loaded = true);
   }
 
@@ -198,148 +193,153 @@ class _PostDisPState extends State<PostDisplayPage> {
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Back',
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                profileDisplay(
-                  (ArrivalData.posts[widget.postIndex].user==null)
-                    ? Profile.empty
-                    : ArrivalData.posts[widget.postIndex].user
-                ),
-                Divider(height: lineSize, thickness: lineSize),
-                ArrivalData.posts[widget.postIndex].image(),
-                loaded
-                  ? Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
-                    child: SizedBox(
-                      height: 300,
-                      child: ListView(
-                        children: [
-                          Row(
-                            children: <Widget>[
-                              GestureDetector(
-                                child: Expanded(
+      child: widget.postIndex!=null
+        ? Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  profileDisplay(
+                    (ArrivalData.posts[widget.postIndex].user==null)
+                      ? Profile.empty
+                      : ArrivalData.posts[widget.postIndex].user
+                  ),
+                  Divider(height: lineSize, thickness: lineSize),
+                  ArrivalData.posts[widget.postIndex].image(),
+                  loaded
+                    ? Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
+                      child: SizedBox(
+                        height: 300,
+                        child: ListView(
+                          children: [
+                            Row(
+                              children: <Widget>[
+                                GestureDetector(
+                                  child: Expanded(
+                                    flex: 1,
+                                    child: Icon(
+                                      ClientHeartStyle,
+                                      size: 35.0,
+                                      color: ClientHeartColor,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    print(
+                                      'liking post'
+                                    );
+                                    if (clientHasLikedPost) {
+                                      ClientHeartStyle = Styles.heart;
+                                      ClientHeartColor = Colors.black;
+                                    } else {
+                                      ClientHeartStyle = Styles.heart_full;
+                                      ClientHeartColor = Colors.red;
+                                    }
+                                    setState(() => clientHasLikedPost = !clientHasLikedPost);
+                                  },
+                                ),
+                                Expanded(
                                   flex: 1,
                                   child: Icon(
-                                    ClientHeartStyle,
+                                    Styles.comment,
                                     size: 35.0,
-                                    color: ClientHeartColor,
+                                    color: Colors.black,
                                   ),
                                 ),
-                                onTap: () {
-                                  print(
-                                    'liking post'
-                                  );
-                                  if(clientHasLikedPost) {
-                                    ClientHeartStyle = Styles.heart;
-                                    ClientHeartColor = Colors.black;
-                                  } else {
-                                    ClientHeartStyle = Styles.heart_full;
-                                    ClientHeartColor = Colors.red;
-                                  }
-                                  setState(() => clientHasLikedPost = !clientHasLikedPost);
-                                },
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Styles.comment,
-                                  size: 35.0,
-                                  color: Colors.black,
+                                Expanded(
+                                  flex: 6,
+                                  child: Material(),
                                 ),
-                              ),
-                              Expanded(
-                                flex: 6,
-                                child: Material(),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Styles.share,
-                                  size: 35.0,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: padding),
-                          Text.rich(
-                            TextSpan(
-                              style: Styles.postText,
-                              children: [
-                                TextSpan(
-                                  text:
-                                  ArrivalData.posts[widget.postIndex].likes.toString() + ' likes & ',
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text:
-                                  ArrivalData.posts[widget.postIndex].comments.toString() + ' comments',
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w700,
+                                Expanded(
+                                  flex: 1,
+                                  child: Icon(
+                                    Styles.share,
+                                    size: 35.0,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                          SizedBox(height: padding),
-                          Text.rich(
-                            TextSpan(
-                              style: Styles.postText,
-                              children: [
-                                TextSpan(
-                                  text: ArrivalData.posts[widget.postIndex].user==null ? 'no user' : ArrivalData.posts[widget.postIndex].user.name
-                                  + '  ',
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w700,
+                            SizedBox(height: padding),
+                            Text.rich(
+                              TextSpan(
+                                style: Styles.postText,
+                                children: [
+                                  TextSpan(
+                                    text:
+                                    ArrivalData.posts[widget.postIndex].likes.toString() + ' likes & ',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                TextSpan(text: '  ' + ArrivalData.posts[widget.postIndex].caption),
-                              ],
+                                  TextSpan(
+                                    text:
+                                    ArrivalData.posts[widget.postIndex].comments.toString() + ' comments',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                          SizedBox(height: padding),
-                          Text.rich(
-                            TextSpan(
-                              style: Styles.postText,
-                              children: [
-                                TextSpan(
-                                  text: '(comments will go here later...)',
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w500,
-                                  )
-                                ),
-                              ],
+                            SizedBox(height: padding),
+                            Text.rich(
+                              TextSpan(
+                                style: Styles.postText,
+                                children: [
+                                  TextSpan(
+                                    text: ArrivalData.posts[widget.postIndex].user==null ? 'no user' : ArrivalData.posts[widget.postIndex].user.name
+                                    + '  ',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  TextSpan(text: '  ' + ArrivalData.posts[widget.postIndex].caption),
+                                ],
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
+                            SizedBox(height: padding),
+                            Text.rich(
+                              TextSpan(
+                                style: Styles.postText,
+                                children: [
+                                  TextSpan(
+                                    text: '(comments will go here later...)',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w500,
+                                    )
+                                  ),
+                                ],
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                  : Loading(
-                    indicator: BallPulseIndicator(),
-                    size: 40.0,
-                    color: Styles.ArrivalPalletteCream,
-                  )
-                ,
-              ],
+                    )
+                    : Padding(
+                      padding: EdgeInsets.all(32),
+                      child: Loading(
+                        indicator: BallPulseIndicator(),
+                        size: 16.0,
+                        color: Styles.ArrivalPalletteCream,
+                      ),
+                    )
+                  ,
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        )
+        : Styles.ArrivalErrorPage(context, '4PpA'),
     );
   }
 }

@@ -1,6 +1,11 @@
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
-import '../data/cards/partners.dart';
 import '../posts/post.dart';
+import '../data/cards/partners.dart';
+import '../data/cards/articles.dart';
+import '../data/cards/sales.dart';
 import '../posts/page.dart';
 import '../users/profile.dart';
 import '../users/data.dart';
@@ -13,7 +18,10 @@ class ArrivalData {
   static String sendMessage;
   static bool carry;
   static List<Post> posts;
+  static List<Profile> profiles;
   static List<Business> partners;
+  static List<Article> articles;
+  static List<Sale> sales;
   static List<String> partner_strings;
 
   static void save() async {
@@ -21,7 +29,7 @@ class ArrivalData {
 
     Map<String, dynamic> data = Map<String, dynamic>();
 
-    for(var i=0;i<ArrivalData.partners.length;i++) {
+    for (var i=0;i<ArrivalData.partners.length;i++) {
       data[ArrivalData.partners[i].cryptlink] =
         ArrivalData.partner_strings[i];
     }
@@ -34,6 +42,9 @@ class ArrivalData {
     ArrivalData.partner_strings = List<String>();
     ArrivalData.partners = List<Business>();
     ArrivalData.posts = List<Post>();
+    ArrivalData.profiles = List<Profile>();
+    ArrivalData.articles = List<Article>();
+    ArrivalData.sales = List<Sale>();
 
     try {
       Map<String, dynamic> data = await file.readAll();

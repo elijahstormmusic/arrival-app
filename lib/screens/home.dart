@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
       ),
       tabBuilder: (context, index) {
         if (index == 0) {
-          return ListScreen();
+          return ForYouPage();
         } else if (index == 1) {
           return Maps();
         } else if (index == 2) {

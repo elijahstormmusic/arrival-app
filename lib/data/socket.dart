@@ -23,12 +23,12 @@ class socket {
     _socket.subscribe('message', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
 
-      if(data['type']==800) { // icons download
-        if(search==null) return;
+      if (data['type']==800) { // icons download
+        if (search==null) return;
         var list = data['response'];
 
         try {
-          for(int i=0;i<list.length;i++) {
+          for (int i=0;i<list.length;i++) {
             ArrivalData.posts.add(Post.icon(
               cryptlink: list[i]['link'],
               cloudlink: list[i]['cloud'],
@@ -44,12 +44,12 @@ class socket {
         search.responded(data['response']);
       }
 
-      if(data['type']==801) { // post data
-        if(post==null) return;
+      else if (data['type']==801) { // post data
+        if (post==null) return;
 
-        Post postData = Post.json(data['response'], data['user']);
-        for(int i=0;i<ArrivalData.posts.length;i++) {
-          if(ArrivalData.posts[i].cryptlink==postData.cryptlink) {
+        Post postData = Post.json(data['response']);
+        for (int i=0;i<ArrivalData.posts.length;i++) {
+          if (ArrivalData.posts[i].cryptlink==postData.cryptlink) {
             ArrivalData.posts[i] = postData;
             break;
           }
@@ -58,11 +58,11 @@ class socket {
         post.responded();
       }
 
-      if(data['type']==802) { // comments
-        if(post==null) return;
+      else if (data['type']==802) { // comments
+        if (post==null) return;
 
-        for(int i=0;i<ArrivalData.posts.length;i++) {
-          if(ArrivalData.posts[i].cryptlink==data['link']) {
+        for (int i=0;i<ArrivalData.posts.length;i++) {
+          if (ArrivalData.posts[i].cryptlink==data['link']) {
             // ArrivalData.posts[i].comments.add(data['comments']);
             break;
           }
@@ -71,11 +71,17 @@ class socket {
         post.responded();
       }
 
-      if(data['type']==803) { // profile page download
-        if(profile==null) return;
+      else if (data['type']==803) { // profile page download
+        if (profile==null) return;
 
         try {
           Profile profile = Profile.json(data['response']);
+          for (var i=0;i<ArrivalData.profiles.length;i++) {
+            if (ArrivalData.profiles[i].cryptlink==profile.cryptlink) {
+              ArrivalData.profiles[i] = profile;
+              break;
+            }
+          }
         }
         catch (e) {
           print('arrival connection error 803');
@@ -86,10 +92,33 @@ class socket {
         profile.responded(profile);
       }
 
-      if(data['type']==900) { // for you download
-        if(foryou==null) return;
+      else if (data['type']==804) { // lite profile
+        try {
+          Profile profile = Profile.litejson(data['response']);
+          for (var i=0;i<ArrivalData.profiles.length;i++) {
+            if (ArrivalData.profiles[i].cryptlink==profile.cryptlink) {
+              if (ArrivalData.profiles[i].name=='') {
+                ArrivalData.profiles[i] = profile;
+              }
+              break;
+            }
+          }
+        }
+        catch (e) {
+          print('arrival connection error 804');
+          return;
+        }
+      }
+
+      else if (data['type']==900) { // for you download
+        if (foryou==null) return;
 
         foryou.responded(data['response']);
+      }
+
+      else if (data['type']==500) { // error reporting
+        print('Arrival Socket error: ' + data['error_code'].toString());
+        // make popup here
       }
     });
 

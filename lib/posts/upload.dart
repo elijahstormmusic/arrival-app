@@ -34,7 +34,7 @@ class _PostUploadState extends State<PostUploadScreen> {
   }
 
   void _uploadImage() async {
-    if(_image == null) return;
+    if (_image == null) return;
 
     setState(() {
       isLoading = true;
@@ -47,7 +47,7 @@ class _PostUploadState extends State<PostUploadScreen> {
         folder: 'posts/' + UserData.client.name,
       )).secure_url;
 
-      if(img_url!=null) {
+      if (img_url!=null) {
         socket.emit('posts upload', {
           'cloudlink': img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
           'userlink': UserData.client.cryptlink,
