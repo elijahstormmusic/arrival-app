@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import '../data/app_state.dart';
 import '../data/preferences.dart';
 import '../data/socket.dart';
+import '../data/arrival.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
 import '../users/data.dart';
@@ -59,18 +60,23 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedViewIndex = 0;
+  bool loaded = false;
 
   @override
   void initState() {
     socket.profile = this;
-    socket.emit('profile get', {
-      'link': widget.profile.cryptlink,
-    });
+    if(widget.profile.email=='') {
+      socket.emit('profile get', {
+        'link': widget.profile.cryptlink,
+      });
+    }
     super.initState();
   }
 
-  void responded(Profile _input) {
-    setState(() => widget.profile = _input);
+  void responded(int index) {
+    if(index==null) return;
+    widget.profile = ArrivalData.profiles[index];
+    setState(() => loaded = true);
   }
 
   Widget _buildPersonalDetails(BuildContext context, AppState model) {

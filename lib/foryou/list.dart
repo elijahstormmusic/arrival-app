@@ -8,8 +8,8 @@ import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../adobe/pinned.dart';
-import '../widgets/search_bar.dart';
 import '../widgets/profile_stats_card.dart';
+import '../widgets/slide_menu.dart';
 import '../widgets/blobs.dart';
 import '../widgets/cards.dart';
 import '../data/socket.dart';
@@ -27,8 +27,15 @@ import '../foryou/business_card.dart';
 import '../foryou/article_card.dart';
 import '../foryou/post_card.dart';
 import '../foryou/sale_card.dart';
+import 'search.dart';
 
 class ForYouPage extends StatefulWidget {
+  static _ListState currentState;
+  static void scrollToTop() {
+    if(ForYouPage.currentState==null) return;
+    currentState.scrollToTop();
+  }
+
   @override
   _ListState createState() => _ListState();
 }
@@ -38,13 +45,10 @@ class _ListState extends State<ForYouPage> {
   List<RowCard> forYou;
   ScrollController _scrollController;
   RefreshController _refreshController;
-  final _textInputController = TextEditingController();
-  final _focusNode = FocusNode();
   RowCard _loadingCard;
   bool _allowRequest = true, _requestFailed = false;
   final REQUEST_AMOUNT = 10;
-  String searchTerms = '';
-  bool _searchBoxOpen = false;
+  Search _search;
 
   @override
   void initState() {
@@ -53,13 +57,13 @@ class _ListState extends State<ForYouPage> {
     _scrollController.addListener(_scrollListener);
     _refreshController = RefreshController(initialRefresh: true);
     _loadingCard = RowLoading();
-    _textInputController.addListener(_onTextChanged);
+    _search = Search();
     socket.foryou = this;
+    ForYouPage.currentState = this;
     super.initState();
   }
   @override
   void dispose() {
-    _focusNode.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -131,13 +135,17 @@ class _ListState extends State<ForYouPage> {
     _allowRequest = true;
   }
 
-  void _onTextChanged() {
-    setState(() => searchTerms = _textInputController.text);
-  }
   void _scrollListener() {
     if (_scrollController.offset + 400 >= _scrollController.position.maxScrollExtent) {
       _pullNext(REQUEST_AMOUNT);
     }
+  }
+  void scrollToTop() {
+    _scrollController.animateTo(
+      0.0,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+    );
   }
 
   void _gotoUpload(BuildContext context) {
@@ -147,47 +155,76 @@ class _ListState extends State<ForYouPage> {
     ));
   }
 
-  Widget _buildSearchLines(List<Business> places) {
-    if (places.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(
-            'Try simplifiying your search.',
-            style: Styles.headlineDescription(CupertinoTheme.of(context)),
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      itemCount: places.length,
-      itemBuilder: (context, i) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: Container(),
-          // child: BusinessHeadline(places[i]),
-        );
-      },
-    );
-  }
-  Widget _buildSearchResults(AppState model, String terms) {
-    List<Post> posts = model.searchPosts(terms);
-    List<Business> businesses = model.searchBusinesses(terms);
-
-    if (terms=='') {
-      return Container();
-    }
-    return _buildSearchLines(businesses);
-  }
-  Widget _buildSearchBox() {
-    return _searchBoxOpen ? Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-      child: SearchBar(
-        controller: _textInputController,
-        focusNode: _focusNode,
+  Widget _buildForyouList(BuildContext context, var prefs) {
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: true,
+      header: WaterDropHeader(),
+      footer: CustomFooter(
+        builder: (BuildContext context, LoadStatus mode){
+          Widget body;
+          if (mode==LoadStatus.idle){
+            body = Container();
+          }
+          else if (mode==LoadStatus.loading){
+            body = CupertinoActivityIndicator();
+          }
+          else if (mode == LoadStatus.failed){
+            body = Text("Network Error");
+          }
+          else if (mode == LoadStatus.canLoading){
+            body = Container();
+          }
+          else {
+            body = Container();
+          }
+          return Container(
+            height: 55.0,
+            child: Center(child: body),
+          );
+        },
       ),
-    ) : Container();
+      controller: _refreshController,
+      onRefresh: _refresh,
+      onLoading: _loadMore,
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: forYou.length + 3,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Stack(
+              children: <Widget>[
+                Blob_Background(height: 305.0),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 265.0,
+                        child: Pinned.fromSize(
+                          bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
+                          size: Size(412.0, 1600.0),
+                          pinLeft: true,
+                          pinRight: true,
+                          pinTop: true,
+                          fixedHeight: true,
+                          child: UserProfilePlacecard(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else if (index <= forYou.length) {
+            return forYou[index-1].generate(prefs);
+          } else {
+            return _loadingCard.generate(prefs);
+          }
+        },
+      ),
+    );
   }
 
   @override
@@ -204,19 +241,21 @@ class _ListState extends State<ForYouPage> {
               style: Styles.arrTitleText,
             ),
             backgroundColor: Styles.ArrivalPalletteRed,
-            leading: IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-
-              }
-            ),
+            // leading: IconButton(
+            //   icon: const Icon(Icons.menu),
+            //   onPressed: () {
+            //
+            //   }
+            // ),
             actions: <Widget>[
               IconButton(
-                onPressed: () => setState(() => _searchBoxOpen = !_searchBoxOpen),
+                onPressed: () =>
+                  setState(() => _search.searchOpen = !_search.searchOpen),
                 icon: const Icon(Icons.search),
               ),
             ],
           ),
+          drawer: SlideMenu(),
           floatingActionButton: FloatingActionButton(
             onPressed: () => _gotoUpload(context),
             tooltip: 'Pick Image',
@@ -227,76 +266,8 @@ class _ListState extends State<ForYouPage> {
             bottom: false,
             child: Stack(
               children: <Widget>[
-                SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: true,
-                  header: WaterDropHeader(),
-                  footer: CustomFooter(
-                    builder: (BuildContext context, LoadStatus mode){
-                      Widget body;
-                      if (mode==LoadStatus.idle){
-                        body = Container();
-                      }
-                      else if (mode==LoadStatus.loading){
-                        body = CupertinoActivityIndicator();
-                      }
-                      else if (mode == LoadStatus.failed){
-                        body = Text("Network Error");
-                      }
-                      else if (mode == LoadStatus.canLoading){
-                        body = Container();
-                      }
-                      else {
-                        body = Container();
-                      }
-                      return Container(
-                        height: 55.0,
-                        child: Center(child: body),
-                      );
-                    },
-                  ),
-                  controller: _refreshController,
-                  onRefresh: _refresh,
-                  onLoading: _loadMore,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: forYou.length + 3,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return Stack(
-                          children: <Widget>[
-                            Blob_Background(height: 305.0),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 265.0,
-                                    child: Pinned.fromSize(
-                                      bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
-                                      size: Size(412.0, 1600.0),
-                                      pinLeft: true,
-                                      pinRight: true,
-                                      pinTop: true,
-                                      fixedHeight: true,
-                                      child: UserProfilePlacecard(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      } else if (index <= forYou.length) {
-                        return forYou[index-1].generate(prefs);
-                      } else {
-                        return _loadingCard.generate(prefs);
-                      }
-                    },
-                  ),
-                ),
-                _buildSearchBox(),
+                _buildForyouList(context, prefs),
+                _search,
               ],
             ),
           ),

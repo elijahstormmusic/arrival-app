@@ -22,7 +22,6 @@ class ArrivalData {
   static List<Business> partners;
   static List<Article> articles;
   static List<Sale> sales;
-  static List<String> partner_strings;
 
   static void save() async {
     ArrivalFiles file = ArrivalFiles('partners.json');
@@ -31,15 +30,23 @@ class ArrivalData {
 
     for (var i=0;i<ArrivalData.partners.length;i++) {
       data[ArrivalData.partners[i].cryptlink] =
-        ArrivalData.partner_strings[i];
+        ArrivalData.partners[i].toString();
+    }
+
+    await file.write(data);
+
+    file = ArrivalFiles('articles.json');
+
+    data = Map<String, dynamic>();
+
+    for (var i=0;i<ArrivalData.articles.length;i++) {
+      data[ArrivalData.articles[i].cryptlink] =
+        ArrivalData.articles[i].toString();
     }
 
     await file.write(data);
   }
   static void load() async {
-    ArrivalFiles file = ArrivalFiles('partners.json');
-
-    ArrivalData.partner_strings = List<String>();
     ArrivalData.partners = List<Business>();
     ArrivalData.posts = List<Post>();
     ArrivalData.profiles = List<Profile>();
@@ -47,27 +54,40 @@ class ArrivalData {
     ArrivalData.sales = List<Sale>();
 
     try {
-      Map<String, dynamic> data = await file.readAll();
-
-      data.forEach((String key, dynamic value) {
-        ArrivalData.partner_strings.add(value);
-        ArrivalData.partners.add(Business.parse(value));
-      });
+      (await ArrivalFiles('partners.json').readAll())
+        .forEach((String key, dynamic value) =>
+          ArrivalData.partners.add(Business.parse(value)));
     } catch(e) {
       print('-------');
-      print('Some error happened in link.dart @ 42');
+      print('Arrival Error when loading parter data');
+      print(e);
+      print('-------');
+    }
+    try {
+      (await ArrivalFiles('articles.json').readAll())
+        .forEach((String key, dynamic value) =>
+          ArrivalData.articles.add(Article.parse(value)));
+    } catch(e) {
+      print('-------');
+      print('Arrival Error when loading article data');
       print(e);
       print('-------');
     }
   }
   static void refresh() async {
-    ArrivalFiles file = ArrivalFiles('partners.json');
-
     try {
-      file.delete();
+      ArrivalFiles('partners.json').delete();
     } catch(e) {
       print('-------');
-      print('Could not delete file in link.dart @ 47');
+      print('Arrival Error when deleting partners file');
+      print(e);
+      print('-------');
+    }
+    try {
+      ArrivalFiles('articles.json').delete();
+    } catch(e) {
+      print('-------');
+      print('Arrival Error when deleting articles file');
       print(e);
       print('-------');
     }

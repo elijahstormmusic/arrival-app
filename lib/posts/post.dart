@@ -2,12 +2,10 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import '../users/profile.dart';
-
 class Post {
   static final String source =
     'https://res.cloudinary.com/arrival-kc/image/upload/';
@@ -62,10 +60,16 @@ class Post {
     return NetworkImage(Post.source + cloudlink);
   }
   Widget image() {
-    return Image.network(Post.source + cloudlink);
+    return Image.network(
+      Post.source + cloudlink,
+      fit: BoxFit.fitWidth,
+    );
   }
   Widget icon() {
-    return Image.network(Post.source + 'c_thumb,w_200,g_face/' + cloudlink);
+    return Image.network(
+      Post.source + 'c_thumb,w_200,g_face/' + cloudlink,
+      fit: BoxFit.fitWidth,
+    );
   }
 
   static Post json(var input) {

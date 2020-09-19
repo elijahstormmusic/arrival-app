@@ -48,6 +48,8 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/slide_menu/city.jpg
+    - assets/images/slide_menu/arts.jpg
     - assets/images/logo.jpg
     - assets/images/stft.jpg
     - assets/empty.jpg

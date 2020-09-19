@@ -162,7 +162,6 @@ class DataState extends State<Data> {
             if (split[0]=='response') {
               for (int i=1;i<split.length;i++) {
                 ArrivalData.partners.add(Business.parse(split[i]));
-                ArrivalData.partner_strings.add(split[i]);
               }
               ArrivalData.save();
 

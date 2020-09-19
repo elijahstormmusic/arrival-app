@@ -124,7 +124,6 @@ class PostDisplayPage extends StatefulWidget {
   int postIndex;
 
   PostDisplayPage(String _cryptlink) {
-    socket.post = this;
     for (int i=0;i<ArrivalData.posts.length;i++) {
       if (ArrivalData.posts[i].cryptlink==_cryptlink) {
         this.postIndex = i;
@@ -140,6 +139,12 @@ class PostDisplayPage extends StatefulWidget {
 class _PostDisPState extends State<PostDisplayPage> {
   bool response = false;
   bool loaded = false;
+
+  @override
+  void initState() {
+    socket.post = this;
+    super.initState();
+  }
 
   void responded() {
     setState(() => loaded = true);
@@ -326,11 +331,11 @@ class _PostDisPState extends State<PostDisplayPage> {
                       ),
                     )
                     : Padding(
-                      padding: EdgeInsets.all(32),
+                      padding: EdgeInsets.fromLTRB(32, 48, 32, 12),
                       child: Loading(
                         indicator: BallPulseIndicator(),
                         size: 16.0,
-                        color: Styles.ArrivalPalletteCream,
+                        color: Styles.ArrivalPalletteGrey,
                       ),
                     )
                   ,

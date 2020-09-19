@@ -1,6 +1,6 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'package:meta/meta.dart';
 import 'package:flutter/widgets.dart';
@@ -13,7 +13,7 @@ class Profile {
   static final String default_img =
     'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
   static final String source =
-    'https://arrival-app.herokuapp.com/user/data/';
+    'https://res.cloudinary.com/arrival-kc/image/upload/user_photo/';
 
   final String name;
   final String pic;
@@ -59,7 +59,7 @@ class Profile {
   );
 
   Widget iconBySize(double height) {
-    if (pic=='') {
+    if (pic=='' || pic==null) {
       return Image.network(
         Profile.default_img,
         fit: BoxFit.cover,
@@ -72,10 +72,11 @@ class Profile {
       Profile.source + pic,
       fit: BoxFit.cover,
       semanticLabel: 'Profile image for ' + name,
+      height: height,
     );
   }
   Widget icon() {
-    if (pic=='') {
+    if (pic=='' || pic==null) {
       return Image.network(
         Profile.default_img,
         fit: BoxFit.cover,
@@ -144,7 +145,7 @@ class Profile {
   }
   static Profile json(var input) {
     return Profile(
-      name: input['username'],
+      name: input['name'],
       pic: input['pic'],
       cryptlink: input['cryptlink'],
       email: input['email'],
@@ -155,7 +156,7 @@ class Profile {
   }
   static Profile litejson(var input) {
     return Profile(
-      name: input['username'],
+      name: input['name'],
       pic: input['pic'],
       cryptlink: input['cryptlink'],
       email: '',

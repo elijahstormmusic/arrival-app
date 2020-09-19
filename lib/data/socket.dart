@@ -46,7 +46,6 @@ class socket {
 
       else if (data['type']==801) { // post data
         if (post==null) return;
-
         Post postData = Post.json(data['response']);
         for (int i=0;i<ArrivalData.posts.length;i++) {
           if (ArrivalData.posts[i].cryptlink==postData.cryptlink) {
@@ -74,10 +73,13 @@ class socket {
       else if (data['type']==803) { // profile page download
         if (profile==null) return;
 
+        int index;
+
         try {
           Profile profile = Profile.json(data['response']);
           for (var i=0;i<ArrivalData.profiles.length;i++) {
             if (ArrivalData.profiles[i].cryptlink==profile.cryptlink) {
+              index = i;
               ArrivalData.profiles[i] = profile;
               break;
             }
@@ -85,11 +87,11 @@ class socket {
         }
         catch (e) {
           print('arrival connection error 803');
-          profile.responded(null);
+          profile.responded(index);
           return;
         }
 
-        profile.responded(profile);
+        profile.responded(index);
       }
 
       else if (data['type']==804) { // lite profile

@@ -31,9 +31,6 @@ void main() async {
   if (UserData.username==null || UserData.username=='null') {
     launchState = LoginPage();
   }
-  else if (ArrivalData.partners.length<5) {
-    launchState = Data.partners('');
-  }
 
   runApp(
     ScopedModel<AppState>(

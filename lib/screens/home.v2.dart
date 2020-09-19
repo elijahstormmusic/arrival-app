@@ -21,11 +21,21 @@ class HomeScreen extends StatefulWidget {
 class _MainAppStates extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  void _selectedTab(int index) {
+    if (_selectedIndex == index) {
+      if (index == 0) {
+        ForYouPage.scrollToTop();
+      }
+    }
+    setState(() => _selectedIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _selectedIndex==0 ? ForYouPage() : Maps(),
       bottomNavigationBar: BottomNavigationBar(
+        onTap: _selectedTab,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -40,17 +50,16 @@ class _MainAppStates extends State<HomeScreen> {
         backgroundColor: Styles.ArrivalPalletteRed,
         selectedIconTheme: IconThemeData(
           color: Styles.ArrivalPalletteYellow,
-          size: 30.0,
+          size: 24.0,
         ),
         unselectedIconTheme: IconThemeData(
           color: Styles.ArrivalPalletteWhite,
-          size: 26.0,
+          size: 24.0,
         ),
-        selectedFontSize: 18.0,
-        unselectedFontSize: 16.0,
+        selectedFontSize: 12.0,
+        unselectedFontSize: 12.0,
         selectedItemColor: Styles.ArrivalPalletteYellow,
         unselectedItemColor: Styles.ArrivalPalletteWhite,
-        onTap: (int index) => setState(() => _selectedIndex = index),
       ),
     );
   }
