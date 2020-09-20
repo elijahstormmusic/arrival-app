@@ -97,24 +97,40 @@ class _ListState extends State<ForYouPage> {
     try {
       for (var i=0;i<data.length;i++) {
         if (data[i]['type']==0) {
-          result = Business.json(data[i]);
-          card = RowBusiness(result);
-          ArrivalData.partners.add(result);
+          try {
+            result = Business.json(data[i]);
+            card = RowBusiness(result);
+            ArrivalData.partners.add(result);
+          } catch (e) {
+
+          }
         }
         else if (data[i]['type']==1) {
-          result = Article.json(data[i]);
-          card = RowArticle(result);
-          ArrivalData.articles.add(result);
+          try {
+            result = Article.json(data[i]);
+            card = RowArticle(result);
+            ArrivalData.articles.add(result);
+          } catch (e) {
+
+          }
         }
         else if (data[i]['type']==2) {
-          result = Post.json(data[i]['post']);
-          card = RowPost(result);
-          ArrivalData.posts.add(result);
+          try {
+            result = Post.json(data[i]['post']);
+            card = RowPost(result);
+            ArrivalData.posts.add(result);
+          } catch (e) {
+
+          }
         }
         else if (data[i]['type']==3) {
-          result = Sale.json(data[i]);
-          card = RowSale(result);
-          ArrivalData.sales.add(result);
+          try {
+            result = Sale.json(data[i]);
+            card = RowSale(result);
+            ArrivalData.sales.add(result);
+          } catch (e) {
+
+          }
         }
         else continue;
 
@@ -126,6 +142,7 @@ class _ListState extends State<ForYouPage> {
     catch (e) {
       _requestFailed = true;
       _refreshController.loadFailed();
+      print(e);
       return;
     }
 

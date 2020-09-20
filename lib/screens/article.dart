@@ -37,7 +37,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
             right: 0,
             left: 0,
             child: Image.network(
-              widget.article.header_img,
+              widget.article.image_link(0),
               fit: BoxFit.cover,
               semanticLabel: 'A background image of ',
             ),

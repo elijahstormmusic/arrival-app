@@ -13,10 +13,9 @@ import '../data/preferences.dart';
 import 'row_card.dart';
 
 class ArticleCard extends StatelessWidget {
-  ArticleCard(this.article, this.isNear);
+  ArticleCard(this.article);
 
   final Article article;
-  final bool isNear;
 
   Widget _buildDetails() {
     return FrostyBackground(
@@ -27,7 +26,7 @@ class ArticleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'article ' + article.name,
+              article.title,
               style: Styles.cardTitleText,
             ),
           ],
@@ -48,15 +47,13 @@ class ArticleCard extends StatelessWidget {
       child: Stack(
         children: [
           Semantics(
-            label: 'Logo for ${article.name}',
+            label: 'Logo for ${article.title}',
             child: Container(
-              height: isNear ? 300 : 150,
+              height: 150,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  colorFilter:
-                      isNear ? null : Styles.desaturatedColorFilter,
-                  image: article.card_image(),
+                  image: article.headline_image(),
                 ),
               ),
             ),
@@ -76,18 +73,16 @@ class ArticleCard extends StatelessWidget {
 class RowArticle extends RowCard {
 
   final Article post;
-  final bool isNear = true;
 
   RowArticle(
     @required this.post,
-    // this.isNear,
   );
 
   @override
   Widget generate(Preferences prefs) {
     return Padding(
       padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-      child: ArticleCard(post, isNear),
+      child: ArticleCard(post),
     );
   }
 }

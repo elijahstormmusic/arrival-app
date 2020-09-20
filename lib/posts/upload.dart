@@ -2,10 +2,11 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'dart:math';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
@@ -41,9 +42,10 @@ class _PostUploadState extends State<PostUploadScreen> {
     });
 
     try {
+      String image_name = UserData.client.name + Random().nextInt(1000000).toString();
       String img_url = (await cloudinary_client.uploadImage(
         _image.path,
-        // filename: 'uploadtest',
+        filename: image_name,
         folder: 'posts/' + UserData.client.name,
       )).secure_url;
 
@@ -51,7 +53,7 @@ class _PostUploadState extends State<PostUploadScreen> {
         socket.emit('posts upload', {
           'cloudlink': img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
           'userlink': UserData.client.cryptlink,
-          'id': UserData.client.name,
+          'id': image_name,
           'caption': caption,
         });
       }

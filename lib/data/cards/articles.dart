@@ -4,54 +4,76 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'dart:convert';
 
 class Article {
+  static int index = 0;
   static final String source =
-    'https://arrival-app.herokuapp.com/partners/';
+    'https://res.cloudinary.com/arrival-kc/image/upload/';
+  static final String default_img =
+    'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
 
   final int id;
   final String cryptlink;
-  final String name;
-  final String shortDescription;
-  String header_img = 'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
+  final String title;
+  final String author;
+  final String date;
+  final String topic;
+  final List<dynamic> body;
+  final List<dynamic> images;
+  final String extra_info;
 
   String toString() {
     String str = '';
     str += 'cryptlink:' + cryptlink + ',';
-    str += 'name:' + name + ',';
-    str += 'info:' + shortDescription + ',';
+    str += 'title:' + title + ',';
+    str += 'author:' + author + ',';
+    str += 'date:' + date + ',';
+    str += 'topic:' + topic + ',';
+    str += 'body:' + jsonEncode(body) + ',';
+    str += 'images:' + jsonEncode(images) + ',';
+    str += 'extra_info:' + extra_info + ',';
     return str;
-  }
-  bool isOpen() {
-    return true;
   }
 
   Article({
     @required this.id,
     @required this.cryptlink,
-    @required this.name,
-    @required this.shortDescription,
-  });
-
-  NetworkImage card_image() {
-    return NetworkImage(Article.source + 'logo.jpg');
+    @required this.title,
+    @required this.author,
+    @required this.date,
+    @required this.topic,
+    @required this.body,
+    @required this.images,
+    @required this.extra_info,
+  }) {
+    if(images.length<1) images.add(Article.default_img);
   }
-  Widget image() {
-    return Image.network(Article.source + 'logo.jpg');
+
+  NetworkImage headline_image() {
+    return NetworkImage(Article.source + images[0]);
+  }
+  String image_link(int index) {
+    if(index>=images.length) return images[0];
+    return images[index];
   }
 
   static Article json(var data) {
     return Article(
       id: Article.index++,
       cryptlink: data['link'],
-      name: data['name'],
-      shortDescription: data['info'],
-    );;
+      title: data['title'],
+      author: data['author'],
+      date: data['date'],
+      topic: data['topic'],
+      body: data['body'],
+      images: data['images'],
+      extra_info: data['extra_info'],
+    );
   }
   static Article parse(String input) {
-    var id, name, rating, ratingAmount, lat, lng,
-        location, images, industry, contact,
-        shortDescription, sales, cryptlink;
+    var id, title, author, date, topic,
+        body, images, extra_info, cryptlink;
 
     var startDataLoc, endDataLoc = 0;
 
@@ -61,26 +83,55 @@ class Article {
     endDataLoc = input.indexOf(',', startDataLoc);
     cryptlink = input.substring(startDataLoc, endDataLoc);
 
-    startDataLoc = input.indexOf('name')            + 5;
+    startDataLoc = input.indexOf('title')             + 6;
     endDataLoc = input.indexOf(',', startDataLoc);
-    name = input.substring(startDataLoc, endDataLoc);
+    title = input.substring(startDataLoc, endDataLoc);
 
-    startDataLoc = input.indexOf('info')            + 5;
+    startDataLoc = input.indexOf('author')            + 7;
     endDataLoc = input.indexOf(',', startDataLoc);
-    shortDescription = input.substring(startDataLoc, endDataLoc);
+    author = input.substring(startDataLoc, endDataLoc);
+
+    startDataLoc = input.indexOf('date')              + 5;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    date = input.substring(startDataLoc, endDataLoc);
+
+    startDataLoc = input.indexOf('topic')             + 6;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    topic = input.substring(startDataLoc, endDataLoc);
+
+    startDataLoc = input.indexOf('body')              + 5;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    body = input.substring(startDataLoc, endDataLoc);
+
+    startDataLoc = input.indexOf('images')            + 7;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    images = input.substring(startDataLoc, endDataLoc);
+
+    startDataLoc = input.indexOf('extra_info')       + 11;
+    endDataLoc = input.indexOf(',', startDataLoc);
+    extra_info = input.substring(startDataLoc, endDataLoc);
 
     return Article(
       id: id,
       cryptlink: cryptlink,
-      name: name,
-      shortDescription: shortDescription,
+      title: title,
+      author: author,
+      date: date,
+      topic: topic,
+      body: body,
+      images: images,
+      extra_info: extra_info,
     );
   }
-  static int index = 0;
 }
 Article blankArticle = Article(
   id: -1,
   cryptlink: '',
-  name: 'none',
-  shortDescription: '',
+  title: '',
+  author: '',
+  date: '',
+  topic: '',
+  body: [],
+  images: [],
+  extra_info: '',
 );

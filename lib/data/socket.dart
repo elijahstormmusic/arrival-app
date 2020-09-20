@@ -23,6 +23,11 @@ class socket {
     _socket.subscribe('message', (jsonData) {
       Map<String, dynamic> data = json.decode(jsonData);
 
+
+        /***  Content downloading
+         * this functions allow for seemless use of the app
+         */
+
       if (data['type']==800) { // icons download
         if (search==null) return;
         var list = data['response'];
@@ -118,8 +123,32 @@ class socket {
         foryou.responded(data['response']);
       }
 
+
+
+        /***  Server feedback
+         * this functions allow for seemless use of the app
+         */
+
       else if (data['type']==500) { // error reporting
         print('Arrival Socket error: ' + data['error_code'].toString());
+        // make popup here
+      }
+      else if (data['type']==530) { // post successfully uploaded
+        print('Post uploaded');
+        // put it at top of Foryou page -> data['link']
+        // and go navigate to Foryou
+      }
+      else if (data['type']==531) { // post failed upload
+        print('Post upload failed');
+        // make popup here
+      }
+      else if (data['type']==520) { // article successfully uploaded
+        print('Article uploaded');
+        // put it at top of Foryou page -> data['link']
+        // and go navigate to Foryou
+      }
+      else if (data['type']==521) { // article failed upload
+        print('Article upload failed');
         // make popup here
       }
     });
