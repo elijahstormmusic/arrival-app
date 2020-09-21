@@ -99,8 +99,8 @@ class _Blobs extends State<Blob_Background> with SingleTickerProviderStateMixin 
   @override
   void initState() {
     controller =
-        AnimationController(duration: const Duration(seconds: 1), vsync: this);
-    curve = CurvedAnimation(parent: controller, curve: Curves.easeOut);
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    curve = CurvedAnimation(parent: controller, curve: Curves.elasticOut);
     animation = Tween<double>(begin: 0, end: 1.0).animate(curve);
     controller.forward();
     super.initState();

@@ -28,6 +28,7 @@ class _PostUploadState extends State<PostUploadScreen> {
   CloudinaryClient cloudinary_client =
     new CloudinaryClient('868422847775537', 'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
   String caption = 'upload test caption';
+  BuildContext recentlySavedContext;
 
   @override
   void initState() {
@@ -59,14 +60,10 @@ class _PostUploadState extends State<PostUploadScreen> {
       }
 
       _image = null;
-      // feedback that it has uploaded
+      Navigator.pop(recentlySavedContext);
     } catch (e) {
       print(e);
       // feedback that it has failed
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 
@@ -80,6 +77,8 @@ class _PostUploadState extends State<PostUploadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    recentlySavedContext = context;
+
     return Scaffold(
       body: Center(
         child: isLoading

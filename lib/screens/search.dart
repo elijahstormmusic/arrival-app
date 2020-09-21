@@ -44,7 +44,7 @@ class _SearchScreenState extends State<SearchScreen> {
     explorePosts = List<Post>();
     controller.addListener(_onTextChanged);
     socket.emit('posts get', userstate);
-    socket.search = this;
+    // socket.search = this;
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _refreshController = RefreshController(initialRefresh: true);

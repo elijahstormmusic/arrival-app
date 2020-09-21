@@ -6,6 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import '../users/profile.dart';
+import '../data/arrival.dart';
+import '../data/socket.dart';
+
+
 class Post {
   static final String source =
     'https://res.cloudinary.com/arrival-kc/image/upload/';
@@ -125,10 +129,24 @@ class Post {
     );
   }
   static Post link(String input) {
-    return Post.empty;
-    // await Data.profile(input);  // still to make
-    // String result = UserData.get(input);  // still to make
-    // return Post.parse(result);
+    for (var i=0;i<ArrivalData.posts.length;i++) {
+      if (ArrivalData.posts[i].cryptlink==input) {
+        return ArrivalData.posts[i];
+      }
+    }
+    var P = Post(
+      caption: '',
+      cryptlink: input,
+      cloudlink: 'v1599325166/sample.jpg',
+      likes: 0,
+      comments: 0,
+      user: Profile.empty,
+    );
+    socket.emit('posts get', {
+      'link': input,
+    });
+    ArrivalData.posts.add(P);
+    return P;
   }
   static int index = 0;
 }

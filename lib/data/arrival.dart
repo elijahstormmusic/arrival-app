@@ -11,8 +11,10 @@ import '../users/profile.dart';
 import '../users/data.dart';
 import '../data/local.dart';
 import '../data/link.dart';
+import '../foryou/row_card.dart';
 
 class ArrivalData {
+  static List<RowCard> foryou;
   static DataState server;
   static String result;
   static String sendMessage;

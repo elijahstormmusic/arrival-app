@@ -139,6 +139,7 @@ class PostDisplayPage extends StatefulWidget {
 class _PostDisPState extends State<PostDisplayPage> {
   bool response = false;
   bool loaded = false;
+  double _buttonSize = 35.0;
 
   @override
   void initState() {
@@ -216,52 +217,46 @@ class _PostDisPState extends State<PostDisplayPage> {
                   loaded
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
-                      child: SizedBox(
-                        height: 300,
+                      child: Container(
+                        height: 200.0,
                         child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
                           children: [
                             Row(
                               children: <Widget>[
-                                GestureDetector(
-                                  child: Expanded(
-                                    flex: 1,
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
                                     child: Icon(
-                                      ClientHeartStyle,
-                                      size: 35.0,
-                                      color: ClientHeartColor,
+                                      clientHasLikedPost
+                                        ? Styles.heart
+                                        : Styles.heart_full,
+                                      color: clientHasLikedPost
+                                        ? Colors.black
+                                        : Colors.red,
+                                      size: _buttonSize,
                                     ),
+                                    onTap: () => setState(() =>
+                                      clientHasLikedPost = !clientHasLikedPost),
                                   ),
-                                  onTap: () {
-                                    print(
-                                      'liking post'
-                                    );
-                                    if (clientHasLikedPost) {
-                                      ClientHeartStyle = Styles.heart;
-                                      ClientHeartColor = Colors.black;
-                                    } else {
-                                      ClientHeartStyle = Styles.heart_full;
-                                      ClientHeartColor = Colors.red;
-                                    }
-                                    setState(() => clientHasLikedPost = !clientHasLikedPost);
-                                  },
                                 ),
                                 Expanded(
                                   flex: 1,
                                   child: Icon(
                                     Styles.comment,
-                                    size: 35.0,
+                                    size: _buttonSize,
                                     color: Colors.black,
                                   ),
                                 ),
                                 Expanded(
                                   flex: 6,
-                                  child: Material(),
+                                  child: Container(),
                                 ),
                                 Expanded(
                                   flex: 1,
                                   child: Icon(
                                     Styles.share,
-                                    size: 35.0,
+                                    size: _buttonSize,
                                     color: Colors.black,
                                   ),
                                 ),

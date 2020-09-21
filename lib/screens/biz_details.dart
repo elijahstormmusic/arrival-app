@@ -69,17 +69,14 @@ class SellerView extends StatelessWidget {
             style: Styles.detailsTitleText(themeData),
           ),
           SizedBox(height: 8),
-          Text(
-            'here is where we would put items the user can buy with the app at a discount',
-            style: Styles.detailsDescriptionText(themeData),
-          ),
-          // BuyingCards(biz, prefs),
+          BuyingCards(biz, prefs),
           SizedBox(height: 24),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CupertinoSwitch(
+              Switch(
                 value: biz.isFavorite,
+                activeColor: Styles.ArrivalPalletteBlue,
                 onChanged: (value) {
                   appState.setFavorite(id, value);
                 },
@@ -165,6 +162,9 @@ class InfoView extends StatelessWidget {
                   biz.contact.address + ', ' + biz.contact.zip,
                   style: Styles.detailsAddressText,
                 ),
+                // ButtonBar(
+                //  do later
+                // ),
                 Text(
                   'take me here'.toUpperCase(),
                   style: Styles.detailsBigLinkText,
@@ -224,10 +224,11 @@ class InfoView extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CupertinoSwitch(
+              Switch(
+                activeColor: Styles.ArrivalPalletteBlue,
                 value: biz.isFavorite,
                 onChanged: (value) {
-                appState.setFavorite(id, value);
+                  appState.setFavorite(id, value);
                 },
               ),
               SizedBox(width: 8),
@@ -299,6 +300,7 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
               children: [
                 _buildHeader(context, appState),
                 SizedBox(height: 20),
+                // do laater
                 CupertinoSegmentedControl<int>(
                   children: {
                     0: Text('Sales'),

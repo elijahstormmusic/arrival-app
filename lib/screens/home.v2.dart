@@ -5,9 +5,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import '../data/socket.dart';
 import '../foryou/list.dart';
 import '../maps/maps.dart';
-import '../screens/search.dart';
 import '../screens/settings.dart';
 import '../posts/upload.dart';
 import '../styles.dart';
@@ -20,6 +20,26 @@ class HomeScreen extends StatefulWidget {
 
 class _MainAppStates extends State<HomeScreen> {
   int _selectedIndex = 0;
+  BuildContext recentlySavedContext;
+
+  @override
+  void initState() {
+    socket.home = this;
+    super.initState();
+  }
+
+  void openSnackBar(var details) {
+    // details['text'] -> normal text
+    // ['action'] -> action text
+    // ['function'] -> onclick function
+    // ['timeout'] -> duration
+  }
+
+  void gotoForyou() {
+    if(recentlySavedContext!=null)
+      Navigator.of(recentlySavedContext).popUntil((route) => route.isFirst);
+    setState(() => _selectedIndex = 0);
+  }
 
   void _selectedTab(int index) {
     if (_selectedIndex == index) {
@@ -32,6 +52,8 @@ class _MainAppStates extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    recentlySavedContext = context;
+
     return Scaffold(
       body: _selectedIndex==0 ? ForYouPage() : Maps(),
       bottomNavigationBar: BottomNavigationBar(

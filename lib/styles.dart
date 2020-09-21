@@ -95,6 +95,54 @@ abstract class Styles {
   static Widget ArrivalBlobBlue = SvgPicture.asset('assets/design/blobs/blue.svg');
 
 
+    /** Article Styling
+     *
+     */
+
+  static const TextStyle articleContent = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        // height: 1.6,
+        fontFamily: 'times',
+        // fontFamily: 'Helvetica',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+  );
+  static const TextStyle articleQuote = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'times',
+        // fontFamily: 'Helvetica',
+        fontSize: 22,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+  );
+  static const TextStyle articleHeadline = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
+        // fontSize: 32,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+  );
+  static const TextStyle articleAuthor = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+  );
+  static const TextStyle articleDate = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
+        fontSize: 18,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.normal,
+  );
+
+
+
   static TextStyle headlineText(CupertinoThemeData themeData) => TextStyle(
         color: Styles.ArrivalPalletteBlack,
         fontFamily: 'UraeNium',

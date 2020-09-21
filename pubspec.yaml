@@ -19,6 +19,7 @@ dependencies:
   flutter_speed_dial: ^1.2.5
   cloudinary_client: ^0.0.9
   pull_to_refresh: ^1.6.1
+  drop_cap_text: ^1.0.7
   loading: ^1.0.2
   flutter_polyline_points: ^0.1.0
   cupertino_icons: ^0.1.3

@@ -10,10 +10,13 @@ import '../users/data.dart';
 import '../data/arrival.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
+import '../posts/post.dart';
+import '../foryou/post_card.dart';
+import '../foryou/list.dart';
 
 class socket {
   static SocketIO _socket;
-  static var search, post, profile, foryou;
+  static var home, post, profile, foryou;
 
   static void init() {
     _socket = SocketIOManager().createSocketIO(
@@ -28,25 +31,10 @@ class socket {
          * this functions allow for seemless use of the app
          */
 
-      if (data['type']==800) { // icons download
-        if (search==null) return;
-        var list = data['response'];
+      if (data['type']==900) { // for you download
+        if (foryou==null) return;
 
-        try {
-          for (int i=0;i<list.length;i++) {
-            ArrivalData.posts.add(Post.icon(
-              cryptlink: list[i]['link'],
-              cloudlink: list[i]['cloud'],
-            ));
-          }
-        }
-        catch (e) {
-          print('arrival connection error 800');
-          search.responded([]);
-          return;
-        }
-
-        search.responded(data['response']);
+        foryou.responded(data['response']);
       }
 
       else if (data['type']==801) { // post data
@@ -117,12 +105,6 @@ class socket {
         }
       }
 
-      else if (data['type']==900) { // for you download
-        if (foryou==null) return;
-
-        foryou.responded(data['response']);
-      }
-
 
 
         /***  Server feedback
@@ -130,27 +112,35 @@ class socket {
          */
 
       else if (data['type']==500) { // error reporting
-        print('Arrival Socket error: ' + data['error_code'].toString());
-        // make popup here
+        home.openSnackBar({
+          'text': 'Arrival Socket error: ' + data['error_code'].toString(),
+        });
       }
       else if (data['type']==530) { // post successfully uploaded
-        print('Post uploaded');
-        // put it at top of Foryou page -> data['link']
-        // and go navigate to Foryou
+        foryou.insert(RowPost(Post.link(data['link'])));
+        home.gotoForyou();
+        ForYouPage.scrollToTop();
       }
       else if (data['type']==531) { // post failed upload
-        print('Post upload failed');
-        // make popup here
+        home.openSnackBar({
+          'text': 'Post failed to upload',
+          'action': 'RETRY',
+          'function': () => 3,
+        });
       }
-      else if (data['type']==520) { // article successfully uploaded
-        print('Article uploaded');
-        // put it at top of Foryou page -> data['link']
-        // and go navigate to Foryou
-      }
-      else if (data['type']==521) { // article failed upload
-        print('Article upload failed');
-        // make popup here
-      }
+      // else if (data['type']==520) { // article successfully uploaded
+      //   var article = Article.link(data['link']);
+      //   ArrivalData.articles.add(article);
+      //   ArrivalData.foryou.insert(RowArticle(article));
+      //   home.gotoForyouTop();
+      // }
+      // else if (data['type']==521) { // article failed upload
+      //   home.openSnackBar({
+      //     'text': 'Your article failed to upload',
+      //     'action': 'RETRY',
+      //     'function': () => 3,
+      //   });
+      // }
     });
 
     _socket.connect();

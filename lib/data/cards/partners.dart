@@ -331,7 +331,7 @@ class Business {
       ratingAmount: data['ratingAmount'],
       industry: SourceIndustry.values[data['icon']],
       images: StoreImages(data['images']),
-      contact: ContactList(),
+      contact: ContactList.json(data['contact']),
       sales: SalesList.json(data['sales']),
     );;
   }

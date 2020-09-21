@@ -42,7 +42,6 @@ class ForYouPage extends StatefulWidget {
 
 class _ListState extends State<ForYouPage> {
 
-  List<RowCard> forYou;
   ScrollController _scrollController;
   RefreshController _refreshController;
   RowCard _loadingCard;
@@ -52,15 +51,15 @@ class _ListState extends State<ForYouPage> {
 
   @override
   void initState() {
-    forYou = List<RowCard>();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _refreshController = RefreshController(initialRefresh: true);
+    _refreshController = RefreshController(initialRefresh: false);
     _loadingCard = RowLoading();
     _search = Search();
     socket.foryou = this;
     ForYouPage.currentState = this;
     super.initState();
+    if(ArrivalData.foryou==null) _refresh();
   }
   @override
   void dispose() {
@@ -77,7 +76,7 @@ class _ListState extends State<ForYouPage> {
   }
   void _refresh() {
     if (!_allowRequest) return;
-    forYou = List<RowCard>();
+    ArrivalData.foryou = List<RowCard>();
     _pullNext(REQUEST_AMOUNT);
   }
   void _loadMore() {
@@ -102,7 +101,7 @@ class _ListState extends State<ForYouPage> {
             card = RowBusiness(result);
             ArrivalData.partners.add(result);
           } catch (e) {
-
+            continue;
           }
         }
         else if (data[i]['type']==1) {
@@ -111,7 +110,7 @@ class _ListState extends State<ForYouPage> {
             card = RowArticle(result);
             ArrivalData.articles.add(result);
           } catch (e) {
-
+            continue;
           }
         }
         else if (data[i]['type']==2) {
@@ -120,7 +119,7 @@ class _ListState extends State<ForYouPage> {
             card = RowPost(result);
             ArrivalData.posts.add(result);
           } catch (e) {
-
+            continue;
           }
         }
         else if (data[i]['type']==3) {
@@ -129,7 +128,7 @@ class _ListState extends State<ForYouPage> {
             card = RowSale(result);
             ArrivalData.sales.add(result);
           } catch (e) {
-
+            continue;
           }
         }
         else continue;
@@ -147,7 +146,7 @@ class _ListState extends State<ForYouPage> {
     }
 
     _requestFailed = false;
-    setState(() => forYou += list);
+    setState(() => ArrivalData.foryou += list);
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
   }
@@ -206,7 +205,7 @@ class _ListState extends State<ForYouPage> {
       onLoading: _loadMore,
       child: ListView.builder(
         controller: _scrollController,
-        itemCount: forYou.length + 3,
+        itemCount: ArrivalData.foryou.length + 3,
         itemBuilder: (context, index) {
           if (index == 0) {
             return Stack(
@@ -234,8 +233,8 @@ class _ListState extends State<ForYouPage> {
                 ),
               ],
             );
-          } else if (index <= forYou.length) {
-            return forYou[index-1].generate(prefs);
+          } else if (index <= ArrivalData.foryou.length) {
+            return ArrivalData.foryou[index-1].generate(prefs);
           } else {
             return _loadingCard.generate(prefs);
           }
