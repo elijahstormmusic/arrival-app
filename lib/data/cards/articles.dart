@@ -47,7 +47,7 @@ class Article {
     @required this.images,
     @required this.extra_info,
   }) {
-    if(images.length<1) images.add(Article.default_img);
+    if (images.length<1) images.add(Article.default_img);
   }
 
   NetworkImage headline_image() {

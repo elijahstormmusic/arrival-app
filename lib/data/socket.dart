@@ -117,13 +117,13 @@ class socket {
         }
         for (var i=0;i<ArrivalData.partners.length;i++) {
           if (ArrivalData.partners[i].cryptlink==_business.cryptlink) {
-            try {
               for (var j=0;j<ArrivalData.partners[i].sales.length;j++) {
-                _business.sales.add(ArrivalData.partners[i].sales[j]);
-              }
-            }
-            catch (e) {
-              print('Arrival Error -- Failure adding Sales E810');
+                try {
+                  _business.sales.add(ArrivalData.partners[i].sales[j]);
+                }
+                catch (e) {
+                  print('Arrival Error -- Failure adding Sales E810');
+                }
             }
             ArrivalData.partners[i] = _business;
             return;

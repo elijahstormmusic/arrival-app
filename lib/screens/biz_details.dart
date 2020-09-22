@@ -183,9 +183,9 @@ class InfoView extends StatelessWidget {
 }
 
 class BusinessDisplayPage extends StatefulWidget {
-  final int id;
+  final String cryptlink;
 
-  BusinessDisplayPage(this.id);
+  BusinessDisplayPage(this.cryptlink);
 
   @override
   _BusinessDisplayPageState createState() => _BusinessDisplayPageState();
@@ -196,7 +196,7 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
   final double _headerHeight = 150.0;
 
   Widget _buildHeader(BuildContext context, AppState model) {
-    final biz = model.getBusiness(widget.id);
+    final biz = model.getBusiness(widget.cryptlink);
 
     return SizedBox(
       height: _headerHeight,
@@ -228,7 +228,7 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
-    final biz = appState.getBusiness(widget.id);
+    final biz = appState.getBusiness(widget.cryptlink);
 
     return CupertinoPageScaffold(
       child: Column(
@@ -254,7 +254,7 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
                 //       value: biz.isFavorite,
                 //       activeColor: Styles.ArrivalPalletteBlue,
                 //       onChanged: (value) {
-                //         appState.setFavorite(widget.id, value);
+                //         appState.setFavorite(widget.cryptlink, value);
                 //       },
                 //     ),
                 //     SizedBox(width: 8),

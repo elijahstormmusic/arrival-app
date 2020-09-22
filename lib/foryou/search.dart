@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../widgets/search_bar.dart';
+import '../widgets/partner_headline.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
 import '../data/preferences.dart';
@@ -17,6 +18,7 @@ import '../data/cards/partners.dart';
 import '../data/cards/articles.dart';
 import '../data/cards/sales.dart';
 import '../posts/post.dart';
+import 'list.dart';
 
 class Search extends StatefulWidget {
   _SearchState currentState;
@@ -48,7 +50,11 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
-  void toggleSearch() => setState(() => _searchOpen = !_searchOpen);
+  void toggleSearch() {
+    if (_searchOpen) ForYouPage.showUploadButton();
+    else ForYouPage.hideUploadButton();
+    setState(() => _searchOpen = !_searchOpen);
+  }
 
   Widget _buildSearchLines(List<Business> places) {
     if (places.isEmpty) {
@@ -68,8 +74,7 @@ class _SearchState extends State<Search> {
       itemBuilder: (context, i) {
         return Padding(
           padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: Container(),
-          // child: BusinessHeadline(places[i]),
+          child: BusinessHeadline(places[i]),
         );
       },
     );
@@ -100,18 +105,32 @@ class _SearchState extends State<Search> {
     if (!_searchOpen) return Container();
 
     return Container(
-        height: 400.0,
-        decoration: BoxDecoration(
-          color: Styles.ArrivalPalletteWhite,
-        ),
-        child: ListView(
-          children: <Widget>[
-            _buildSearchBar(),
-            searchTerms!=''
-              ? _buildSearchResults(appState)
-              : Container(),
-          ],
-        ),
-      );
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: searchTerms==''
+          ? Styles.transparentColor
+          : Styles.ArrivalPalletteWhite,
+      ),
+      child: ListView(
+        physics: ClampingScrollPhysics(),
+        children: <Widget>[
+          _buildSearchBar(),
+          Container(
+            height: MediaQuery.of(context).size.height - 100.0,
+            child: searchTerms==''
+              ? GestureDetector(
+                onTap: toggleSearch,
+                child: Container(
+                  height: MediaQuery.of(context).size.height - 100.0,
+                  decoration: BoxDecoration(
+                    color: Styles.transparentColor,
+                  ),
+                ),
+              )
+              : _buildSearchResults(appState),
+          ),
+        ],
+      ),
+    );
   }
 }

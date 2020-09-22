@@ -36,6 +36,13 @@ abstract class Styles {
   static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
   static const _oldArrivalPalletteYellow = Color.fromRGBO(255, 196, 60, 1);
   static const _oldArrivalPalletteCream = Color.fromRGBO(250, 250, 250, 1);
+  static const ArrivalPalletteRedTransparent = Color(0xccF15D5D);
+  static const ArrivalPalletteWhiteTransparent = Color(0xccF8F8F9);
+  static const ArrivalPalletteCreamTransparent = Color(0xccF9EDD3);
+  static const ArrivalPalletteGreyTransparent = Color(0xccD9D5D3);
+  static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
+  static const ArrivalPalletteBlueTransparent = Color(0xcc5AA6DC);
+  static const ArrivalPalletteYellowTransparent = Color(0xccFFCF01);
 
   static const Color mainColor = Styles.ArrivalPalletteRed;
   static const Color activeColor = Styles.ArrivalPalletteYellow;
@@ -120,7 +127,15 @@ abstract class Styles {
         color: Styles.ArrivalPalletteBlack,
         // fontFamily: 'times',
         fontFamily: 'Helvetica',
-        // fontSize: 32,
+        fontSize: 30,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+  );
+  static const TextStyle smallerArticleHeadline = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
+        fontSize: 24,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
   );

@@ -44,7 +44,7 @@ class SaleCard extends StatelessWidget {
       child: PressableCard(
         onPressed: () {
           Navigator.of(context).push<void>(CupertinoPageRoute(
-            builder: (context) => BusinessDisplayPage(sale.partner.id),
+            builder: (context) => BusinessDisplayPage(sale.partner.cryptlink),
             fullscreenDialog: true,
           ));
         },

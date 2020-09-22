@@ -380,7 +380,7 @@ class Business {
         return ArrivalData.partners[i];
       }
     }
-    var P = Business(
+    Business P = Business(
       cryptlink: input,
       id: -1,
       name: 'none',

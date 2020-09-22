@@ -46,7 +46,7 @@ class BusinessCard extends StatelessWidget {
     return PressableCard(
       onPressed: () {
         Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => BusinessDisplayPage(biz.id),
+          builder: (context) => BusinessDisplayPage(biz.cryptlink),
           fullscreenDialog: true,
         ));
       },

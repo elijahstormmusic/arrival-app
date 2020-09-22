@@ -73,7 +73,7 @@ class BusinessHeadline extends StatelessWidget {
     final themeData = CupertinoTheme.of(context);
     return GestureDetector(
       onTap: () => Navigator.of(context).push<void>(CupertinoPageRoute(
-        builder: (context) => BusinessDisplayPage(biz.id),
+        builder: (context) => BusinessDisplayPage(biz.cryptlink),
         fullscreenDialog: true,
       )),
       child: Row(
@@ -93,17 +93,21 @@ class BusinessHeadline extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      biz.name,
-                      style: Styles.headlineName(themeData),
+                    Expanded(
+                      child: Text(
+                        biz.name,
+                        style: Styles.headlineName(themeData),
+                      ),
                     ),
                     // ..._buildSeasonDots(biz.seasons),
                   ],
                 ),
                 StarRating(rating: biz.rating,),
-                Text(
-                  biz.shortDescription,
-                  style: Styles.headlineDescription(themeData),
+                Expanded(
+                  child: Text(
+                    biz.shortDescription,
+                    style: Styles.headlineDescription(themeData),
+                  ),
                 ),
               ],
             ),

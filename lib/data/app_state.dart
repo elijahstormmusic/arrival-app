@@ -14,7 +14,7 @@ class AppState extends Model {
 
   List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);
 
-  Business getBusiness(int id) => ArrivalData.partners.singleWhere((v) => v.id == id);
+  Business getBusiness(String link) => ArrivalData.partners.singleWhere((v) => v.cryptlink == link);
 
   List<Business> get availableBusinesses {
     return ArrivalData.partners.where((v) => v.isOpen()).toList();
@@ -34,8 +34,8 @@ class AppState extends Model {
       .where((v) => v.name.toLowerCase().contains(terms.toLowerCase()))
       .toList();
 
-  void setFavorite(int id, bool isFavorite) {
-    var business = getBusiness(id);
+  void setFavorite(String link, bool isFavorite) {
+    var business = getBusiness(link);
     business.isFavorite = isFavorite;
     notifyListeners();
   }

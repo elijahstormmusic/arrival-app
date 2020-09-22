@@ -206,6 +206,7 @@ class _PostDisPState extends State<PostDisplayPage> {
           children: [
             Expanded(
               child: ListView(
+                physics: ClampingScrollPhysics(),
                 children: [
                   profileDisplay(
                     (ArrivalData.posts[widget.postIndex].user==null)

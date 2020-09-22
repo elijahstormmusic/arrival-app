@@ -30,8 +30,9 @@ class ArticleDisplayPage extends StatefulWidget {
 class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   int _selectedViewIndex = 0;
   int _articleTitleBestSize = 30;
-  double _maxHeaderHeight = 150.0, _minHeaderHeight = 90.0;
-  double _headerDrawY = 71.0, _headerDrawHeight = 34.0;
+  double _safeareaPadding;
+  double _maxHeaderHeight = 126.0, _minHeaderHeight = 66.0;
+  double _headerDrawY = 71.0, _headerDrawHeight = 35.0;
   double _headerHeight;
   double _articlePadding = 24.0;
   double _articleProgress = 0.0;
@@ -60,7 +61,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
       _adjustedArticleTitle =
         _breakLines(widget.article.title, _articleTitleBestSize);
     }
-    else _adjustedArticleTitle = widget.article.title + '                    '
+    else _adjustedArticleTitle = widget.article.title + '                              '
             .substring(0, _articleTitleBestSize-widget.article.title.length);
 
     _headerHeight = _maxHeaderHeight;
@@ -101,7 +102,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
     return AnimatedContainer(
       duration: _animationDuration,
       curve: Curves.easeOutBack,
-      height: _headerHeight,
+      height: _headerHeight + _safeareaPadding,
       child: Stack(
         children: [
           Positioned(
@@ -134,12 +135,16 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
                 height: _headerDrawHeight,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      _adjustedArticleTitle,
-                      style: Styles.articleHeadline,
-                    ),
+                  child: Flex(
+                    direction: Axis.horizontal,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          _adjustedArticleTitle,
+                          style: Styles.smallerArticleHeadline,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -153,13 +158,14 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
                 decoration: BoxDecoration(
                   color: Styles.ArrivalPalletteWhite,
                 ),
+                width: MediaQuery.of(context).size.width - (_articlePadding*2),
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
                   child: Text.rich(
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: widget.article.author + '    ',
+                          text: widget.article.author + '        ',
                           style: Styles.articleAuthor,
                         ),
                         TextSpan(
@@ -195,6 +201,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
       padding: EdgeInsets.all(_articlePadding),
       child: DropCapText(
         content,
+        indentation: Offset(0, 0),
         style: Styles.articleContent,
         textAlign: TextAlign.justify,
         dropCapChars: 1,
@@ -262,6 +269,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   Widget _buildArticle() {
     bool skipNext = false;
     return ListView.builder(
+      physics: ClampingScrollPhysics(),
       controller: _scrollController,
       itemCount: widget.article.body.length + 1,
       itemBuilder: (context, index) {
@@ -323,6 +331,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
+    _safeareaPadding = MediaQuery.of(context).padding.top;
 
     return CupertinoPageScaffold(
       child: Column(

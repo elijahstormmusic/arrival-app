@@ -36,6 +36,11 @@ class ForYouPage extends StatefulWidget {
     currentState.scrollToTop();
   }
 
+  static void showUploadButton() =>
+    currentState.setState(() => currentState.showUploadButton = true);
+  static void hideUploadButton() =>
+    currentState.setState(() => currentState.showUploadButton = false);
+
   @override
   _ListState createState() => _ListState();
 }
@@ -45,6 +50,7 @@ class _ListState extends State<ForYouPage> {
   ScrollController _scrollController;
   RefreshController _refreshController;
   RowCard _loadingCard;
+  bool showUploadButton = true, _scrolling = false;
   bool _allowRequest = true, _requestFailed = false;
   final REQUEST_AMOUNT = 10;
   Search _search;
@@ -276,11 +282,14 @@ class _ListState extends State<ForYouPage> {
             ],
           ),
           drawer: SlideMenu(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => _gotoUpload(context),
-            tooltip: 'Pick Image',
-            child: Icon(Icons.add_a_photo),
-            backgroundColor: Styles.ArrivalPalletteBlue,
+          floatingActionButton: Visibility(
+            visible: showUploadButton,
+            child: FloatingActionButton(
+              onPressed: () => _gotoUpload(context),
+              tooltip: 'Pick Image',
+              child: Icon(Icons.add_a_photo),
+              backgroundColor: Styles.ArrivalPalletteBlue,
+            ),
           ),
           backgroundColor: Styles.ArrivalPalletteWhite,
           body: SafeArea(
