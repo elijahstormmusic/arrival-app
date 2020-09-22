@@ -27,12 +27,8 @@ class SaleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'sale ' + sale.name,
-              style: Styles.cardTitleText,
-            ),
-            Text(
-              sale.shortDescription,
-              style: Styles.cardDescriptionText,
+              sale.name,
+              style: Styles.saleTitle,
             ),
           ],
         ),
@@ -42,36 +38,75 @@ class SaleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PressableCard(
-      onPressed: () {
-        Navigator.of(context).push<void>(CupertinoPageRoute(
-          builder: (context) => BusinessDisplayPage(sale.biz),
-          fullscreenDialog: true,
-        ));
-      },
-      child: Stack(
-        children: [
-          Semantics(
-            label: 'Logo for ${sale.name}',
-            child: Container(
-              height: isNear ? 300 : 150,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  colorFilter:
-                      isNear ? null : Styles.desaturatedColorFilter,
-                  image: sale.card_image(),
+    return Padding(
+      padding: EdgeInsets.only(left: 16, right: 16),
+      child: PressableCard(
+        onPressed: () {
+          Navigator.of(context).push<void>(CupertinoPageRoute(
+            builder: (context) => BusinessDisplayPage(sale.biz),
+            fullscreenDialog: true,
+          ));
+        },
+        child: Stack(
+          children: [
+            Semantics(
+              label: 'Logo for ${sale.name}',
+              child: Container(
+                width: 150,
+                height: 200,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    colorFilter:
+                    isNear ? null : Styles.desaturatedColorFilter,
+                    image: sale.card_image(),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildDetails(),
-          ),
-        ],
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildDetails(),
+            ),
+          ],
+        ),
+      ),
+    );
+    return FractionallySizedBox(
+      widthFactor: 0.45,
+      child: PressableCard(
+        onPressed: () {
+          Navigator.of(context).push<void>(CupertinoPageRoute(
+            builder: (context) => BusinessDisplayPage(sale.biz),
+            fullscreenDialog: true,
+          ));
+        },
+        child: Stack(
+          children: [
+            Semantics(
+              label: 'Logo for ${sale.name}',
+              child: Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    colorFilter:
+                    isNear ? null : Styles.desaturatedColorFilter,
+                    image: sale.card_image(),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildDetails(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -90,8 +125,22 @@ class RowSale extends RowCard {
   @override
   Widget generate(Preferences prefs) {
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-      child: SaleCard(sale, isNear),
+      padding: const EdgeInsets.only(bottom: 20),
+        child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: <Widget>[
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+            SaleCard(sale, isNear),
+          ],
+        ),
+      ),
     );
   }
 }

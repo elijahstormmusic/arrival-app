@@ -124,9 +124,17 @@ class _ListState extends State<ForYouPage> {
         }
         else if (data[i]['type']==3) {
           try {
-            result = Sale.json(data[i]);
-            card = RowSale(result);
-            ArrivalData.sales.add(result);
+            var _sale_list = data[i];
+            for (var _sale=0;_sale<_sale_list.length;_sale++) {
+              try {
+                result = Sale.json(_sale_list[_sale]);
+                card = RowSale(result);
+                ArrivalData.sales.add(result);
+              }
+              catch (e) {
+                continue;
+              }
+            }
           } catch (e) {
             continue;
           }
@@ -257,16 +265,10 @@ class _ListState extends State<ForYouPage> {
               style: Styles.arrTitleText,
             ),
             backgroundColor: Styles.ArrivalPalletteRed,
-            // leading: IconButton(
-            //   icon: const Icon(Icons.menu),
-            //   onPressed: () {
-            //
-            //   }
-            // ),
             actions: <Widget>[
               IconButton(
                 onPressed: () =>
-                  setState(() => _search.searchOpen = !_search.searchOpen),
+                  setState(() => _search.toggleSearch()),
                 icon: const Icon(Icons.search),
               ),
             ],
@@ -278,6 +280,7 @@ class _ListState extends State<ForYouPage> {
             child: Icon(Icons.add_a_photo),
             backgroundColor: Styles.ArrivalPalletteBlue,
           ),
+          backgroundColor: Styles.ArrivalPalletteWhite,
           body: SafeArea(
             bottom: false,
             child: Stack(

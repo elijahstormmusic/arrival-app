@@ -103,7 +103,7 @@ class _PostUploadState extends State<PostUploadScreen> {
         ? FloatingActionButton(
             onPressed: _getImage,
             tooltip: 'Pick Image',
-            child: Icon(Icons.add_a_photo),
+            child: Icon(Icons.add_photo_alternate),
             backgroundColor: Styles.ArrivalPalletteBlue,
           )
         : SpeedDial(

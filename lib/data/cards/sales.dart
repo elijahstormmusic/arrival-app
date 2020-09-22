@@ -81,6 +81,6 @@ class Sale {
 Sale blankSale = Sale(
   id: -1,
   cryptlink: '',
-  name: 'none',
-  shortDescription: '',
+  name: 'no sale',
+  shortDescription: 'we apologize, but no sale could be found',
 );

@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 
+import '../foryou/sale_card.dart';
 import '../data/app_state.dart';
 import '../data/preferences.dart';
 import '../data/cards/partners.dart';
@@ -16,107 +17,45 @@ import '../widgets/close_button.dart';
 import '../widgets/cards.dart';
 import '../maps/maps.dart';
 
-class BuyingCards extends StatelessWidget {
-  const BuyingCards(this.biz, this.prefs);
-
-  final Business biz;
-  final Preferences prefs;
-
-  @override
-  Widget build(BuildContext context) {
-    return FrostyBackground(
-      color: Color(0x90ffffff),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'biz.name',
-              style: Styles.cardTitleText,
-            ),
-            Text(
-              'biz.shortDescription',
-              style: Styles.cardDescriptionText,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class SellerView extends StatelessWidget {
-  final int id;
+  final biz;
 
-  const SellerView(this.id);
+  const SellerView(this.biz);
 
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
     final prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
-    final biz = appState.getBusiness(id);
     final themeData = CupertinoTheme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: 8),
-          Text(
-            biz.name,
-            style: Styles.detailsTitleText(themeData),
-          ),
-          SizedBox(height: 8),
-          BuyingCards(biz, prefs),
-          SizedBox(height: 24),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Switch(
-                value: biz.isFavorite,
-                activeColor: Styles.ArrivalPalletteBlue,
-                onChanged: (value) {
-                  appState.setFavorite(id, value);
-                },
-              ),
-              SizedBox(width: 8),
-              Text(
-                'Save to Favorites',
-                style: CupertinoTheme.of(context).textTheme.textStyle,
-              ),
-            ],
-          ),
-        ],
+      padding: const EdgeInsets.only(bottom: 20),
+      child: ListView.builder(
+        itemCount: biz.sales.length,
+        itemBuilder: (context, index) {
+          return RowSale(biz.sales[index]).generate(prefs);
+        },
       ),
     );
   }
 }
 
 class InfoView extends StatelessWidget {
-  final int id;
+  final biz;
 
-  const InfoView(this.id);
+  const InfoView(this.biz);
 
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
     final prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
-    final biz = appState.getBusiness(id);
     final themeData = CupertinoTheme.of(context);
 
     return Padding(
       padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: 8),
-          Text(
-            biz.name,
-            style: Styles.detailsTitleText(themeData),
-          ),
-          SizedBox(height: 8),
+      child: ListView(
+        children: <Widget>[
           Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
@@ -221,23 +160,6 @@ class InfoView extends StatelessWidget {
               ),
           ),
           SizedBox(height: 24),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Switch(
-                activeColor: Styles.ArrivalPalletteBlue,
-                value: biz.isFavorite,
-                onChanged: (value) {
-                  appState.setFavorite(id, value);
-                },
-              ),
-              SizedBox(width: 8),
-              Text(
-                'Save to Favorites',
-                style: CupertinoTheme.of(context).textTheme.textStyle,
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -255,12 +177,13 @@ class BusinessDisplayPage extends StatefulWidget {
 
 class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
   int _selectedViewIndex = 0;
+  final double _headerHeight = 150.0;
 
   Widget _buildHeader(BuildContext context, AppState model) {
     final biz = model.getBusiness(widget.id);
 
     return SizedBox(
-      height: 150,
+      height: _headerHeight,
       child: Stack(
         children: [
           Positioned(
@@ -289,6 +212,7 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
+    final biz = appState.getBusiness(widget.id);
 
     return CupertinoPageScaffold(
       child: Column(
@@ -297,23 +221,52 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
         children: [
           Expanded(
             child: ListView(
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 _buildHeader(context, appState),
-                SizedBox(height: 20),
-                // do laater
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    biz.name,
+                    style: Styles.businessNameText,
+                  ),
+                ),
+                // Row(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: [
+                //     Switch(
+                //       value: biz.isFavorite,
+                //       activeColor: Styles.ArrivalPalletteBlue,
+                //       onChanged: (value) {
+                //         appState.setFavorite(widget.id, value);
+                //       },
+                //     ),
+                //     SizedBox(width: 8),
+                //     Text(
+                //       'Save to Favorites',
+                //       style: CupertinoTheme.of(context).textTheme.textStyle,
+                //     ),
+                //   ],
+                // ),
+                Container(
+                  height: MediaQuery.of(context).size.height - _headerHeight - 180,
+                  child: _selectedViewIndex == 0
+                    ? SellerView(biz)
+                    : InfoView(biz),
+                ),
                 CupertinoSegmentedControl<int>(
                   children: {
-                    0: Text('Sales'),
-                    1: Text('Contact Info'),
+                    0: Icon(Icons.shopping_cart),
+                    1: Icon(Icons.phone),
                   },
+                  borderColor: Styles.ArrivalPalletteCream,
+                  selectedColor: Styles.ArrivalPalletteBlue,
+                  unselectedColor: Styles.ArrivalPalletteWhite,
                   groupValue: _selectedViewIndex,
                   onValueChanged: (value) {
                     setState(() => _selectedViewIndex = value);
                   },
                 ),
-                _selectedViewIndex == 0
-                    ? SellerView(widget.id)
-                    : InfoView(widget.id),
               ],
             ),
           ),

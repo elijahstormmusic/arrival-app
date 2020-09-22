@@ -2,8 +2,10 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'sales.dart';
 
 
 class LatLng {
@@ -230,45 +232,6 @@ class ContactList {
     return contactData;
   }
 }
-class SalesList {
-  String name = '';
-  String info = '';
-
-  String toString() {
-    String str = '';
-
-    str += '[]';
-
-    return str;
-  }
-
-  SalesList({
-    this.name,
-    this.info,
-  });
-
-  static SalesList json(var data) {
-    return SalesList(
-
-    );
-  }
-  static SalesList parse(String input)
-  {
-    SalesList salesData = SalesList();
-    List<String> curData;
-    List<String> list = input.split(',');
-    for (var i=0;i<list.length;i++) {
-      curData = list[i].split(':');
-      if (curData[0]=='name') {
-        salesData.name = curData[1];
-      }
-      else if (curData[0]=='info') {
-        salesData.info = curData[1];
-      }
-    }
-    return salesData;
-  }
-}
 class Business {
   final int id;
   final String name;
@@ -281,7 +244,7 @@ class Business {
   final StoreImages images;
   final SourceIndustry industry; // an enum link to the Industy index
   final ContactList contact;
-  SalesList sales;
+  List<Sale> sales;
   bool isFavorite;
 
   String toString() {
@@ -318,7 +281,14 @@ class Business {
     @required this.sales,
     @required this.cryptlink,
     this.isFavorite = false,
-  });
+  }) {
+    if(sales.length==0) {
+      int rando = Random().nextInt(10);
+      for (int i=0;i<rando;i++) {
+        sales.add(blankSale);
+      }
+    }
+  }
 
   static Business json(var data) {
     return Business(
@@ -332,8 +302,8 @@ class Business {
       industry: SourceIndustry.values[data['icon']],
       images: StoreImages(data['images']),
       contact: ContactList.json(data['contact']),
-      sales: SalesList.json(data['sales']),
-    );;
+      sales: List<Sale>(),
+    );
   }
   static Business parse(String input) {
     var id, name, rating, ratingAmount, lat, lng,
@@ -388,10 +358,6 @@ class Business {
     endDataLoc = input.indexOf('}', startDataLoc);
     contact = ContactList.parse(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('sales')           + 6;
-    endDataLoc = input.indexOf(']', startDataLoc);
-    sales = SalesList.parse(input.substring(startDataLoc, endDataLoc));
-
     return Business(
       id: id,
       name: name,
@@ -403,7 +369,7 @@ class Business {
       contact: contact,
       shortDescription: shortDescription,
       cryptlink: cryptlink,
-      sales: sales,
+      sales: List<Sale>(),
     );
   }
   static int index = 0;
@@ -418,7 +384,7 @@ Business blankBusiness = Business(
   industry: SourceIndustry.none,
   contact: ContactList(),
   shortDescription: 'description',
-  sales: SalesList(),
+  sales: List<Sale>(),
   cryptlink: "",
 );
 

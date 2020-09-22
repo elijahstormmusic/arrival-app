@@ -19,7 +19,9 @@ import '../data/cards/sales.dart';
 import '../posts/post.dart';
 
 class Search extends StatefulWidget {
-  bool searchOpen = false;
+  _SearchState currentState;
+
+  void toggleSearch() => currentState.toggleSearch();
 
   @override
   _SearchState createState() => _SearchState();
@@ -27,20 +29,26 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
 
+  final ScrollController _scrollController = ScrollController();
   final _textInputController = TextEditingController();
   final _focusNode = FocusNode();
+  bool _searchOpen = false;
   String searchTerms = '';
 
   @override
   void initState() {
+    widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
     super.initState();
   }
   @override
   void dispose() {
+    _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
+
+  void toggleSearch() => setState(() => _searchOpen = !_searchOpen);
 
   Widget _buildSearchLines(List<Business> places) {
     if (places.isEmpty) {
@@ -72,13 +80,13 @@ class _SearchState extends State<Search> {
     return _buildSearchLines(businesses);
   }
   Widget _buildSearchBar() {
-    return widget.searchOpen ? Padding(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
       child: SearchBar(
         controller: _textInputController,
         focusNode: _focusNode,
       ),
-    ) : Container();
+    );
   }
 
   void _onTextChanged() {
@@ -89,9 +97,9 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     var appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
 
-    return searchTerms==''
-      ? _buildSearchBar()
-      : Container(
+    if (!_searchOpen) return Container();
+
+    return Container(
         height: 400.0,
         decoration: BoxDecoration(
           color: Styles.ArrivalPalletteWhite,
@@ -99,7 +107,9 @@ class _SearchState extends State<Search> {
         child: ListView(
           children: <Widget>[
             _buildSearchBar(),
-            _buildSearchResults(appState),
+            searchTerms!=''
+              ? _buildSearchResults(appState)
+              : Container(),
           ],
         ),
       );

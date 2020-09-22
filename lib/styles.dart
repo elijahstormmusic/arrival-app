@@ -142,6 +142,19 @@ abstract class Styles {
   );
 
 
+      /** Sales Styling
+       *
+       */
+
+  static const saleTitle = TextStyle(
+      color: Styles.ArrivalPalletteBlack,
+      fontFamily: 'Helvetica',
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.bold,
+  );
+
+
 
   static TextStyle headlineText(CupertinoThemeData themeData) => TextStyle(
         color: Styles.ArrivalPalletteBlack,
@@ -211,6 +224,13 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
+  static TextStyle businessNameText = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'Helvetica',
+        fontSize: 30,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
   static TextStyle detailsTitleText(CupertinoThemeData themeData) => TextStyle(
         color: themeData.textTheme.textStyle.color,
         fontFamily: 'Helvetica',

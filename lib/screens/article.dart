@@ -4,6 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   double _headerHeight;
   double _articlePadding = 24.0;
   double _articleProgress = 0.0;
+  double _articleHeightProgress = 5000.0;
   double _progressBarHeight = 10.0;
   double _lastRatio = 0.0;
   String _adjustedArticleTitle;
@@ -62,6 +64,10 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
             .substring(0, _articleTitleBestSize-widget.article.title.length);
 
     _headerHeight = _maxHeaderHeight;
+
+    SchedulerBinding.instance.addPostFrameCallback((_) =>
+      _articleHeightProgress = _scrollController.position.maxScrollExtent - 100
+    );
   }
   @override
   void dispose() {
@@ -71,8 +77,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
 
   void _scrollListener() {
     if (_scrollController.position.outOfRange) return;
-    double ratio = _scrollController.offset /
-      (_scrollController.position.maxScrollExtent - 100);
+    double ratio = _scrollController.offset / _articleHeightProgress;
     ratio = (ratio * 10.0).floor().toDouble() / 10.0;
     ratio += 0.05 - (ratio * 0.05);
     if (ratio!=_lastRatio) {
@@ -223,7 +228,10 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
           width: 200.0,
           height: 200.0,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(_articlePadding, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+              leftWrap ? 0 : _articlePadding, 0,
+              leftWrap ? _articlePadding : 0, 0
+            ),
             child: Image.network(
               widget.article.image_link(content),
               fit: BoxFit.fitWidth,
