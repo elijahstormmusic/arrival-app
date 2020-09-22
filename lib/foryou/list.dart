@@ -124,17 +124,19 @@ class _ListState extends State<ForYouPage> {
         }
         else if (data[i]['type']==3) {
           try {
-            var _sale_list = data[i];
-            for (var _sale=0;_sale<_sale_list.length;_sale++) {
+            var _sale_list = data[i]['list'];
+            List<Sale> result_list = List<Sale>();
+            for (int _sale=0;_sale<_sale_list.length;_sale++) {
               try {
                 result = Sale.json(_sale_list[_sale]);
-                card = RowSale(result);
+                result_list.add(result);
                 ArrivalData.sales.add(result);
               }
               catch (e) {
                 continue;
               }
             }
+            card = RowSale(result_list);
           } catch (e) {
             continue;
           }

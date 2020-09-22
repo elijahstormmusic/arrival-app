@@ -38,12 +38,13 @@ class SaleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (sale==null) return Container();
     return Padding(
       padding: EdgeInsets.only(left: 16, right: 16),
       child: PressableCard(
         onPressed: () {
           Navigator.of(context).push<void>(CupertinoPageRoute(
-            builder: (context) => BusinessDisplayPage(sale.biz),
+            builder: (context) => BusinessDisplayPage(sale.partner.id),
             fullscreenDialog: true,
           ));
         },
@@ -74,71 +75,33 @@ class SaleCard extends StatelessWidget {
         ),
       ),
     );
-    return FractionallySizedBox(
-      widthFactor: 0.45,
-      child: PressableCard(
-        onPressed: () {
-          Navigator.of(context).push<void>(CupertinoPageRoute(
-            builder: (context) => BusinessDisplayPage(sale.biz),
-            fullscreenDialog: true,
-          ));
-        },
-        child: Stack(
-          children: [
-            Semantics(
-              label: 'Logo for ${sale.name}',
-              child: Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    colorFilter:
-                    isNear ? null : Styles.desaturatedColorFilter,
-                    image: sale.card_image(),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildDetails(),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
 class RowSale extends RowCard {
 
-  final Sale sale;
+  final List<Sale> sales;
   final bool isNear = true;
 
   RowSale(
-    @required this.sale,
+    @required this.sales,
     // this.isNear,
   );
 
   @override
   Widget generate(Preferences prefs) {
+
+    List<SaleCard> list_of_sales = List<SaleCard>();
+    for (int i=0;i<sales.length;i++) {
+      list_of_sales.add(SaleCard(sales[i], isNear));
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
         child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: <Widget>[
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-            SaleCard(sale, isNear),
-          ],
+          children: list_of_sales,
         ),
       ),
     );

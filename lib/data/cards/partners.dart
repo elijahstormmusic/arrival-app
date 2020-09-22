@@ -5,6 +5,8 @@
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import '../arrival.dart';
+import '../socket.dart';
 import 'sales.dart';
 
 
@@ -244,7 +246,7 @@ class Business {
   final StoreImages images;
   final SourceIndustry industry; // an enum link to the Industy index
   final ContactList contact;
-  List<Sale> sales;
+  List<Sale> sales = List<Sale>();
   bool isFavorite;
 
   String toString() {
@@ -372,6 +374,31 @@ class Business {
       sales: List<Sale>(),
     );
   }
+  static Business link(String input) {
+    for (var i=0;i<ArrivalData.partners.length;i++) {
+      if (ArrivalData.partners[i].cryptlink==input) {
+        return ArrivalData.partners[i];
+      }
+    }
+    var P = Business(
+      cryptlink: input,
+      id: -1,
+      name: 'none',
+      rating: 0,
+      ratingAmount: 0,
+      location: LatLng(0, 0),
+      images: StoreImages('empty'),
+      industry: SourceIndustry.none,
+      contact: ContactList(),
+      shortDescription: 'description',
+      sales: List<Sale>(),
+    );
+    socket.emit('partners get link', {
+      'link': input,
+    });
+    ArrivalData.partners.add(P);
+    return P;
+  }
   static int index = 0;
 }
 Business blankBusiness = Business(
@@ -385,7 +412,7 @@ Business blankBusiness = Business(
   contact: ContactList(),
   shortDescription: 'description',
   sales: List<Sale>(),
-  cryptlink: "",
+  cryptlink: '',
 );
 
 

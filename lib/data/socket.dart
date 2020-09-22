@@ -8,6 +8,7 @@ import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'dart:convert';
 import '../users/data.dart';
 import '../data/arrival.dart';
+import '../data/cards/partners.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 import '../posts/post.dart';
@@ -103,6 +104,32 @@ class socket {
           print('arrival connection error 804');
           return;
         }
+      }
+
+      else if (data['type']==810) { //  single partner link downoad
+        Business _business;
+        try {
+          _business = Business.json(data['response']);
+        }
+        catch (e) {
+          print('Arrival Error -- Failure parsing Business E810');
+          return;
+        }
+        for (var i=0;i<ArrivalData.partners.length;i++) {
+          if (ArrivalData.partners[i].cryptlink==_business.cryptlink) {
+            try {
+              for (var j=0;j<ArrivalData.partners[i].sales.length;j++) {
+                _business.sales.add(ArrivalData.partners[i].sales[j]);
+              }
+            }
+            catch (e) {
+              print('Arrival Error -- Failure adding Sales E810');
+            }
+            ArrivalData.partners[i] = _business;
+            return;
+          }
+        }
+        ArrivalData.partners.add(_business);
       }
 
 

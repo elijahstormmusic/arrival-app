@@ -29,14 +29,30 @@ class SellerView extends StatelessWidget {
     final prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
     final themeData = CupertinoTheme.of(context);
 
+    if(biz.sales.length==0) {
+      return Padding(
+        padding: EdgeInsets.all(64),
+        child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: FrostyBackground(
+            color: Styles.frostedBackground,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'There are no sales for this business at the moment.',
+                style: Styles.cardTitleText,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
-      child: ListView.builder(
-        itemCount: biz.sales.length,
-        itemBuilder: (context, index) {
-          return RowSale(biz.sales[index]).generate(prefs);
-        },
-      ),
+      child: RowSale(biz.sales).generate(prefs),
     );
   }
 }
