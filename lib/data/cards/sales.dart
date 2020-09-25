@@ -41,7 +41,7 @@ class Sale {
     @required this.shortDescription,
     @required this.partner,
   }) {
-    partner.sales.add(this);
+    ArrivalData.innocentAdd(partner.sales, this);
   }
 
   NetworkImage card_image() {

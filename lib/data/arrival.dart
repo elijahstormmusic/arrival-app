@@ -24,6 +24,17 @@ class ArrivalData {
   static List<Business> partners;
   static List<Article> articles;
   static List<Sale> sales;
+  static final DateTime default_time = new DateTime(1996, 9, 29);
+
+  static dynamic innocentAdd(List<dynamic> _list, dynamic _input) {
+    for (int i=0;i<_list.length;i++) {
+      if (_list[i].cryptlink==_input.cryptlink) {
+        return;
+      }
+    }
+    _list.add(_input);
+    return _input;
+  }
 
   static void save() async {
     ArrivalFiles file = ArrivalFiles('partners.json');
@@ -58,7 +69,7 @@ class ArrivalData {
     try {
       (await ArrivalFiles('partners.json').readAll())
         .forEach((String key, dynamic value) =>
-          ArrivalData.partners.add(Business.parse(value)));
+          ArrivalData.innocentAdd(ArrivalData.partners, Business.parse(value)));
     } catch(e) {
       print('-------');
       print('Arrival Error when loading parter data');
@@ -68,7 +79,7 @@ class ArrivalData {
     try {
       (await ArrivalFiles('articles.json').readAll())
         .forEach((String key, dynamic value) =>
-          ArrivalData.articles.add(Article.parse(value)));
+          ArrivalData.innocentAdd(ArrivalData.articles, Article.parse(value)));
     } catch(e) {
       print('-------');
       print('Arrival Error when loading article data');

@@ -22,7 +22,7 @@ class PostCard extends StatelessWidget {
 
   Widget _buildDetails() {
     return FrostyBackground(
-      color: Color(0x90ffffaa),
+      color: Styles.ArrivalPalletteBlueFrosted,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

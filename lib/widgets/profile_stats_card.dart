@@ -27,7 +27,7 @@ class UserProfilePlacecard extends StatelessWidget {
           ));
         },
         child: FrostyBackground(
-          color: Color(0x90ffffaa),
+          color: Styles.ArrivalPalletteYellowFrosted,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Stack(

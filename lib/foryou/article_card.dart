@@ -19,7 +19,7 @@ class ArticleCard extends StatelessWidget {
 
   Widget _buildDetails() {
     return FrostyBackground(
-      color: Color(0x90ffffaa),
+      color: Styles.ArrivalPalletteYellowFrosted,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

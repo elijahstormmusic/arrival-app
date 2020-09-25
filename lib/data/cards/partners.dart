@@ -283,14 +283,7 @@ class Business {
     @required this.sales,
     @required this.cryptlink,
     this.isFavorite = false,
-  }) {
-    if(sales.length==0) {
-      int rando = Random().nextInt(10);
-      for (int i=0;i<rando;i++) {
-        sales.add(blankSale);
-      }
-    }
-  }
+  });
 
   static Business json(var data) {
     return Business(
@@ -396,7 +389,7 @@ class Business {
     socket.emit('partners get link', {
       'link': input,
     });
-    ArrivalData.partners.add(P);
+    ArrivalData.innocentAdd(ArrivalData.partners, P);
     return P;
   }
   static int index = 0;

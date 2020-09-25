@@ -93,7 +93,7 @@ class DataState extends State<Data> {
               if (split.length==0) return;
               if (split[0]=='links') {
                 for (int i=1;i<split.length;i++) {
-                  ArrivalData.posts.add(Post.icon(
+                  ArrivalData.innocentAdd(ArrivalData.posts, Post.icon(
                     cryptlink: split[i].substring(6, split[i].length-1)
                   ));
                 }
@@ -161,7 +161,7 @@ class DataState extends State<Data> {
             if (split.length==0) return;
             if (split[0]=='response') {
               for (int i=1;i<split.length;i++) {
-                ArrivalData.partners.add(Business.parse(split[i]));
+                ArrivalData.innocentAdd(ArrivalData.partners, Business.parse(split[i]));
               }
               ArrivalData.save();
 

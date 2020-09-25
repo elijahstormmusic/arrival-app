@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 class FrostyBackground extends StatelessWidget {
   const FrostyBackground({
     this.color,
-    this.intensity = 25,
+    this.intensity = 5,
     this.child,
   });
 

@@ -53,6 +53,7 @@ class _ListState extends State<ForYouPage> {
   bool showUploadButton = true, _scrolling = false;
   bool _allowRequest = true, _requestFailed = false;
   final REQUEST_AMOUNT = 10;
+  final _scrollTargetDistanceFromBottom = 400.0;
   Search _search;
 
   @override
@@ -105,7 +106,7 @@ class _ListState extends State<ForYouPage> {
           try {
             result = Business.json(data[i]);
             card = RowBusiness(result);
-            ArrivalData.partners.add(result);
+            ArrivalData.innocentAdd(ArrivalData.partners, result);
           } catch (e) {
             continue;
           }
@@ -114,17 +115,18 @@ class _ListState extends State<ForYouPage> {
           try {
             result = Article.json(data[i]);
             card = RowArticle(result);
-            ArrivalData.articles.add(result);
+            ArrivalData.innocentAdd(ArrivalData.articles, result);
           } catch (e) {
             continue;
           }
         }
         else if (data[i]['type']==2) {
           try {
-            result = Post.json(data[i]['post']);
+            result = Post.json(data[i]);
             card = RowPost(result);
-            ArrivalData.posts.add(result);
+            ArrivalData.innocentAdd(ArrivalData.posts, result);
           } catch (e) {
+            print(e);
             continue;
           }
         }
@@ -135,8 +137,8 @@ class _ListState extends State<ForYouPage> {
             for (int _sale=0;_sale<_sale_list.length;_sale++) {
               try {
                 result = Sale.json(_sale_list[_sale]);
-                result_list.add(result);
-                ArrivalData.sales.add(result);
+                ArrivalData.innocentAdd(result_list, result);
+                ArrivalData.innocentAdd(ArrivalData.sales, result);
               }
               catch (e) {
                 continue;
@@ -168,9 +170,17 @@ class _ListState extends State<ForYouPage> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset + 400 >= _scrollController.position.maxScrollExtent) {
+    if (_scrollController.offset + _scrollTargetDistanceFromBottom
+        >= _scrollController.position.maxScrollExtent) {
       _pullNext(REQUEST_AMOUNT);
     }
+  }
+  void _onEndScroll(ScrollMetrics metrics) {
+    // setState(() => _scrolling = false);
+    // _scrollController.saveScrollOffset();
+  }
+  void _onStartScroll(ScrollMetrics metrics) {
+    // setState(() => _scrolling = true);
   }
   void scrollToTop() {
     _scrollController.animateTo(
@@ -202,7 +212,10 @@ class _ListState extends State<ForYouPage> {
             body = CupertinoActivityIndicator();
           }
           else if (mode == LoadStatus.failed){
-            body = Text("Network Error");
+            openSnackBar({
+              'text': 'Network Error'
+            });
+            body = Container();
           }
           else if (mode == LoadStatus.canLoading){
             body = Container();
@@ -219,48 +232,86 @@ class _ListState extends State<ForYouPage> {
       controller: _refreshController,
       onRefresh: _refresh,
       onLoading: _loadMore,
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: ArrivalData.foryou.length + 3,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Stack(
-              children: <Widget>[
-                Blob_Background(height: 305.0),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 265.0,
-                        child: Pinned.fromSize(
-                          bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
-                          size: Size(412.0, 1600.0),
-                          pinLeft: true,
-                          pinRight: true,
-                          pinTop: true,
-                          fixedHeight: true,
-                          child: UserProfilePlacecard(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          } else if (index <= ArrivalData.foryou.length) {
-            return ArrivalData.foryou[index-1].generate(prefs);
-          } else {
-            return _loadingCard.generate(prefs);
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollNotification) {
+          if (scrollNotification is ScrollStartNotification) {
+            _onStartScroll(scrollNotification.metrics);
+          } else if (scrollNotification is ScrollEndNotification) {
+            _onEndScroll(scrollNotification.metrics);
           }
         },
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: ArrivalData.foryou.length + 3,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Stack(
+                children: <Widget>[
+                  Blob_Background(height: 305.0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 24, 32, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 265.0,
+                          child: Pinned.fromSize(
+                            bounds: Rect.fromLTWH(18.0, 26.0, 387.0, 205.0),
+                            size: Size(412.0, 1600.0),
+                            pinLeft: true,
+                            pinRight: true,
+                            pinTop: true,
+                            fixedHeight: true,
+                            child: UserProfilePlacecard(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            } else if (index <= ArrivalData.foryou.length) {
+              return ArrivalData.foryou[index-1].generate(prefs);
+            } else {
+              try {
+                return _loadingCard.generate(prefs);
+              } catch (e) {
+                return Container();
+              }
+            }
+          },
+        ),
       ),
     );
   }
 
+  BuildContext _context;
+  SnackBar _snackBar;
+  void openSnackBar(Map<String, dynamic> input) {
+    try {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(input['text']),
+        backgroundColor: Styles.ArrivalPalletteRed,
+        elevation: 15.0,
+        duration: input['duration']==null ? null : Duration(seconds: input['duration']),
+        action: input['action']==null ? null : SnackBarAction(
+          textColor: Styles.ArrivalPalletteBlue,
+          disabledTextColor: Styles.ArrivalPalletteGrey,
+          label: input['action-label'],
+          onPressed: input['action'],
+        ),
+        // animation: Animation<double>(),
+        // behavior: SnackBarBehavior.fixed,
+      ));
+    } catch (e) {
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _context = context;
+
     return CupertinoTabView(
       builder: (context) {
         var appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
@@ -284,11 +335,20 @@ class _ListState extends State<ForYouPage> {
           drawer: SlideMenu(),
           floatingActionButton: Visibility(
             visible: showUploadButton,
-            child: FloatingActionButton(
-              onPressed: () => _gotoUpload(context),
-              tooltip: 'Pick Image',
-              child: Icon(Icons.add_a_photo),
-              backgroundColor: Styles.ArrivalPalletteBlue,
+            child: AnimatedContainer(
+              duration: Duration(seconds: 1),
+              decoration: BoxDecoration(
+                // color: _scrolling
+                //   ? Styles.ArrivalPalletteBlueTransparent
+                //   : Styles.ArrivalPalletteBlue,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: FloatingActionButton(
+                onPressed: () => _gotoUpload(context),
+                tooltip: 'Upload Content',
+                child: Icon(Icons.add_a_photo),
+                backgroundColor: Styles.ArrivalPalletteBlue,
+              ),
             ),
           ),
           backgroundColor: Styles.ArrivalPalletteWhite,

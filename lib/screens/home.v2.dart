@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _MainAppStates extends State<HomeScreen> {
   int _selectedIndex = 0;
-  BuildContext recentlySavedContext;
+  bool _pulltoforyou = false;
 
   @override
   void initState() {
@@ -28,22 +28,13 @@ class _MainAppStates extends State<HomeScreen> {
     super.initState();
   }
 
-  void openSnackBar(var details) {
-    // details['text'] -> normal text
-    // ['action'] -> action text
-    // ['function'] -> onclick function
-    // ['timeout'] -> duration
-  }
+  void gotoForyou() =>
+    setState(() => _pulltoforyou = true);
 
-  void gotoForyou() {
-    if(recentlySavedContext!=null)
-      Navigator.of(recentlySavedContext).popUntil((route) => route.isFirst);
-    setState(() => _selectedIndex = 0);
-  }
-
-  void _selectedTab(int index) {
+  void _selectedTab(BuildContext context, int index) {
     if (_selectedIndex == index) {
       if (index == 0) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
         ForYouPage.scrollToTop();
       }
     }
@@ -52,12 +43,16 @@ class _MainAppStates extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    recentlySavedContext = context;
+
+    if (_pulltoforyou) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      _pulltoforyou = false;
+    }
 
     return Scaffold(
       body: _selectedIndex==0 ? ForYouPage() : Maps(),
       bottomNavigationBar: BottomNavigationBar(
-        onTap: _selectedTab,
+        onTap: (index) => _selectedTab(context, index),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

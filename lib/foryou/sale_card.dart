@@ -20,7 +20,7 @@ class SaleCard extends StatelessWidget {
 
   Widget _buildDetails() {
     return FrostyBackground(
-      color: Color(0x90ffffaa),
+      color: Styles.ArrivalPalletteRedFrosted,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

@@ -14,10 +14,10 @@ import '../adobe/pinned.dart';
 
 import '../data/app_state.dart';
 import '../styles.dart';
-import '../widgets/close_button.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 import '../users/page.dart';
+import '../users/data.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 import 'dart:async';
@@ -139,19 +139,221 @@ class PostDisplayPage extends StatefulWidget {
 class _PostDisPState extends State<PostDisplayPage> {
   bool response = false;
   bool loaded = false;
+  bool _commentsPageOpen = false;
+  bool _clientHasLikedPost = false;
+  final _padding = 7.0;
+  final _lineSize = 3.0;
   double _buttonSize = 35.0;
+  int _page = 0;
+  ScrollController _scrollController;
+  final _textInputController = TextEditingController();
+  final _focusNode = FocusNode();
 
   @override
   void initState() {
     socket.post = this;
+    socket.emit('posts get comments', {
+      'link': ArrivalData.posts[widget.postIndex].cryptlink,
+      'page': _page,
+    });
+    _scrollController = ScrollController();
+    _textInputController.addListener(_onTextChanged);
     super.initState();
+  }
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   void responded() {
     setState(() => loaded = true);
   }
 
-  Widget profileDisplay(Profile user) {
+  TextStyle _usernameTextStyle = TextStyle(
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
+  String _addPluralS(int amount) {
+    if (amount>1) return 's';
+    return '';
+  }
+  Widget _buildLikesDisplay() {
+    int currentLikes =
+      ArrivalData.posts[widget.postIndex].likes + (_clientHasLikedPost ? 1 : 0);
+    int commentAmt = ArrivalData.posts[widget.postIndex].comments.length;
+
+    return Text.rich(
+      TextSpan(
+        style: Styles.postText,
+        children: [
+            TextSpan(
+            text:
+              (currentLikes==0) ? '' :
+              currentLikes.toString() + ' like' + _addPluralS(currentLikes),
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          TextSpan(
+            text:
+              commentAmt==0 ? '' :
+                ((currentLikes==0 ? '' : ' & ')
+                  + commentAmt.toString()
+                  + ' comment' + _addPluralS(commentAmt)),
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+      textAlign: TextAlign.left,
+    );
+  }
+  Widget _buildComment(Map<String, dynamic> _comment) {
+    if(_comment==null) return Container();
+    return Text.rich(
+      TextSpan(
+        style: Styles.postText,
+        children: [
+          TextSpan(
+            text: _comment['username']
+            + '  ',
+            style: _usernameTextStyle,
+          ),
+          TextSpan(text: '  ' + _comment['content']),
+        ],
+      ),
+      textAlign: TextAlign.left,
+    );
+  }
+  Widget _buildCaption() {
+    return _buildComment({
+      'username': ArrivalData.posts[widget.postIndex].user==null
+                    ? 'no user'
+                    : ArrivalData.posts[widget.postIndex].user.name,
+      'content': ArrivalData.posts[widget.postIndex].caption,
+    });
+  }
+  Widget _buildShortCommentList(List<Map<String, dynamic>> commentsList) {
+    int maxShortDisplay = 3;
+
+    return Container(
+      height: 100,
+      child: ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: commentsList.length<maxShortDisplay ? commentsList.length : maxShortDisplay,
+        itemBuilder: (context, index) => _buildComment(commentsList[index]),
+      ),
+    );
+  }
+
+  void _openCommentsPage(BuildContext context) {
+    setState(() => _commentsPageOpen = true);
+  }
+  void _loadMore() {
+    socket.emit('posts get comments', {
+      'link': ArrivalData.posts[widget.postIndex].cryptlink,
+      'page': ++_page,
+    });
+  }
+  void _loadReplies(String reply_index) {
+    socket.emit('posts get comments', {
+      'link': ArrivalData.posts[widget.postIndex].cryptlink,
+      'page': _page,
+      'reply': reply_index,
+    });
+  }
+
+  Widget _drawSupportingElements(BuildContext context) {
+    return ListView(
+      physics: NeverScrollableScrollPhysics(),
+      children: [
+        Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: GestureDetector(
+                child: Icon(
+                  _clientHasLikedPost
+                    ? Styles.heart_full
+                    : Styles.heart,
+                  color: _clientHasLikedPost
+                    ? Colors.red
+                    : Colors.black,
+                  size: _buttonSize,
+                ),
+                onTap: () => setState(() =>
+                  _clientHasLikedPost = !_clientHasLikedPost),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: GestureDetector(
+                child: Icon(
+                  Styles.comment,
+                  size: _buttonSize,
+                  color: Colors.black,
+                ),
+                onTap: () => setState(() => _focusNode.requestFocus()),
+              ),
+            ),
+            Expanded(
+              flex: 6,
+              child: Container(),
+            ),
+            Expanded(
+              flex: 1,
+              child: GestureDetector(
+                child: Icon(
+                  Styles.share,
+                  size: _buttonSize,
+                  color: Colors.black,
+                ),
+                onTap: () => setState(() => _focusNode.requestFocus()),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: _padding),
+        (ArrivalData.posts[widget.postIndex].likes==0
+          && ArrivalData.posts[widget.postIndex].comments.length==0)
+          ? Container()
+          : _buildLikesDisplay(),
+        SizedBox(height: _padding),
+        _buildCaption(),
+        SizedBox(height: _padding*2),
+        _buildShortCommentList(ArrivalData.posts[widget.postIndex].comments),
+        GestureDetector(
+          onTap: () => _openCommentsPage(context),
+          child: Container(
+            height: 50,
+            child: Text.rich(
+              TextSpan(
+                style: Styles.postText,
+                children: [
+                  TextSpan(
+                    text: 'Show all comments...',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                    )
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ),
+        _buildCommentAdder(),
+      ],
+    );
+  }
+  Widget _profileDisplay(Profile user) {
     return GestureDetector(
       child: SizedBox(
         height: 50,
@@ -185,15 +387,268 @@ class _PostDisPState extends State<PostDisplayPage> {
     );
   }
 
+  String _showTimeSinceDate(DateTime date) {
+    Duration timeSince = DateTime.now().difference(date);
+    String output = 'just now';
+
+    if (timeSince.inDays==0) {
+      if (timeSince.inHours==0) {
+          if (timeSince.inMinutes==0) {
+            output = timeSince.inSeconds.toString() + ' second';
+            if (timeSince.inSeconds>1) output+='s';
+            output+=' ago';
+          } else {
+            output = timeSince.inMinutes.toString() + ' minute';
+            if (timeSince.inMinutes>1) output+='s';
+            output+=' ago';
+          }
+      } else {
+        output = timeSince.inHours.toString() + ' hour';
+        if (timeSince.inHours>1) output+='s';
+        output+=' ago';
+      }
+    }
+    else {
+      if (timeSince.inDays>=365) {
+        int years = timeSince.inDays ~/ 365;
+        output = years.toString() + ' year';
+        if (years>1) output+='s';
+        output+=' ago';
+      } else if (timeSince.inDays>=29) {
+        int months = timeSince.inDays ~/ 30;
+        output = months.toString() + ' month';
+        if (months>1) output+='s';
+        output+=' ago';
+      } else {
+        output = timeSince.inDays.toString() + ' day';
+        if (timeSince.inDays>1) output+='s';
+        output+=' ago';
+      }
+    }
+
+    return output;
+  }
+  Widget _buildCommentsList(List<Map<String, dynamic>> commentsList) {
+    double _commonCommentPadding = 10;
+    return ListView.builder(
+      physics: ClampingScrollPhysics(),
+      itemCount: commentsList.length + 1,
+      itemBuilder: (context, index) {
+        return index==0
+          ? Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: EdgeInsets.all(_commonCommentPadding),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(9999.0),
+                          child: Profile.empty.iconBySize(35.0),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 6,
+                      child: Padding(
+                        padding: EdgeInsets.all(_commonCommentPadding),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildCaption(),
+                            Text(
+                              _showTimeSinceDate(ArrivalData.posts[widget.postIndex].uploadDate),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 4),
+              Divider(height: 1.0, thickness: 1.0),
+            ],
+          )
+          : Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 4,
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: EdgeInsets.all(_commonCommentPadding),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(9999.0),
+                      child: Profile.empty.iconBySize(35.0),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Padding(
+                    padding: EdgeInsets.all(_commonCommentPadding),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildComment(commentsList[index - 1]),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 4,
+                              child: Text(
+                                _showTimeSinceDate(DateTime.parse(commentsList[index - 1]['date'])),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                commentsList[index - 1]['votes'].toString() + ' likes',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'reply',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: EdgeInsets.all(_commonCommentPadding),
+                    child: Icon(Styles.heart),
+                  ),
+                ),
+              ],
+            ),
+          );
+      },
+      controller: _scrollController,
+    );
+  }
+  Widget _buildCommentsScreen(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        previousPageTitle: 'Back',
+      ),
+      child: _buildCommentsList(ArrivalData.posts[widget.postIndex].comments),
+    );
+  }
+
+  Widget _buildCommentAdder() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Styles.ArrivalPalletteWhite,
+        borderRadius: BorderRadius.circular(0),
+        border: Border.all(color: Styles.ArrivalPalletteBlack),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 4,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+                child: CupertinoTextField(
+                  controller: _textInputController,
+                  focusNode: _focusNode,
+                  decoration: null,
+                  // selectionHeightStyle: BoxHeightStyle.includeLineSpacingTop,
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Styles.ArrivalPalletteBlack,
+                  ),
+                  cursorColor: Styles.searchCursorColor,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: _sendCommentToServer,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Styles.ArrivalPalletteRed,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(6),
+                  child: Text(
+                    'SEND',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Styles.ArrivalPalletteWhite,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  bool _allowComment = true;
+  void _sendCommentToServer() async {
+    if (!_allowComment) return;
+
+    var cleanedComment = _textInputController.text;
+
+    if (cleanedComment=='') return;
+
+    _allowComment = false;
+    socket.emit('posts add comment', {
+			'cryptlink': UserData.client.cryptlink,
+			'username': UserData.client.name,
+  		'content': cleanedComment,
+      'link': ArrivalData.posts[widget.postIndex].cryptlink,
+    });
+
+    await Future.delayed(const Duration(seconds: 5));
+    _allowComment = true;
+  }
+  void _onTextChanged() {
+    if (true) return; // check if @ing someone and suggest
+    setState(() => 3);
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
     final themeData = CupertinoTheme.of(context);
-    final padding = 7.0;
-    final lineSize = 3.0;
-    var clientHasLikedPost = false;
-    var ClientHeartStyle = Styles.heart;
-    var ClientHeartColor = Colors.black;
+
+    if (_commentsPageOpen) return _buildCommentsScreen(context);
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -208,122 +663,19 @@ class _PostDisPState extends State<PostDisplayPage> {
               child: ListView(
                 physics: ClampingScrollPhysics(),
                 children: [
-                  profileDisplay(
+                  _profileDisplay(
                     (ArrivalData.posts[widget.postIndex].user==null)
                       ? Profile.empty
                       : ArrivalData.posts[widget.postIndex].user
                   ),
-                  Divider(height: lineSize, thickness: lineSize),
+                  Divider(height: _lineSize, thickness: _lineSize),
                   ArrivalData.posts[widget.postIndex].image(),
                   loaded
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
                       child: Container(
-                        height: 200.0,
-                        child: ListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 1,
-                                  child: GestureDetector(
-                                    child: Icon(
-                                      clientHasLikedPost
-                                        ? Styles.heart
-                                        : Styles.heart_full,
-                                      color: clientHasLikedPost
-                                        ? Colors.black
-                                        : Colors.red,
-                                      size: _buttonSize,
-                                    ),
-                                    onTap: () => setState(() =>
-                                      clientHasLikedPost = !clientHasLikedPost),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Icon(
-                                    Styles.comment,
-                                    size: _buttonSize,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 6,
-                                  child: Container(),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Icon(
-                                    Styles.share,
-                                    size: _buttonSize,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: padding),
-                            Text.rich(
-                              TextSpan(
-                                style: Styles.postText,
-                                children: [
-                                  TextSpan(
-                                    text:
-                                    ArrivalData.posts[widget.postIndex].likes.toString() + ' likes & ',
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                    ArrivalData.posts[widget.postIndex].comments.toString() + ' comments',
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(height: padding),
-                            Text.rich(
-                              TextSpan(
-                                style: Styles.postText,
-                                children: [
-                                  TextSpan(
-                                    text: ArrivalData.posts[widget.postIndex].user==null ? 'no user' : ArrivalData.posts[widget.postIndex].user.name
-                                    + '  ',
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  TextSpan(text: '  ' + ArrivalData.posts[widget.postIndex].caption),
-                                ],
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(height: padding),
-                            Text.rich(
-                              TextSpan(
-                                style: Styles.postText,
-                                children: [
-                                  TextSpan(
-                                    text: '(comments will go here later...)',
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.w500,
-                                    )
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
+                        height: 320.0,
+                        child: _drawSupportingElements(context),
                       ),
                     )
                     : Padding(

@@ -184,7 +184,7 @@ class Profile {
     socket.emit('profile lite', {
       'link': input,
     });
-    ArrivalData.profiles.add(P);
+    ArrivalData.innocentAdd(ArrivalData.profiles, P);
     return P;
   }
   static Profile link(String input) {
@@ -206,7 +206,7 @@ class Profile {
     socket.emit('profile get', {
       'link': input,
     });
-    ArrivalData.profiles.add(P);
+    ArrivalData.innocentAdd(ArrivalData.profiles, P);
     return P;
   }
 }

@@ -18,8 +18,9 @@ class Post {
   final String cryptlink;
   final String cloudlink;
   final int likes;
-  final int comments;
   final Profile user;
+  final DateTime uploadDate;
+  List<Map<String, dynamic>> comments = [];
   final bool full;
 
   String toString() {
@@ -27,8 +28,8 @@ class Post {
     str += 'caption:' + caption + ',';
     str += 'cryptlink:' + cryptlink + ',';
     str += 'cloudlink:' + cloudlink + ',';
+    str += 'date:' + uploadDate.toString() + ',';
     str += 'likes:' + likes.toString() + ',';
-    str += 'comments:' + comments.toString() + ',';
     str += 'user:{' + user.toString() + '}';
     return str;
   }
@@ -38,7 +39,7 @@ class Post {
     @required this.cryptlink,
     @required this.cloudlink,
     @required this.likes,
-    @required this.comments,
+    @required this.uploadDate,
     @required this.user,
     this.full = true,
   });
@@ -47,20 +48,22 @@ class Post {
     @required this.cloudlink,
     this.caption = 'loading...',
     this.likes = 0,
-    this.comments = 0,
+    this.uploadDate = null,
     this.full = false,
     this.user = null,
-  }) {}
+  });
   static final Post empty = Post(
     caption: '',
     cryptlink: '',
     cloudlink: 'v1599325166/sample.jpg',
     likes: 0,
-    comments: 0,
+    uploadDate: ArrivalData.default_time,
     user: Profile.empty,
   );
 
   NetworkImage card_image() {
+    if (cloudlink==null)
+      return NetworkImage(Post.source + 'v1599325166/sample.jpg');
     return NetworkImage(Post.source + cloudlink);
   }
   Widget image() {
@@ -82,7 +85,7 @@ class Post {
       cryptlink: input['cryptlink'],
       cloudlink: input['cloudlink'],
       likes: input['likes'],
-      comments: input['comments'],
+      uploadDate: DateTime.parse(input['date']),
       user: Profile.lite(input['user']),
     );
   }
@@ -91,7 +94,7 @@ class Post {
       input = input.substring(1, input.length-1);
 
     var caption, cryptlink, likes,
-        cloudlink, comments, user;
+        uploadDate, cloudlink, user;
 
     var startDataLoc, endDataLoc = 0;
 
@@ -103,9 +106,9 @@ class Post {
     endDataLoc = input.indexOf(',', startDataLoc);
     likes = int.parse(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('comments')           + 9;
+    startDataLoc = input.indexOf('uploadDate')      + 11;
     endDataLoc = input.indexOf(',', startDataLoc);
-    comments = int.parse(input.substring(startDataLoc, endDataLoc));
+    uploadDate = DateTime.parse(input.substring(startDataLoc, endDataLoc));
 
     startDataLoc = input.indexOf('cryptlink')       + 10;
     endDataLoc = input.indexOf(',', startDataLoc);
@@ -123,8 +126,8 @@ class Post {
       caption: caption,
       cryptlink: cryptlink,
       cloudlink: cloudlink,
+      uploadDate: uploadDate,
       likes: likes,
-      comments: comments,
       user: user,
     );
   }
@@ -139,13 +142,13 @@ class Post {
       cryptlink: input,
       cloudlink: 'v1599325166/sample.jpg',
       likes: 0,
-      comments: 0,
+      uploadDate: ArrivalData.default_time,
       user: Profile.empty,
     );
     socket.emit('posts get', {
       'link': input,
     });
-    ArrivalData.posts.add(P);
+    ArrivalData.innocentAdd(ArrivalData.posts, P);
     return P;
   }
   static int index = 0;

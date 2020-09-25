@@ -27,10 +27,10 @@ class ArrivalTitle extends StatelessWidget {
 abstract class Styles {
 
   static const ArrivalPalletteRed = Color(0xffF15D5D);
-  static const ArrivalPalletteWhite = Color(0xffF8F8F9);
   static const ArrivalPalletteCream = Color(0xffF9EDD3);
-  static const ArrivalPalletteGrey = Color(0xffD9D5D3);
+  static const ArrivalPalletteWhite = Color(0xffF8F8F9);
   static const ArrivalPalletteBlack = Color(0xff231F20);
+  static const ArrivalPalletteGrey = Color(0xffD9D5D3);
   static const ArrivalPalletteBlue = Color(0xff5AA6DC);
   static const ArrivalPalletteYellow = Color(0xffFFCF01);
   static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
@@ -41,8 +41,16 @@ abstract class Styles {
   static const ArrivalPalletteCreamTransparent = Color(0xccF9EDD3);
   static const ArrivalPalletteGreyTransparent = Color(0xccD9D5D3);
   static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
-  static const ArrivalPalletteBlueTransparent = Color(0xcc5AA6DC);
+  static const ArrivalPalletteBlueTransparent = Color(0x595AA6DC);
   static const ArrivalPalletteYellowTransparent = Color(0xccFFCF01);
+  static const ArrivalPalletteRedFrosted = Color(0x50F58E8E);
+  static const ArrivalPalletteWhiteFrosted = Color(0x80F9F4E9);
+  static const ArrivalPalletteCreamFrosted = Color(0x80F3DAA5);
+  static const ArrivalPalletteGreyFrosted = Color(0x80E8E7E6);
+  static const ArrivalPalletteBlackFrosted = Color(0x80837979);
+  static const ArrivalPalletteBlueFrosted = Color(0x8078B6E2);
+  static const ArrivalPalletteYellowFrosted = Color(0x80FFE570);
+  static const ArrivalPalletteClearFrosted = Color(0x80F9EDD3);
 
   static const Color mainColor = Styles.ArrivalPalletteRed;
   static const Color activeColor = Styles.ArrivalPalletteYellow;
@@ -106,25 +114,37 @@ abstract class Styles {
      *
      */
 
+  static const Color articleColorsDark = Styles.ArrivalPalletteBlack;
+  static const Color articleColorsPrimary = Styles.ArrivalPalletteRed;
+  static const Color articleColorsSecondary = Color(0xffF1EADA);
+
   static const TextStyle articleContent = TextStyle(
-        color: Styles.ArrivalPalletteBlack,
+        color: Styles.articleColorsDark,
         // height: 1.6,
-        fontFamily: 'times',
-        // fontFamily: 'Helvetica',
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
         fontSize: 18,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
   );
   static const TextStyle articleQuote = TextStyle(
-        color: Styles.ArrivalPalletteBlack,
-        fontFamily: 'times',
-        // fontFamily: 'Helvetica',
+        color: Styles.articleColorsSecondary,
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
         fontSize: 22,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
   );
+  static const TextStyle articleQuoteStart = TextStyle(
+        color: Styles.articleColorsSecondary,
+        // fontFamily: 'times',
+        fontFamily: 'Helvetica',
+        fontSize: 50,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+  );
   static const TextStyle articleHeadline = TextStyle(
-        color: Styles.ArrivalPalletteBlack,
+        color: Styles.articleColorsDark,
         // fontFamily: 'times',
         fontFamily: 'Helvetica',
         fontSize: 30,
@@ -132,7 +152,7 @@ abstract class Styles {
         fontWeight: FontWeight.bold,
   );
   static const TextStyle smallerArticleHeadline = TextStyle(
-        color: Styles.ArrivalPalletteBlack,
+        color: Styles.articleColorsDark,
         // fontFamily: 'times',
         fontFamily: 'Helvetica',
         fontSize: 24,
@@ -140,7 +160,7 @@ abstract class Styles {
         fontWeight: FontWeight.bold,
   );
   static const TextStyle articleAuthor = TextStyle(
-        color: Styles.ArrivalPalletteBlack,
+        color: Styles.articleColorsDark,
         // fontFamily: 'times',
         fontFamily: 'Helvetica',
         fontSize: 18,
@@ -148,8 +168,8 @@ abstract class Styles {
         fontWeight: FontWeight.normal,
   );
   static const TextStyle articleDate = TextStyle(
-        color: Styles.ArrivalPalletteBlack,
-        // fontFamily: 'times',
+        color: Styles.articleColorsDark,
+        // fontF/amily: 'times',
         fontFamily: 'Helvetica',
         fontSize: 18,
         fontStyle: FontStyle.italic,

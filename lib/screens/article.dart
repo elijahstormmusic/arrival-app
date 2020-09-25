@@ -67,7 +67,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
     _headerHeight = _maxHeaderHeight;
 
     SchedulerBinding.instance.addPostFrameCallback((_) =>
-      _articleHeightProgress = _scrollController.position.maxScrollExtent - 100
+      _articleHeightProgress = _scrollController.position.maxScrollExtent
     );
   }
   @override
@@ -77,7 +77,15 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.outOfRange) return;
+    print('max');
+    print(_scrollController.position.maxScrollExtent);
+    print('progress');
+    print(_articleHeightProgress);
+    print('cur');
+    print(_scrollController.offset);
+
+
+
     double ratio = _scrollController.offset / _articleHeightProgress;
     ratio = (ratio * 10.0).floor().toDouble() / 10.0;
     ratio += 0.05 - (ratio * 0.05);
@@ -129,7 +137,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
             child: SafeArea(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Styles.ArrivalPalletteWhite,
+                  color: Styles.articleColorsSecondary,
                 ),
                 width: MediaQuery.of(context).size.width - (_articlePadding*2),
                 height: _headerDrawHeight,
@@ -156,7 +164,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
             child: SafeArea(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Styles.ArrivalPalletteWhite,
+                  color: Styles.articleColorsSecondary,
                 ),
                 width: MediaQuery.of(context).size.width - (_articlePadding*2),
                 child: Padding(
@@ -201,7 +209,8 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
       padding: EdgeInsets.all(_articlePadding),
       child: DropCapText(
         content,
-        indentation: Offset(0, 0),
+        dropCapPadding: EdgeInsets.all(4),
+        forceNoDescent: true,
         style: Styles.articleContent,
         textAlign: TextAlign.justify,
         dropCapChars: 1,
@@ -253,14 +262,24 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
       padding: EdgeInsets.all(_articlePadding*2),
       child: Container(
         decoration: BoxDecoration(
-          color: Styles.ArrivalPalletteGrey,
+          color: Styles.articleColorsPrimary,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
           padding: EdgeInsets.all(_articlePadding),
-          child: Text(
-            content,
-            style: Styles.articleQuote,
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: content[0],
+                  style: Styles.articleQuoteStart,
+                ),
+                TextSpan(
+                  text: content.substring(1, content.length),
+                  style: Styles.articleQuote,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -346,7 +365,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Styles.ArrivalPalletteWhite,
+                      color: Styles.articleColorsSecondary,
                     ),
                     height: MediaQuery.of(context).size.height - _headerHeight,
                     child: _buildArticle(),

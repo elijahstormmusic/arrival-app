@@ -1,3 +1,8 @@
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
+
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../screens/settings.dart';
@@ -44,68 +49,93 @@ class _SlideState extends State<SlideMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          GestureDetector(
-            onTap: () => setState(() => _imgIndex = (_imgIndex+1) % SlideMenu.coverImages.length),
-            child: DrawerHeader(
+    var now = new DateTime.now();
+
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: Styles.ArrivalPalletteCream,
+      ),
+      child: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
               child: Text(
                 'Kansas City',
-                style: TextStyle(color: SlideMenu.coverTextColors[_imgIndex], fontSize: 25),
+                style: TextStyle(
+                  color: SlideMenu.coverTextColors[_imgIndex],
+                  fontSize: 25
+                ),
               ),
               decoration: BoxDecoration(
                   color: Styles.ArrivalPalletteRed,
                   image: DecorationImage(
                       fit: BoxFit.fill,
-                      image: AssetImage(SlideMenu.coverImages[_imgIndex]))),
+                      image: AssetImage(
+                        'assets/images/slide_menu/'
+                        + (now.hour < 7 || now.hour > 21 ? 'night'
+                        : (now.hour > 7 && now.hour < 15 ? 'day' : 'evening'))
+                        + (Random().nextInt(2)==0 ? 'arts' : 'city')
+                        + '.jpg'
+                      ))),
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
-            onTap: () {
-              ForYouPage.scrollToTop();
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text('Profile'),
-            onTap: () => {
-              Navigator.of(context).push<void>(CupertinoPageRoute(
-                builder: (context) => ProfilePage(),
-                fullscreenDialog: true,
-              ))
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () => {
-              Navigator.of(context).push<void>(CupertinoPageRoute(
-                builder: (context) => SettingsScreen(),
-                fullscreenDialog: true,
-              ))
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text('Feedback'),
-            onTap: () => {
-              Navigator.of(context).push<void>(CupertinoPageRoute(
-                builder: (context) => ContactUs(),
-                fullscreenDialog: true,
-              ))
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: _logout,
-          ),
-        ],
+            ListTile(
+              leading: Icon(Icons.input),
+              title: Text('Welcome'),
+              onTap: () {
+                ForYouPage.scrollToTop();
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.verified_user),
+              title: Text(
+                'Profile',
+                style: TextStyle(color: Styles.ArrivalPalletteBlack),
+              ),
+              onTap: () => {
+                Navigator.of(context).push<void>(CupertinoPageRoute(
+                  builder: (context) => ProfilePage(),
+                  fullscreenDialog: true,
+                ))
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text(
+                'Settings',
+                style: TextStyle(color: Styles.ArrivalPalletteBlack),
+              ),
+              onTap: () => {
+                Navigator.of(context).push<void>(CupertinoPageRoute(
+                  builder: (context) => SettingsScreen(),
+                  fullscreenDialog: true,
+                ))
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.border_color),
+              title: Text(
+                'Feedback',
+                style: TextStyle(color: Styles.ArrivalPalletteBlack),
+              ),
+              onTap: () => {
+                Navigator.of(context).push<void>(CupertinoPageRoute(
+                  builder: (context) => ContactUs(),
+                  fullscreenDialog: true,
+                ))
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text(
+                'Logout',
+                style: TextStyle(color: Styles.ArrivalPalletteBlack),
+              ),
+              onTap: _logout,
+            ),
+          ],
+        ),
       ),
     );
   }
