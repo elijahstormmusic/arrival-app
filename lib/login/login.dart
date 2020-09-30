@@ -18,6 +18,12 @@ class LoginPage extends StatefulWidget {
   LoginPage.login(String username, String password) {
     this._query = '?u:'+username+':'+password;
   }
+  LoginPage.forgotUsername(String email) {
+    this._query = '?f:'+email;
+  }
+  LoginPage.forgotPassword(String username) {
+    this._query = '?fp:'+username;
+  }
 
   @override
   _LoginState createState() => _LoginState(_query);

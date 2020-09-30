@@ -558,7 +558,10 @@ class _PostDisPState extends State<PostDisplayPage> {
   Widget _buildCommentsScreen(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Back',
+        leading: GestureDetector(
+          onTap: () => setState(() => _commentsPageOpen = false),
+          child: Text('Back'),
+        ),
       ),
       child: _buildCommentsList(ArrivalData.posts[widget.postIndex].comments),
     );

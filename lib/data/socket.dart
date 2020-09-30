@@ -18,6 +18,7 @@ import '../foryou/list.dart';
 class socket {
   static SocketIO _socket;
   static var home, post, profile, foryou;
+  static int error_report_time = 8;
 
   static void init() {
     _socket = SocketIOManager().createSocketIO(
@@ -26,6 +27,7 @@ class socket {
 
     _socket.subscribe('message', (jsonData) async {
       Map<String, dynamic> data = json.decode(jsonData);
+
 
 
         /***  Content downloading
@@ -152,6 +154,52 @@ class socket {
 
 
 
+        /***  Userdata and Settings sync with device
+         * this makes sure the server's userstate and the
+         * device's userstate are always the same
+         */
+
+      else if (data['type']==600) { // client userdata download
+        if (UserData.client==null) return;
+
+        UserData.refreshClientDate(data['response']);
+      }
+
+      else if (data['type']==601) { // updated user password
+        foryou.openSnackBar({
+          'text': 'Password updated.',
+          'duration': socket.error_report_time,
+        });
+      }
+
+      else if (data['type']==602) { // updated user email
+        foryou.openSnackBar({
+          'text': 'A verification email was sent to '+ data['response'] + ' and will expire in 24 hours.',
+          'duration': socket.error_report_time,
+        });
+      }
+
+      else if (data['type']==666) { // error with settings update
+        String error_msg = '';
+
+        if (data['code']==0) error_msg = 'Network connection error. Check your data or Wifi.';
+        else if (data['code']==1) {
+          if (data['error']=='password') error_msg = 'The password did not fit formatting standards.';
+          if (data['error']=='pic') error_msg = 'Your picture did not fit file size standards.';
+          if (data['error']=='email') error_msg = 'Your email might have been entered incorrectly.';
+          if (data['error']=='verify email') error_msg = 'Your verification code was entered incorrectly.';
+        }
+        else if (data['code']==2) error_msg = 'Unknown error.';
+        else if (data['code']==5) error_msg = 'Password not correct';
+
+        foryou.openSnackBar({
+          'text': error_msg,
+          'duration': socket.error_report_time,
+        });
+      }
+
+
+
         /***  Server feedback
          * this functions allow for seemless use of the app
          */
@@ -163,7 +211,7 @@ class socket {
             print('closed')
           },
           'action-label': 'Test',
-          'duration': 8,
+          'duration': error_report_time,
         });
       }
       else if (data['type']==530) { // post successfully uploaded
@@ -173,7 +221,7 @@ class socket {
             print('open')
           },
           'action-label': 'Test',
-          'duration': 8,
+          'duration': error_report_time,
         });
         ArrivalData.foryou.insert(0, RowPost(Post.link(data['link'])));
         home.gotoForyou();
@@ -186,7 +234,7 @@ class socket {
             print('closed')
           },
           'action-label': 'Test',
-          'duration': 8,
+          'duration': error_report_time,
         });
       }
       else if (data['type']==532) { // comment made successful
@@ -197,7 +245,7 @@ class socket {
             print('closed')
           },
           'action-label': 'Test',
-          'duration': 8,
+          'duration': error_report_time,
         });
       }
       else if (data['type']==533) { // comment failed upload
@@ -207,7 +255,7 @@ class socket {
             print('closed')
           },
           'action-label': 'Test',
-          'duration': 8,
+          'duration': error_report_time,
         });
       }
 

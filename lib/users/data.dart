@@ -7,10 +7,33 @@ import '../users/profile.dart';
 import '../data/local.dart';
 
 class UserData {
+  static Profile client;
+  static String client_string;
   static String username;
   static String password;
-  static String client_string;
-  static Profile client;
+  static double DefaultTip = 0.2;
+  static int MembershipTier = 0;
+  static bool LocationOn = true;
+  static bool NewsLetterSubscription = true;
+
+  static void refreshClientDate(var input_data) {
+    UserData.MembershipTier = input_data['settings']['membership']['tier'];
+    UserData.DefaultTip = input_data['settings']['membership']['default_tip'];
+    UserData.LocationOn = input_data['settings']['legal']['location'];
+    UserData.NewsLetterSubscription = input_data['settings']['membership']['newsletter'];
+
+    UserData.client = Profile(
+      name: input_data['name'],
+      pic: input_data['pic'],
+      email: input_data['email'],
+      shortBio: input_data['bio'],
+      level: input_data['level'],
+      points: input_data['points'],
+      cryptlink: input_data['cryptlink']
+    );
+
+    UserData.save();
+  }
 
   static void save() async {
     ArrivalFiles file = ArrivalFiles('client.json');

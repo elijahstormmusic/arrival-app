@@ -75,7 +75,7 @@ class _SlideState extends State<SlideMenu> {
                         'assets/images/slide_menu/'
                         + (now.hour < 7 || now.hour > 21 ? 'night'
                         : (now.hour > 7 && now.hour < 15 ? 'day' : 'evening'))
-                        + (Random().nextInt(2)==0 ? 'arts' : 'city')
+                        + '/' + (Random().nextInt(2)==0 ? 'arts' : 'city')
                         + '.jpg'
                       ))),
             ),

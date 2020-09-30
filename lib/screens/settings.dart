@@ -4,16 +4,28 @@
 
 
 import 'dart:ui';
+import 'dart:math';
+import 'dart:io';
+import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:arrival_kc/data/preferences.dart';
-import 'package:arrival_kc/data/cards/partners.dart';
-import 'package:arrival_kc/styles.dart';
-import 'package:arrival_kc/widgets/settings_group.dart';
-import 'package:arrival_kc/widgets/settings_item.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:cloudinary_client/cloudinary_client.dart';
+
+import '../data/preferences.dart';
+import '../data/cards/partners.dart';
+import '../data/socket.dart';
+import '../login/login.dart';
+import '../users/data.dart';
+import '../arrival_team/contact.dart';
+import '../styles.dart';
+import '../widgets/settings_group.dart';
+import '../widgets/settings_item.dart';
 
 
 /***
@@ -30,12 +42,41 @@ import 'package:arrival_kc/widgets/settings_item.dart';
 //TODO: Card info verification - third party integration/APIs involved?
 //TODO: Show Existing payment methods/cards and add button to ADD new payment method
 class SubSettings extends StatefulWidget {
-  final Widget Function(BuildContext) buildPage;
+  final Widget Function(BuildContext, dynamic) buildPage;
+  final initalState;
+  static _SubSettingsParent state;
 
   const SubSettings({
     @required
     this.buildPage,
+    this.initalState,
   })  : assert(buildPage != null);
+
+  static Widget SaveButton(var saveNsend) {
+    return GestureDetector(
+      onTap: saveNsend,
+      child: Text(
+        'Save',
+        style: TextStyle(
+          color: Styles.ArrivalPalletteRed,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+  static Widget ChangesNeedSavingWarning() {
+    return Container(
+      height: 100.0,
+      padding: EdgeInsets.all(16),
+      child: Text(
+        'Changes will not take affect until you confirm by pressing save.',
+        style: TextStyle(
+          color: Styles.ArrivalPalletteBlack,
+          fontSize: 18.0,
+        ),
+      ),
+    );
+  }
 
   /***
    * ------ Payment Settings ------
@@ -44,7 +85,7 @@ class SubSettings extends StatefulWidget {
    *
    */
 
-  static Widget Billing(BuildContext context) {
+  static Widget Billing(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
     final _screenSize = MediaQuery.of(context).size;
 
@@ -55,8 +96,6 @@ class SubSettings extends StatefulWidget {
     double billingFontSize = 18.0;
 
     int _cardNumber = 0;
-
-    ArrivalTextInput arrival = ArrivalTextInput();
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -89,7 +128,6 @@ class SubSettings extends StatefulWidget {
                   height: 70,
                   child: CupertinoTextField(
                     selectionHeightStyle: BoxHeightStyle.max,
-                    controller: arrival.controller,
                     placeholder: '1234 5678 1234 5678',
                     placeholderStyle: TextStyle(fontSize: 16.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
                     decoration: BoxDecoration(
@@ -237,60 +275,108 @@ class SubSettings extends StatefulWidget {
     );
   }
 
-  static Widget ProfilePicture(BuildContext context) {
+  static Widget ProfilePicture(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Profile',
+        trailing: SaveButton(() async {
+          if (variableState==null) return;
+          try {
+            CloudinaryClient cloudinary_client =
+              new CloudinaryClient('868422847775537',
+              'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
+
+            String image_name = UserData.client.name + Random().nextInt(1000000).toString();
+            String img_url = (await cloudinary_client.uploadImage(
+              variableState.path,
+              filename: image_name,
+              folder: 'profile/' + UserData.client.name,
+            )).secure_url;
+
+            if (img_url!=null) {
+              socket.emit('userdata update', {
+                'link': UserData.client.cryptlink,
+                'password': UserData.password,
+                'type': 'pic',
+                'value': img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
+              });
+            }
+
+            SubSettings.state.reload(null);
+          } catch (e) {
+            print('------------- Arrival Error ------------');
+            print(e);
+          }
+        }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('Change Profile Picture'),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
+        child: ListView(
+          children: [
+            Container(
+              height: 150.0,
+              decoration: BoxDecoration(
+                border: Border.all(color: Styles.ArrivalPalletteBlack),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Center(
+                child: variableState==null
+                  ? (UserData.client.pic==null
+                    ? Text('No image selected')
+                    : UserData.client.icon())
+                  : Image(
+                    image: FileImage(variableState),
+                    fit: BoxFit.cover,
+                  ),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            Container(
+              padding: EdgeInsets.fromLTRB(10,20,10,0),
+              child: MaterialButton(
+                child: Text('Pick Image'),
+                textColor: Styles.ArrivalPalletteWhite,
+                color: Styles.ArrivalPalletteBlue,
+                onPressed: () async {
+                  var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                  SubSettings.state.reload(image);
+                },
+              ),
+            ),
+            SubSettings.ChangesNeedSavingWarning(),
+          ],
+        ),
       ),
     );
   }
 
-  static Widget Membership(BuildContext context) {
+  static Widget Membership(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
 
-    double membershipTierSpacing = 12.0; //Spacing in pixels between each tier box
+    double membershipTierSpacing = 12.0;
     double tierFontSize = 20.0;
-    Color notCurrentTierColor = Colors.white70; //Default color for tiers the user is NOT subscribed to
-    const currentTierColor = const Color(0xFFD33731); //Default color for tiers the user IS subscribed to
-
-    // Set up logic to control how tier color is assigned based on whether or not each tier is the one the user currently subscribes to
-    /*
-    Color tierColor = Colors.white70;
-
-    var tierColorList = new List(2);
-    tierColorList[0] = 'tier';
-    tierColorList[1] = tierColor;
-    //Create list of length 3 to hold 3 membership tiers as strings. This must change depending on tiers we use unless we make it more dynamic.
-    var tierList = new List(3);
-    tierList[0] = 'free';
-    tierList[1] = 'lite';
-    tierList[2] = 'max';
-
-    String currentMembershipTier = 'free';
-
-    //Use
-    for (final tier in tierList){
-      var element = tier;
-      if tier == currentMembershipTier:
-          tierColor = Colors.blueAccent;
-      else:
-          tierColor = Colors.white70;
-     };
-    */
+    Color notCurrentTierColor = Colors.white70;
+    const currentTierColor = const Color(0xFFD33731);
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Profile',
+        trailing: SaveButton(() {
+          if (variableState!=0 && variableState!=1 && variableState!=2) return;
+          if (variableState==UserData.MembershipTier) return;
+          UserData.MembershipTier = variableState;
+          socket.emit('userdata update', {
+            'link': UserData.client.cryptlink,
+            'password': UserData.password,
+            'type': 'membership tier',
+            'value': UserData.MembershipTier,
+          });
+        }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      //child: Material(
       child: ListView(
         children: [
           Container(
@@ -301,66 +387,112 @@ class SubSettings extends StatefulWidget {
                 Container(
                   height: membershipTierSpacing,
                 ),
-                Container(
-                  height: 60,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: currentTierColor,    // TODO: Add logic to change color if this is current tier
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Container(
-                    alignment: Alignment(0,0),
-                    child: Text(
-                      'Free                                           0.00/mo',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.bold, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy', color: Colors.white70),
+                GestureDetector(
+                  onTap: () {
+                    SubSettings.state.reload(0);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
+                    child: Container(
+                      height: 60,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: (variableState==0)
+                          ? currentTierColor : notCurrentTierColor,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Container(
+                        alignment: Alignment(0,0),
+                        child: Text(
+                          'Free    0.00/mo',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: tierFontSize,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'HelveticaHeavy',
+                            color: (variableState==0)
+                              ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
                 Container(
                   height: membershipTierSpacing,
                 ),
-                Container(
-                  height: 60,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: notCurrentTierColor,    // TODO: Add logic to change color if this is current tier
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Container(
-                    alignment: Alignment(0,0),
-                    child: Text(
-                      'Lite                                           2.99/mo',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy'),
+                GestureDetector(
+                  onTap: () {
+                    SubSettings.state.reload(1);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
+                    child: Container(
+                      height: 60,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: (variableState==1)
+                          ? currentTierColor : notCurrentTierColor,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Container(
+                        alignment: Alignment(0,0),
+                        child: Text(
+                          'Lite    2.99/mo',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: tierFontSize,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'HelveticaHeavy',
+                            color: (variableState==1)
+                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
                 Container(
                   height: membershipTierSpacing,
                 ),
-                Container(
-                  height: 60,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: notCurrentTierColor,    // TODO: Add logic to change color if this is current tier
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Container(
-                    alignment: Alignment(0,0),
-                    child: Text(
-                      'Max                                           9.99/mo',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy'),
+                GestureDetector(
+                  onTap: () {
+                    SubSettings.state.reload(2);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
+                    child: Container(
+                      height: 60,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: (variableState==2)
+                          ? currentTierColor : notCurrentTierColor,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Container(
+                        alignment: Alignment(0,0),
+                        child: Text(
+                          'Max    9.99/mo',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: tierFontSize,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'HelveticaHeavy',
+                            color: (variableState==2)
+                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
+                Container(
+                  height: membershipTierSpacing,
+                ),
+                SubSettings.ChangesNeedSavingWarning(),
               ],
             ),
           ),
@@ -369,20 +501,31 @@ class SubSettings extends StatefulWidget {
     );
   }
 
-  static Widget Tipping(BuildContext context) {
+  static Widget Tipping(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
 
     double tippingTierHeight = 60;
     double tippingTierSpacing = 12.0;
     double tierFontSize = 20.0;
-    Color notCurrentTierColor = Colors.white70; //Default color for tiers the user is NOT subscribed to
+    Color notCurrentTierColor = Colors.white70;
 
-    const currentTierColor = const Color(0xFFD33731); //Default color for tiers the user IS subscribed to
-    //Color currentTierColor = Colors.red[700];
+    const currentTierColor = const Color(0xFFD33731);
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Profile',
+        trailing: SaveButton(() {
+          if (!(variableState[1] is double)) return;
+          if (variableState[1]<0) return;
+          if (variableState[1]==UserData.DefaultTip) return;
+          UserData.DefaultTip = variableState[1];
+          socket.emit('userdata update', {
+            'link': UserData.client.cryptlink,
+            'password': UserData.password,
+            'type': 'default tip',
+            'value': UserData.DefaultTip,
+          });
+        }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
       child: ListView(
@@ -395,99 +538,161 @@ class SubSettings extends StatefulWidget {
                 Container(
                   height: tippingTierSpacing,
                 ),
-                Container(
-                  height: tippingTierHeight,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: currentTierColor,    // TODO: Add logic to change color if this is current tier
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                GestureDetector(
+                  onTap: () {
+                    SubSettings.state.reload([0, .15]);
+                  },
                   child: Container(
-                    alignment: Alignment(-0.90,0),
-                    child: Text(
-                      '15%',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.bold, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy', color: Colors.white70),
+                    height: tippingTierHeight,
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: (variableState[0]==0)
+                        ? currentTierColor : notCurrentTierColor,
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
+                    child: Container(
+                      alignment: Alignment(-0.90,0),
+                      child: Text(
+                        '15%',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: tierFontSize,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'HelveticaHeavy',
+                            color: (variableState[0]==0)
+                              ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                          ),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
                 Container(
                   height: tippingTierSpacing,
                 ),
-                Container(
-                  height: tippingTierHeight,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: notCurrentTierColor,    // TODO: Add logic to change color if this is current tier
-                    border: Border.all(
-                      color: Colors.black12,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                GestureDetector(
+                  onTap: () {
+                    SubSettings.state.reload([1, .2]);
+                  },
                   child: Container(
-                    alignment: Alignment(-0.9,0),
-                    child: Text(
-                      '20%',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy'),
+                    height: tippingTierHeight,
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: (variableState[0]==1)
+                        ? currentTierColor : notCurrentTierColor,
+                      border: Border.all(
+                        color: Colors.black12,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
+                    child: Container(
+                      alignment: Alignment(-0.9,0),
+                      child: Text(
+                        '20%',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: tierFontSize,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                          fontFamily: 'HelveticaHeavy',
+                          color: (variableState[0]==1)
+                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                        ),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
                 Container(
                   height: tippingTierSpacing,
                 ),
-                Container(
-                  height: tippingTierHeight,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: notCurrentTierColor,    // TODO: Add logic to change color if this is current tier
-                    border: Border.all(
-                      color: Colors.black12,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                GestureDetector(
+                  onTap: () {
+                    SubSettings.state.reload([2, .25]);
+                  },
                   child: Container(
-                    alignment: Alignment(-0.9,0),
-                    child: Text(
-                      '25%',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy'),
+                    height: tippingTierHeight,
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: (variableState[0]==2)
+                        ? currentTierColor : notCurrentTierColor,
+                      border: Border.all(
+                        color: Colors.black12,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
+                    child: Container(
+                      alignment: Alignment(-0.9,0),
+                      child: Text(
+                        '25%',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: tierFontSize,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                          fontFamily: 'HelveticaHeavy',
+                          color: (variableState[0]==2)
+                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                        ),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
                 Container(
                   height: tippingTierSpacing,
                 ),
-                Container(
-                  height: tippingTierHeight,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: notCurrentTierColor,    // TODO: Add logic to change color if this is current tier
-                    border: Border.all(
-                      color: Colors.black12,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                   child: Container(
-                    alignment: Alignment(-0.9,0),
-                    child: Text(
-                      'Custom Amount',
-                      textAlign: TextAlign.left,
+                    height: tippingTierHeight,
+                    child: CupertinoTextField(
+                      selectionHeightStyle: BoxHeightStyle.max,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        // FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(5),
+                        BlacklistingTextInputFormatter.singleLineFormatter,
+                      ],
                       style: TextStyle(
-                          fontSize: tierFontSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal, fontFamily: 'HelveticaHeavy'),
+                        color: (variableState[0]==3)
+                          ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                      ),
+                      placeholder: 'Custom Amount',
+                      placeholderStyle: TextStyle(
+                        fontSize: tierFontSize,
+                        fontWeight: FontWeight.normal,
+                        fontStyle: FontStyle.normal,
+                        fontFamily: 'HelveticaHeavy',
+                      ),
+                      decoration: BoxDecoration(
+                        color: (variableState[0]==3)
+                        ? currentTierColor : notCurrentTierColor,
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      onChanged: (String data_input) {
+                        double _validNumber;
+                        try {
+                          _validNumber = double.parse(data_input);
+                        } catch (e) {
+                          print("failed");
+                          return;
+                        }
+                        if (_validNumber<0) return;
+                        if (_validNumber>1) return; // should up have an upper limit?
+                        SubSettings.state.reload([3, _validNumber]);
+                      },
                     ),
                   ),
-                  //padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                 ),
+                SubSettings.ChangesNeedSavingWarning(),
               ],
             ),
           ),
@@ -503,136 +708,172 @@ class SubSettings extends StatefulWidget {
    *
    */
 
-  static Widget Password(BuildContext context) {
+  static Widget Password(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
-    ArrivalTextInput arrival = ArrivalTextInput();
+    String valid_chars = 'qQwWeErRtTyYuUiIoOpPaAsSdDfFgGhHjJkKlLzZxXcCvVbBnNmM1234567890!@#_{}\$%^&*()~.,';
 
     double passwordFontSize = 16.0;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Profile',
+        trailing: SaveButton(() {
+          for (int j=0;j<variableState.length;j++) {
+            for (int i=0;i<variableState[j].length;i++) {
+              if (valid_chars.indexOf(variableState[j][i])==-1) return;
+            }
+          }
+          if (variableState[0]==null) return;
+          if (variableState[1]==null) return;
+          if (variableState[2]==null) return;
+          if (variableState[1]!=variableState[2]) return;
+
+          socket.emit('userdata update', {
+            'link': UserData.client.cryptlink,
+            'password': variableState[0],
+            'type': 'password',
+            'value': variableState[1],
+          });
+        }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: Material(
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  height: 65.0,
-                  child: CupertinoTextField(
-                    controller: arrival.controller,
-                    placeholder: 'Current Password',
-                    placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    onChanged: (String str) {
-                      // here you write code that activates when the user types in
-                      print(str);
-                    },
-                    onSubmitted: (String str) {
-                      // here you write code that activates when the presses enter
-                      print(str);
-                    },
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        children: [
+          Container(
+            child: Container(
+              height: 65.0,
+              child: CupertinoTextField(
+                placeholder: 'Current Password',
+                placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black38,
+                    width: 1,
                   ),
-                  padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+                  color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
+                onChanged: (String str) {
+                  for (int i=0;i<str.length;i++) {
+                    if (valid_chars.indexOf(str[i])==-1) {
+                      variableState[0] = '.';
+                      SubSettings.state.reload(variableState);
+                      return;
+                    }
+                  }
+                  variableState[0] = str;
+                  SubSettings.state.reload(variableState);
+                },
+              ),
+              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+            ),
+          ),
+          Container(
+            child: Container(
+              height: 65.0,
+              child: CupertinoTextField(
+                placeholder: 'New Password',
+                placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black38,
+                    width: 1,
+                  ),
+                  color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                onChanged: (String str) {
+                  for (int i=0;i<str.length;i++) {
+                    if (valid_chars.indexOf(str[i])==-1) {
+                      variableState[1] = '.';
+                      SubSettings.state.reload(variableState);
+                      return;
+                    }
+                  }
+                  variableState[1] = str;
+                  SubSettings.state.reload(variableState);
+                },
+              ),
+              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+            ),
+          ),
+          Container(
+            child: Container(
+              height: 65.0,
+              child: CupertinoTextField(
+                placeholder: 'Confirm New Password',
+                placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black38,
+                    width: 1,
+                  ),
+                  color: variableState[2]=='.' ? Styles.ArrivalPalletteRed : null,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                onChanged: (String str) {
+                  for (int i=0;i<str.length;i++) {
+                    if (valid_chars.indexOf(str[i])==-1) {
+                      variableState[2] = '.';
+                      SubSettings.state.reload(variableState);
+                      return;
+                    }
+                  }
+                  variableState[2] = str;
+                  SubSettings.state.reload(variableState);
+                },
+              ),
+              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+            ),
+          ),
+          Container(
+            child: GestureDetector(
+              onTap: () => LoginPage.forgotPassword(UserData.username),
+              child: Container(
+                child: Text(
+                  'Forgot your password?',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: passwordFontSize,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo,
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(15.0,8.0,15.0,8.0),
               ),
             ),
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  height: 65.0,
-                  child: CupertinoTextField(
-                    controller: arrival.controller,
-                    placeholder: 'New Password',
-                    placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    onChanged: (String str) {
-                      // here you write code that activates when the user types in
-                      print(str);
-                    },
-                    onSubmitted: (String str) {
-                      // here you write code that activates when the presses enter
-                      print(str);
-                    },
-                  ),
-                  padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-                ),
-              ),
-            ),
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  height: 65.0,
-                  child: CupertinoTextField(
-                    controller: arrival.controller,
-                    placeholder: 'Confirm New Password',
-                    placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    onChanged: (String str) {
-                      // here you write code that activates when the user types in
-                      print(str);
-                    },
-                    onSubmitted: (String str) {
-                      // here you write code that activates when the presses enter
-                      print(str);
-                    },
-                  ),
-                  padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-                ),
-              ),
-            ),
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  child: Text(
-                    'Forgot your password?',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: passwordFontSize, fontWeight: FontWeight.bold, color: Colors.indigo),
-                  ),
-                  padding: EdgeInsets.fromLTRB(15.0,8.0,15.0,8.0),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-  static Widget Email(BuildContext context) {
+  static Widget Email(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
-    ArrivalTextInput arrival = ArrivalTextInput();
+    String valid_chars = 'qQwWeErRtTyYuUiIoOpPaAsSdDfFgGhHjJkKlLzZxXcCvVbBnNmM1234567890!-=_|{}@#\$%^&*()~.,';
 
     double emailFontSize = 16.0;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         previousPageTitle: 'Profile',
+        trailing: SaveButton(() {
+          for (int j=0;j<variableState.length;j++) {
+            for (int i=0;i<variableState[j].length;i++) {
+              if (valid_chars.indexOf(variableState[j][i])==-1) return;
+            }
+          }
+          if (variableState[0]==null) return;
+          if (variableState[1]==null) return;
+          if (variableState[0]!=variableState[1]) return;
+
+          socket.emit('userdata update', {
+            'link': UserData.client.cryptlink,
+            'password': UserData.password,
+            'type': 'email',
+            'value': variableState[0],
+          });
+        }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
       child: Material(
@@ -644,38 +885,41 @@ class SubSettings extends StatefulWidget {
               child: Material(
                 child: Container(
                   child: Text(
-                    'Current Email: ' +  "User's Existing Email",
+                    'Current Email: ' + UserData.client.email,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontSize: emailFontSize),
+                      fontSize: emailFontSize,
+                    ),
                   ),
                   padding: EdgeInsets.fromLTRB(15.0,15.0,15.0,6.0),
                 ),
               ),
             ),
             Container(
-              //padding: EdgeInsets.all(12),
               child: Material(
                 child: Container(
                   height: 65.0,
                   child: CupertinoTextField(
-                    controller: arrival.controller,
-                    placeholder: 'New Password',
+                    placeholder: 'New Email',
                     placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.black38,
                         width: 1,
                       ),
+                      color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     onChanged: (String str) {
-                      // here you write code that activates when the user types in
-                      print(str);
-                    },
-                    onSubmitted: (String str) {
-                      // here you write code that activates when the presses enter
-                      print(str);
+                      for (int i=0;i<str.length;i++) {
+                        if (valid_chars.indexOf(str[i])==-1) {
+                          variableState[0] = '.';
+                          SubSettings.state.reload(variableState);
+                          return;
+                        }
+                      }
+                      variableState[0] = str;
+                      SubSettings.state.reload(variableState);
                     },
                   ),
                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
@@ -683,28 +927,30 @@ class SubSettings extends StatefulWidget {
               ),
             ),
             Container(
-              //padding: EdgeInsets.all(12),
               child: Material(
                 child: Container(
                   height: 65.0,
                   child: CupertinoTextField(
-                    controller: arrival.controller,
-                    placeholder: 'Confirm New Password',
+                    placeholder: 'Confirm New Email',
                     placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.black38,
                         width: 1,
                       ),
+                      color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     onChanged: (String str) {
-                      // here you write code that activates when the user types in
-                      print(str);
-                    },
-                    onSubmitted: (String str) {
-                      // here you write code that activates when the presses enter
-                      print(str);
+                      for (int i=0;i<str.length;i++) {
+                        if (valid_chars.indexOf(str[i])==-1) {
+                          variableState[1] = '.';
+                          SubSettings.state.reload(variableState);
+                          return;
+                        }
+                      }
+                      variableState[1] = str;
+                      SubSettings.state.reload(variableState);
                     },
                   ),
                   padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
@@ -717,7 +963,7 @@ class SubSettings extends StatefulWidget {
     );
   }
 
-  static Widget Agreements(BuildContext context) {
+  static Widget Agreements(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -731,7 +977,7 @@ class SubSettings extends StatefulWidget {
       ),
     );
   }
-  static Widget Location(BuildContext context) {
+  static Widget Location(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -745,7 +991,7 @@ class SubSettings extends StatefulWidget {
       ),
     );
   }
-  static Widget Security(BuildContext context) {
+  static Widget Security(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -760,7 +1006,7 @@ class SubSettings extends StatefulWidget {
     );
   }
 
-  static Widget Legal(BuildContext context) {
+  static Widget Legal(BuildContext context, var variableState) {
     var brightness = CupertinoTheme.brightnessOf(context);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -775,37 +1021,26 @@ class SubSettings extends StatefulWidget {
     );
   }
 
-  static Widget ContactUs(BuildContext context) {
-    var brightness = CupertinoTheme.brightnessOf(context);
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Settings',
-      ),
-      backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('Contact Us'),
-        ],
-      ),
-    );
-  }
-
   @override
   _SubSettingsParent createState() => _SubSettingsParent();
 }
 class _SubSettingsParent extends State<SubSettings> {
+
+  @override
+  void initState() {
+    _currentVariableState = widget.initalState;
+    SubSettings.state = this;
+    super.initState();
+  }
+
+  var _currentVariableState;
+  void reload(var variableState) {
+    setState(() => _currentVariableState = variableState);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.buildPage(context);
-  }
-}
-class ArrivalTextInput {
-  TextEditingController controller;
-  void initState() {
-    controller = TextEditingController();
-  }
-  void dispose() {
-    controller.dispose();
+    return widget.buildPage(context, _currentVariableState);
   }
 }
 
@@ -987,7 +1222,10 @@ class ProfileScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.ProfilePicture),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.ProfilePicture,
+                initalState: null,
+              ),
               title: 'Email Settings',
             ),
           );
@@ -1000,7 +1238,10 @@ class ProfileScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.Email),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.Email,
+                initalState: ['', ''],
+              ),
               title: 'Email Settings',
             ),
           );
@@ -1013,7 +1254,12 @@ class ProfileScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.Password),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.Password,
+                initalState: [
+                  '','','',
+                ],
+              ),
               title: 'Password Settings',
             ),
           );
@@ -1026,7 +1272,10 @@ class ProfileScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.Membership),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.Membership,
+                initalState: UserData.MembershipTier,
+              ),
               title: 'Membership Settings',
             ),
           );
@@ -1044,7 +1293,6 @@ class ProfileScreen extends StatelessWidget {
         children: [
           SettingsGroup(
             items: _account,
-            //header: SettingsGroupHeader('Account'),
           ),
         ],
       ),
@@ -1063,7 +1311,10 @@ class PaymentsScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.Billing),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.Billing,
+                initalState: null,
+              ),
               title: 'Billing Settings',
             ),
           );
@@ -1076,7 +1327,17 @@ class PaymentsScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.Tipping),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.Tipping,
+                initalState: [
+                  UserData.DefaultTip==.15 ? 0 : (
+                      UserData.DefaultTip==.2 ? 1 : (
+                        UserData.DefaultTip==.25 ? 2 : 3
+                      )
+                    ),
+                  UserData.DefaultTip,
+                ],
+              ),
               title: 'Tipping Settings',
             ),
           );
@@ -1102,7 +1363,7 @@ class PaymentsScreen extends StatelessWidget {
   }
 }
 
-class ContactUsScreen extends StatelessWidget {
+class ContactUsSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _contactus = <SettingsItem>[
@@ -1112,7 +1373,7 @@ class ContactUsScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.ContactUs),
+              builder: (context) => ContactUs(),
               title: 'Contact Us',
             ),
           );
@@ -1125,14 +1386,15 @@ class ContactUsScreen extends StatelessWidget {
         onPress: () {
           Navigator.of(context).push<void>(
             CupertinoPageRoute(
-              builder: (context) => SubSettings(buildPage: SubSettings.Legal),
+              builder: (context) => SubSettings(
+                buildPage: SubSettings.Legal,
+                initalState: null,
+              ),
               title: 'Legal',
             ),
           );
         },
       ),
-
-
     ];
 
     var brightness = CupertinoTheme.brightnessOf(context);
@@ -1145,7 +1407,6 @@ class ContactUsScreen extends StatelessWidget {
         children: [
           SettingsGroup(
             items: _contactus,
-            //header: SettingsGroupHeader('Membership'),
           ),
         ],
       ),
@@ -1257,7 +1518,6 @@ class SettingsScreen extends StatelessWidget {
   SettingsItem _buildContactUsItem(BuildContext context, Preferences prefs) {
     return SettingsItem(
       label: 'Contact Us',
-      //subtitle: 'Only see industries you want!',
       icon: SettingsIcon(
         backgroundColor: Styles.iconGold,
         icon: Styles.uncheckedIcon,
@@ -1266,7 +1526,7 @@ class SettingsScreen extends StatelessWidget {
       onPress: () {
         Navigator.of(context).push<void>(
           CupertinoPageRoute(
-            builder: (context) => ContactUsScreen(),
+            builder: (context) => ContactUsSettings(),
             title: 'Contact Us',
           ),
         );

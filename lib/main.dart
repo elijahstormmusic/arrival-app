@@ -26,10 +26,15 @@ void main() async {
   Widget launchState = HomeScreen();
   await UserData.load();
   await ArrivalData.load();
-  socket.init();
+  await socket.init();
   ArrivalData.carry = true;
   if (UserData.username==null || UserData.username=='null') {
     launchState = LoginPage();
+  } else {
+    socket.emit('userdata get link', {
+      'link': UserData.client.cryptlink,
+      'password': UserData.password,
+    });
   }
 
   runApp(

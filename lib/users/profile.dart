@@ -5,7 +5,6 @@
 import 'package:meta/meta.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import '../users/settings.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 
@@ -22,7 +21,6 @@ class Profile {
   final String cryptlink;
   final int level;
   final int points;
-  final SettingsConfig settings;
 
   String toString() {
     String str = '';
@@ -33,7 +31,6 @@ class Profile {
     str += 'cryptlink:' + cryptlink + ',';
     str += 'level:' + level.toString() + ',';
     str += 'points:' + points.toString() + ',';
-    str += 'settings:{' + settings.toString() + '}';
     return str;
   }
 
@@ -45,7 +42,6 @@ class Profile {
     @required this.cryptlink,
     @required this.level,
     @required this.points,
-    @required this.settings,
   });
   static final Profile empty = Profile(
     name: '',
@@ -54,8 +50,7 @@ class Profile {
     shortBio: '',
     cryptlink: '',
     level: 0,
-    points: 0,
-    settings: SettingsConfig.empty,
+    points: 0
   );
 
   Widget iconBySize(double height) {
@@ -96,7 +91,7 @@ class Profile {
       input = input.substring(1, input.length-1);
 
     var name, email, level, shortBio, pic,
-        points, settings, cryptlink;
+        points, cryptlink;
 
     var startDataLoc, endDataLoc = 0;
 
@@ -128,10 +123,6 @@ class Profile {
     endDataLoc = input.indexOf(',', startDataLoc);
     points = int.parse(input.substring(startDataLoc, endDataLoc));
 
-    startDataLoc = input.indexOf('settings')        + 10;
-    endDataLoc = input.indexOf('}', startDataLoc);
-    settings = SettingsConfig.parse(input.substring(startDataLoc, endDataLoc)+',');
-
     return Profile(
       name: name,
       pic: pic,
@@ -140,7 +131,6 @@ class Profile {
       cryptlink: cryptlink,
       level: level,
       points: points,
-      settings: settings,
     );
   }
   static Profile json(var input) {
@@ -151,7 +141,7 @@ class Profile {
       email: input['email'],
       shortBio: input['shortBio'],
       level: input['level'],
-      points: input['points'],
+      points: input['points']
     );
   }
   static Profile litejson(var input) {
@@ -178,8 +168,7 @@ class Profile {
       shortBio: '',
       cryptlink: input,
       level: 0,
-      points: 0,
-      settings: SettingsConfig.empty,
+      points: 0
     );
     socket.emit('profile lite', {
       'link': input,
@@ -200,8 +189,7 @@ class Profile {
       shortBio: '',
       cryptlink: input,
       level: 0,
-      points: 0,
-      settings: SettingsConfig.empty,
+      points: 0
     );
     socket.emit('profile get', {
       'link': input,

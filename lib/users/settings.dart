@@ -1,6 +1,6 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'package:meta/meta.dart';
 
