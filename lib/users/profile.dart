@@ -12,7 +12,7 @@ class Profile {
   static final String default_img =
     'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
   static final String source =
-    'https://res.cloudinary.com/arrival-kc/image/upload/user_photo/';
+    'https://res.cloudinary.com/arrival-kc/image/upload/';
 
   final String name;
   final String pic;
@@ -54,7 +54,7 @@ class Profile {
   );
 
   Widget iconBySize(double height) {
-    if (pic=='' || pic==null) {
+    if (pic=='' || pic==null || pic=='null') {
       return Image.network(
         Profile.default_img,
         fit: BoxFit.cover,
@@ -71,7 +71,7 @@ class Profile {
     );
   }
   Widget icon() {
-    if (pic=='' || pic==null) {
+    if (pic=='' || pic==null || pic=='null') {
       return Image.network(
         Profile.default_img,
         fit: BoxFit.cover,

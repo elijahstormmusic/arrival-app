@@ -265,7 +265,8 @@ class _BusinessDisplayPageState extends State<BusinessDisplayPage> {
                 //   ],
                 // ),
                 Container(
-                  height: MediaQuery.of(context).size.height - _headerHeight - 180,
+                  height: MediaQuery.of(context).size.height - _headerHeight
+                    - 160 - MediaQuery.of(context).padding.top,
                   child: _selectedViewIndex == 0
                     ? SellerView(biz)
                     : InfoView(biz),

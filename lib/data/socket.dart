@@ -191,6 +191,10 @@ class socket {
         }
         else if (data['code']==2) error_msg = 'Unknown error.';
         else if (data['code']==5) error_msg = 'Password not correct';
+        else if (data['code']==666) {
+          home.forceLogin();
+          return;
+        }
 
         foryou.openSnackBar({
           'text': error_msg,

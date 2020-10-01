@@ -5,8 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/scheduler.dart';
 import '../data/socket.dart';
 import '../foryou/list.dart';
+import '../login/login.dart';
 import '../maps/maps.dart';
 import '../screens/settings.dart';
 import '../posts/upload.dart';
@@ -20,7 +22,8 @@ class HomeScreen extends StatefulWidget {
 
 class _MainAppStates extends State<HomeScreen> {
   int _selectedIndex = 0;
-  bool _pulltoforyou = false;
+  bool _pulltoforyou = false,
+        _forcelogin = false;
 
   @override
   void initState() {
@@ -30,6 +33,8 @@ class _MainAppStates extends State<HomeScreen> {
 
   void gotoForyou() =>
     setState(() => _pulltoforyou = true);
+  void forceLogin() =>
+    setState(() => _forcelogin = true);
 
   void _selectedTab(BuildContext context, int index) {
     if (_selectedIndex == index) {
@@ -44,8 +49,19 @@ class _MainAppStates extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    if (_pulltoforyou) {
-      Navigator.of(context).popUntil((route) => route.isFirst);
+    if (_forcelogin) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).push<void>(CupertinoPageRoute(
+          builder: (context) => LoginPage(),
+          fullscreenDialog: true,
+        ));
+      });
+      _forcelogin = false;
+    }
+    else if (_pulltoforyou) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      });
       _pulltoforyou = false;
     }
 

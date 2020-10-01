@@ -16,6 +16,7 @@ class UserProfilePlacecard extends StatelessWidget {
   UserProfilePlacecard({
     Key key,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     try {
@@ -68,9 +69,8 @@ class UserProfilePlacecard extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(9999.0),
-                      child: Image(image: AssetImage(
-                      'assets/icon/default-profile-pic.png',
-                    ))),
+                      child: UserData.client.icon(),
+                    ),
                   ),
                 ),
                 Pinned.fromSize(

@@ -22,6 +22,7 @@ import '../data/cards/partners.dart';
 import '../data/socket.dart';
 import '../login/login.dart';
 import '../users/data.dart';
+import '../users/profile.dart';
 import '../arrival_team/contact.dart';
 import '../styles.dart';
 import '../widgets/settings_group.dart';
@@ -102,175 +103,167 @@ class SubSettings extends StatefulWidget {
         previousPageTitle: 'Profile',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: Material(
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
-              .onDrag, // Make this behave such that touching outside of text field dismisses keyboard
-          children: [
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  child: Text(
-                    'Card Number:',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: billingFontSize, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+            .onDrag, // Make this behave such that touching outside of text field dismisses keyboard
+        children: [
+          Container(
+            //padding: EdgeInsets.all(12),
+            child: Container(
+              child: Text(
+                'Card Number:',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: billingFontSize, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+              ),
+              padding: EdgeInsets.fromLTRB(32.0, 18.0, 25.0, 5.0),
+            ),
+          ),
+          Container(
+            //padding: EdgeInsets.all(12),
+            child: Container(
+              height: 70,
+              child: CupertinoTextField(
+                selectionHeightStyle: BoxHeightStyle.max,
+                placeholder: '1234 5678 1234 5678',
+                placeholderStyle: TextStyle(fontSize: 16.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black12,
+                    width: 1,
                   ),
-                  padding: EdgeInsets.fromLTRB(32.0, 18.0, 25.0, 5.0),
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
+                onChanged: (String str) {
+                  // here you write code that activates when the user types in
+                  print(str);
+                },
+                onSubmitted: (String str) {
+                  // here you write code that activates when the presses enter
+                  print(str);
+                },
               ),
+              padding: EdgeInsets.fromLTRB(30, 10, 30, 15),
             ),
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  height: 70,
-                  child: CupertinoTextField(
-                    selectionHeightStyle: BoxHeightStyle.max,
-                    placeholder: '1234 5678 1234 5678',
-                    placeholderStyle: TextStyle(fontSize: 16.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black12,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    onChanged: (String str) {
-                      // here you write code that activates when the user types in
-                      print(str);
-                    },
-                    onSubmitted: (String str) {
-                      // here you write code that activates when the presses enter
-                      print(str);
-                    },
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: rowH / 2,
+                          width: rowW,
+                          child: Text(
+                            'Exp Date:',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                        ),
+                        Container(
+                          height: rowH / 2 + 20,
+                          width: rowW,
+                          child: CupertinoTextField(
+                            placeholder: 'MM/YY',
+                            placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black12,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            keyboardType: TextInputType.datetime,
+                          ),
+                          padding: EdgeInsets.fromLTRB(2,2,2,18),
+                        ),
+                      ]
                   ),
-                  padding: EdgeInsets.fromLTRB(30, 10, 30, 15),
                 ),
-              ),
-            ),
-            Container(
-              child: Material(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: rowH / 2,
-                              width: rowW,
-                              child: Text(
-                                'Exp Date:',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                            ),
-                            Container(
-                              height: rowH / 2 + 20,
-                              width: rowW,
-                              child: CupertinoTextField(
-                                placeholder: 'MM/YY',
-                                placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black12,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                keyboardType: TextInputType.datetime,
-                              ),
-                              padding: EdgeInsets.fromLTRB(2,2,2,18),
-                            ),
-                          ]
+                Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: rowH / 2,
+                        width: rowW,
+                        child: Text(
+                          'CVV:',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                       ),
-                    ),
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: rowH / 2,
-                            width: rowW,
-                            child: Text(
-                              'CVV:',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+                      Container(
+                        height: rowH / 2 + 20,
+                        width: rowW,
+                        child: CupertinoTextField(
+                          placeholder: '000',
+                          placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 1,
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                            borderRadius: BorderRadius.circular(4.0),
                           ),
-                          Container(
-                            height: rowH / 2 + 20,
-                            width: rowW,
-                            child: CupertinoTextField(
-                              placeholder: '000',
-                              placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black12,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            padding: EdgeInsets.fromLTRB(2,2,2,18),
-                          ),
-                        ],
+                          keyboardType: TextInputType.number,
+                        ),
+                        padding: EdgeInsets.fromLTRB(2,2,2,18),
                       ),
-                    ),
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: rowH / 2,
-                            width: rowW,
-                            child: Text(
-                              'ZIP Code:',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                          ),
-                          Container(
-                            height: rowH / 2 + 20,
-                            width: rowW,
-                            child: CupertinoTextField(
-                              placeholder: '11111',
-                              placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black12,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            padding: EdgeInsets.fromLTRB(2,2,2,18),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: rowH / 2,
+                        width: rowW,
+                        child: Text(
+                          'ZIP Code:',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                      ),
+                      Container(
+                        height: rowH / 2 + 20,
+                        width: rowW,
+                        child: CupertinoTextField(
+                          placeholder: '11111',
+                          placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        padding: EdgeInsets.fromLTRB(2,2,2,18),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -304,6 +297,15 @@ class SubSettings extends StatefulWidget {
               });
             }
 
+            UserData.client = Profile(
+              pic: img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
+              name: UserData.client.name,
+              email: UserData.client.email,
+              shortBio: UserData.client.shortBio,
+              cryptlink: UserData.client.cryptlink,
+              level: UserData.client.level,
+              points: UserData.client.points,
+            );
             SubSettings.state.reload(null);
           } catch (e) {
             print('------------- Arrival Error ------------');
@@ -682,7 +684,6 @@ class SubSettings extends StatefulWidget {
                         try {
                           _validNumber = double.parse(data_input);
                         } catch (e) {
-                          print("failed");
                           return;
                         }
                         if (_validNumber<0) return;
@@ -844,6 +845,7 @@ class SubSettings extends StatefulWidget {
               ),
             ),
           ),
+          SubSettings.ChangesNeedSavingWarning(),
         ],
       ),
     );
@@ -873,92 +875,94 @@ class SubSettings extends StatefulWidget {
             'type': 'email',
             'value': variableState[0],
           });
+          UserData.client = Profile(
+            email: variableState[0],
+            pic: UserData.client.pic,
+            name: UserData.client.name,
+            shortBio: UserData.client.shortBio,
+            cryptlink: UserData.client.cryptlink,
+            level: UserData.client.level,
+            points: UserData.client.points,
+          );
         }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: Material(
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            Container(
-              //padding: EdgeInsets.all(12),
-              child: Material(
-                child: Container(
-                  child: Text(
-                    'Current Email: ' + UserData.client.email,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: emailFontSize,
-                    ),
-                  ),
-                  padding: EdgeInsets.fromLTRB(15.0,15.0,15.0,6.0),
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        children: [
+          Container(
+            //padding: EdgeInsets.all(12),
+            child: Container(
+              child: Text(
+                'Current Email: ' + UserData.client.email,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: emailFontSize,
                 ),
               ),
+              padding: EdgeInsets.fromLTRB(15.0,15.0,15.0,6.0),
             ),
-            Container(
-              child: Material(
-                child: Container(
-                  height: 65.0,
-                  child: CupertinoTextField(
-                    placeholder: 'New Email',
-                    placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                        width: 1,
-                      ),
-                      color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    onChanged: (String str) {
-                      for (int i=0;i<str.length;i++) {
-                        if (valid_chars.indexOf(str[i])==-1) {
-                          variableState[0] = '.';
-                          SubSettings.state.reload(variableState);
-                          return;
-                        }
-                      }
-                      variableState[0] = str;
+          ),
+          Container(
+            child: Container(
+              height: 65.0,
+              child: CupertinoTextField(
+                placeholder: 'New Email',
+                placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black38,
+                    width: 1,
+                  ),
+                  color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                onChanged: (String str) {
+                  for (int i=0;i<str.length;i++) {
+                    if (valid_chars.indexOf(str[i])==-1) {
+                      variableState[0] = '.';
                       SubSettings.state.reload(variableState);
-                    },
-                  ),
-                  padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-                ),
+                      return;
+                    }
+                  }
+                  variableState[0] = str;
+                  SubSettings.state.reload(variableState);
+                },
               ),
+              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
             ),
-            Container(
-              child: Material(
-                child: Container(
-                  height: 65.0,
-                  child: CupertinoTextField(
-                    placeholder: 'Confirm New Email',
-                    placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                        width: 1,
-                      ),
-                      color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    onChanged: (String str) {
-                      for (int i=0;i<str.length;i++) {
-                        if (valid_chars.indexOf(str[i])==-1) {
-                          variableState[1] = '.';
-                          SubSettings.state.reload(variableState);
-                          return;
-                        }
-                      }
-                      variableState[1] = str;
+          ),
+          Container(
+            child: Container(
+              height: 65.0,
+              child: CupertinoTextField(
+                placeholder: 'Confirm New Email',
+                placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black38,
+                    width: 1,
+                  ),
+                  color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                onChanged: (String str) {
+                  for (int i=0;i<str.length;i++) {
+                    if (valid_chars.indexOf(str[i])==-1) {
+                      variableState[1] = '.';
                       SubSettings.state.reload(variableState);
-                    },
-                  ),
-                  padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-                ),
+                      return;
+                    }
+                  }
+                  variableState[1] = str;
+                  SubSettings.state.reload(variableState);
+                },
               ),
+              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
             ),
-          ],
-        ),
+          ),
+          SubSettings.ChangesNeedSavingWarning(),
+        ],
       ),
     );
   }

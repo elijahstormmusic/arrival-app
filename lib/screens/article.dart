@@ -36,7 +36,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   double _headerHeight;
   double _articlePadding = 24.0;
   double _articleProgress = 0.0;
-  double _articleHeightProgress = 5000.0;
+  double _lastScrollExtent;
   double _progressBarHeight = 10.0;
   double _lastRatio = 0.0;
   String _adjustedArticleTitle;
@@ -67,7 +67,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
     _headerHeight = _maxHeaderHeight;
 
     SchedulerBinding.instance.addPostFrameCallback((_) =>
-      _articleHeightProgress = _scrollController.position.maxScrollExtent
+      _lastScrollExtent = _scrollController.position.maxScrollExtent
     );
   }
   @override
@@ -77,16 +77,9 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   }
 
   void _scrollListener() {
-    print('max');
-    print(_scrollController.position.maxScrollExtent);
-    print('progress');
-    print(_articleHeightProgress);
-    print('cur');
-    print(_scrollController.offset);
-
-
-
-    double ratio = _scrollController.offset / _articleHeightProgress;
+    double thisScrollExtent = _scrollController.position.maxScrollExtent;
+    double ratio = _scrollController.offset
+      / (((thisScrollExtent + _lastScrollExtent) / 2) * 0.95);
     ratio = (ratio * 10.0).floor().toDouble() / 10.0;
     ratio += 0.05 - (ratio * 0.05);
     if (ratio!=_lastRatio) {
@@ -100,6 +93,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
       }
       setState(() => _articleProgress = ratio);
     }
+    _lastScrollExtent = thisScrollExtent;
   }
 
   String _makeDateReadable(String fullDate) {

@@ -154,6 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Expanded(
             child: ListView(
+              physics: ClampingScrollPhysics(),
               children: [
                 _buildPersonalDetails(context, appState),
                 SizedBox(height: 20),

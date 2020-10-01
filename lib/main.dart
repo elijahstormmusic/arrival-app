@@ -23,19 +23,14 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  Widget launchState = HomeScreen();
   await UserData.load();
   await ArrivalData.load();
   await socket.init();
-  ArrivalData.carry = true;
-  if (UserData.username==null || UserData.username=='null') {
-    launchState = LoginPage();
-  } else {
-    socket.emit('userdata get link', {
-      'link': UserData.client.cryptlink,
-      'password': UserData.password,
-    });
-  }
+  ArrivalData.carry = false;
+  socket.emit('userdata get link', {
+    'link': UserData.client.cryptlink,
+    'password': UserData.password,
+  });
 
   runApp(
     ScopedModel<AppState>(
@@ -49,7 +44,7 @@ void main() async {
             DefaultWidgetsLocalizations.delegate,
             DefaultCupertinoLocalizations.delegate,
           ],
-          home: launchState,
+          home: HomeScreen(),
         ),
       ),
     ),

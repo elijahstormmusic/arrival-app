@@ -82,21 +82,89 @@ class DataState extends State<Data> {
 
   @override
   Widget build(BuildContext context) {
-    return WebView(
-      initialUrl: 'https://arrival-app.herokuapp.com/applink'+query,
-      javascriptMode: JavascriptMode.unrestricted,
-      javascriptChannels: Set.from([
-        JavascriptChannel(
-            name: 'AppAndPostsCommunication',
+    return SafeArea(
+      child: WebView(
+        initialUrl: 'https://arrival-app.herokuapp.com/applink'+query,
+        javascriptMode: JavascriptMode.unrestricted,
+        javascriptChannels: Set.from([
+          JavascriptChannel(
+              name: 'AppAndPostsCommunication',
+              onMessageReceived: (JavascriptMessage message) {
+                List<String> split = _splitMessage(message.message);
+                if (split.length==0) return;
+                if (split[0]=='links') {
+                  for (int i=1;i<split.length;i++) {
+                    ArrivalData.innocentAdd(ArrivalData.posts, Post.icon(
+                      cryptlink: split[i].substring(6, split[i].length-1)
+                    ));
+                  }
+
+                  // pop off this data pull page
+                  Navigator.pop(context);
+
+                  if (!ArrivalData.carry) return;
+                  // display home screen
+                  Navigator.of(context).push<void>(CupertinoPageRoute(
+                    builder: (context) => HomeScreen(),
+                    fullscreenDialog: true,
+                  ));
+                  ArrivalData.carry = false;
+                }
+                else if (split[0]=='data') {
+                  var post = Post.parse(split[1]);
+                  for (int i=0;i<ArrivalData.posts.length;i++) {
+                    if (ArrivalData.posts[i].cryptlink==
+                        post.cryptlink) {
+                      ArrivalData.posts[i] = post;
+                      break;
+                    }
+                  }
+
+                  // pop off this data pull page
+                  Navigator.pop(context);
+
+                  // display Post Page
+                  // Navigator.of(context).push<void>(CupertinoPageRoute(
+                  //   builder: (context) => PostDisplayPage(post),
+                  //   fullscreenDialog: true,
+                  // ));
+                }
+                else if (split[0]=='comments') {
+                  Navigator.pop(context);
+                }
+              }),
+          JavascriptChannel(
+              name: 'AppAndUserdataCommunication',
+              onMessageReceived: (JavascriptMessage message) {
+                List<String> split = _splitMessage(message.message);
+                if (split.length==0) return;
+                if (split[0]=='response') {
+                  if (split.length!=2) return;
+                  UserData.client = Profile.parse(split[1]);
+                  UserData.client_string = split[1];
+                  UserData.save();
+
+                  // pop off this data pull page
+                  Navigator.pop(context);
+
+                  if (!ArrivalData.carry) return;
+                  // load up parnets data download page
+                  Navigator.of(context).push<void>(CupertinoPageRoute(
+                    builder: (context) => Data.partners(''),
+                    fullscreenDialog: false,
+                  ));
+                }
+              }),
+          JavascriptChannel(
+            name: 'AppAndPartnersCommunication',
             onMessageReceived: (JavascriptMessage message) {
               List<String> split = _splitMessage(message.message);
               if (split.length==0) return;
-              if (split[0]=='links') {
+              if (split[0]=='response') {
                 for (int i=1;i<split.length;i++) {
-                  ArrivalData.innocentAdd(ArrivalData.posts, Post.icon(
-                    cryptlink: split[i].substring(6, split[i].length-1)
-                  ));
+                  ArrivalData.innocentAdd(ArrivalData.partners, Business.parse(split[i]));
                 }
+                ArrivalData.save();
 
                 // pop off this data pull page
                 Navigator.pop(context);
@@ -104,110 +172,44 @@ class DataState extends State<Data> {
                 if (!ArrivalData.carry) return;
                 // display home screen
                 Navigator.of(context).push<void>(CupertinoPageRoute(
-                  builder: (context) => HomeScreen(),
+                  builder: (context) => Data.posts(''),
                   fullscreenDialog: true,
                 ));
-                ArrivalData.carry = false;
               }
-              else if (split[0]=='data') {
-                var post = Post.parse(split[1]);
-                for (int i=0;i<ArrivalData.posts.length;i++) {
-                  if (ArrivalData.posts[i].cryptlink==
-                      post.cryptlink) {
-                    ArrivalData.posts[i] = post;
-                    break;
+            }),
+          JavascriptChannel(
+              name: 'AppAndInfoCommunication',
+              onMessageReceived: (JavascriptMessage message) {
+                List<String> split = _splitMessage(message.message);
+                if (split.length==0) return;
+                if (split[0]=='response') {
+                  for (int i=1;i<split.length;i++) {
+                    print(split[i]);
                   }
                 }
 
                 // pop off this data pull page
                 Navigator.pop(context);
-
-                // display Post Page
-                // Navigator.of(context).push<void>(CupertinoPageRoute(
-                //   builder: (context) => PostDisplayPage(post),
-                //   fullscreenDialog: true,
-                // ));
-              }
-              else if (split[0]=='comments') {
-                Navigator.pop(context);
-              }
-            }),
-        JavascriptChannel(
-            name: 'AppAndUserdataCommunication',
-            onMessageReceived: (JavascriptMessage message) {
-              List<String> split = _splitMessage(message.message);
-              if (split.length==0) return;
-              if (split[0]=='response') {
-                if (split.length!=2) return;
-                UserData.client = Profile.parse(split[1]);
-                UserData.client_string = split[1];
-                UserData.save();
+              }),
+          JavascriptChannel(
+              name: 'AppAndErrorCommunication',
+              onMessageReceived: (JavascriptMessage message) {
+                List<String> split = _splitMessage(message.message);
+                if (split.length==0) return;
+                if (split[0]=='link') {
+                  for (int i=1;i<split.length;i++) {
+                    print(split[i]);
+                  }
+                }
 
                 // pop off this data pull page
                 Navigator.pop(context);
-
-                if (!ArrivalData.carry) return;
-                // load up parnets data download page
-                Navigator.of(context).push<void>(CupertinoPageRoute(
-                  builder: (context) => Data.partners(''),
-                  fullscreenDialog: false,
-                ));
-              }
-            }),
-        JavascriptChannel(
-          name: 'AppAndPartnersCommunication',
-          onMessageReceived: (JavascriptMessage message) {
-            List<String> split = _splitMessage(message.message);
-            if (split.length==0) return;
-            if (split[0]=='response') {
-              for (int i=1;i<split.length;i++) {
-                ArrivalData.innocentAdd(ArrivalData.partners, Business.parse(split[i]));
-              }
-              ArrivalData.save();
-
-              // pop off this data pull page
-              Navigator.pop(context);
-
-              if (!ArrivalData.carry) return;
-              // display home screen
-              Navigator.of(context).push<void>(CupertinoPageRoute(
-                builder: (context) => Data.posts(''),
-                fullscreenDialog: true,
-              ));
-            }
-          }),
-        JavascriptChannel(
-            name: 'AppAndInfoCommunication',
-            onMessageReceived: (JavascriptMessage message) {
-              List<String> split = _splitMessage(message.message);
-              if (split.length==0) return;
-              if (split[0]=='response') {
-                for (int i=1;i<split.length;i++) {
-                  print(split[i]);
-                }
-              }
-
-              // pop off this data pull page
-              Navigator.pop(context);
-            }),
-        JavascriptChannel(
-            name: 'AppAndErrorCommunication',
-            onMessageReceived: (JavascriptMessage message) {
-              List<String> split = _splitMessage(message.message);
-              if (split.length==0) return;
-              if (split[0]=='link') {
-                for (int i=1;i<split.length;i++) {
-                  print(split[i]);
-                }
-              }
-
-              // pop off this data pull page
-              Navigator.pop(context);
-            }),
-      ]),
-      onWebViewCreated: (WebViewController w) {
-        _webViewController = w;
-      },
+              }),
+        ]),
+        onWebViewCreated: (WebViewController w) {
+          _webViewController = w;
+        },
+      ),
     );
   }
 }
