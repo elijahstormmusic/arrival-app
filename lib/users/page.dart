@@ -14,19 +14,103 @@ import '../data/socket.dart';
 import '../data/arrival.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
+import '../posts/post.dart';
+import '../posts/page.dart';
 import '../users/data.dart';
 import '../users/profile.dart';
 import '../widgets/cards.dart';
 
-class First extends StatelessWidget {
-  Profile profile;
-  First(this.profile);
+
+class UserPosts extends StatefulWidget {
+  _ProfilePageState parentPage;
+  UserPosts(this.parentPage);
+
+  @override
+  _UserPostsState createState() => _UserPostsState();
+}
+class _UserPostsState extends State<UserPosts> {
+
+  ScrollController _scrollController;
+  var userstate;
+  bool _allowRequest = true, _requestFailed = false;
+
+  @override
+  void initState() {
+    userstate = {
+      'link': widget.parentPage.widget.profile.cryptlink,
+      'amount': 18,
+      'index': 0,
+    };
+    if (!widget.parentPage.has_reached_end) {
+      socket.emit('profile get posts', userstate);
+    }
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    super.initState();
+  }
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _pullNext() {
+    if (!_allowRequest) return;
+    _allowRequest = false;
+    if (widget.parentPage.has_reached_end) return;
+    userstate['index'] = widget.parentPage.userPosts.length;
+    socket.emit('profile get posts', userstate);
+  }
+  void _loadMore() {
+    if (!_allowRequest) return;
+    _pullNext();
+  }
+  void _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      _loadMore();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Material();
+    final model = ScopedModel.of<AppState>(context, rebuildOnChange: true);
+
+    return Container(
+      child: GridView.count(
+        shrinkWrap: true,
+        childAspectRatio: 1,
+        scrollDirection: Axis.vertical,
+        crossAxisCount: 3,
+        controller: _scrollController,
+        physics: NeverScrollableScrollPhysics(),
+        children: new List<Widget>.generate(
+          widget.parentPage.userPosts.length, (index) {
+            return PressableCard(
+              onPressed: () {
+                Navigator.of(context).push<void>(CupertinoPageRoute(
+                  builder: (context) => PostDisplayPage(
+                    widget.parentPage.userPosts[index].cryptlink
+                  ), fullscreenDialog: true,
+                ));
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1.0, color: const Color(0xff757575)),
+                ),
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: widget.parentPage.userPosts[index].icon(),
+                ),
+              ),
+            );
+          },
+        ).toList(),
+      ),
+    );
   }
 }
+
 class Second extends StatelessWidget {
   Profile profile;
   Second(this.profile);
@@ -36,15 +120,24 @@ class Second extends StatelessWidget {
     return Material();
   }
 }
-class Other extends StatelessWidget {
+class UserContact extends StatelessWidget {
   Profile profile;
-  Other(this.profile);
+  UserContact(this.profile);
 
   @override
   Widget build(BuildContext context) {
-    return Material();
+    final model = ScopedModel.of<AppState>(context, rebuildOnChange: true);
+
+    return Container(
+      height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+      // physics: ClampingScrollPhysics(),
+      child: Container(
+
+      ),
+    );
   }
 }
+
 
 class ProfilePage extends StatefulWidget {
   Profile profile;
@@ -61,9 +154,14 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedViewIndex = 0;
   bool loaded = false;
+  List<Post> userPosts;
+  UserPosts _postScroller;
+  bool has_reached_end = false;
 
   @override
   void initState() {
+    userPosts = List<Post>();
+    _postScroller = UserPosts(this);
     socket.profile = this;
     if(widget.profile.email=='') {
       socket.emit('profile get', {
@@ -77,6 +175,13 @@ class _ProfilePageState extends State<ProfilePage> {
     if(index==null) return;
     widget.profile = ArrivalData.profiles[index];
     setState(() => loaded = true);
+  }
+  void loadedPosts(List<Post> input, bool at_end) {
+    for (int i=0;i<input.length;i++) {
+      ArrivalData.innocentAdd(userPosts, input[i]);
+    }
+
+    setState(() => has_reached_end = at_end);
   }
 
   Widget _buildPersonalDetails(BuildContext context, AppState model) {
@@ -160,20 +265,21 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 20),
                 CupertinoSegmentedControl<int>(
                   children: {
-                    0: Text('First'),
+                    0: Text('Posts'),
                     1: Text('Second'),
-                    2: Text('Other'),
+                    2: Text('Message'),
                   },
                   groupValue: _selectedViewIndex,
                   onValueChanged: (value) {
                     setState(() => _selectedViewIndex = value);
                   },
                 ),
+                SizedBox(height: 20),
                 _selectedViewIndex == 0
-                    ? First(widget.profile)
+                  ? _postScroller
                   : _selectedViewIndex == 1
                     ? Second(widget.profile)
-                    : Other(widget.profile),
+                    : UserContact(widget.profile),
               ],
             ),
           ),

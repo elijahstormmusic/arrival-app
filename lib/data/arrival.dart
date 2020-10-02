@@ -2,6 +2,7 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:convert';
 import '../posts/post.dart';
 import '../data/cards/partners.dart';
 import '../data/cards/articles.dart';
@@ -26,14 +27,14 @@ class ArrivalData {
   static List<Sale> sales;
   static final DateTime default_time = new DateTime(1996, 9, 29);
 
-  static dynamic innocentAdd(List<dynamic> _list, dynamic _input) {
+  static List<dynamic> innocentAdd(List<dynamic> _list, dynamic _input) {
     for (int i=0;i<_list.length;i++) {
       if (_list[i].cryptlink==_input.cryptlink) {
-        return;
+        return _list;
       }
     }
     _list.add(_input);
-    return _input;
+    return _list;
   }
 
   static void save() async {
@@ -43,7 +44,7 @@ class ArrivalData {
 
     for (var i=0;i<ArrivalData.partners.length;i++) {
       data[ArrivalData.partners[i].cryptlink] =
-        ArrivalData.partners[i].toString();
+        jsonEncode(ArrivalData.partners[i].toJson());
     }
 
     await file.write(data);
@@ -54,7 +55,7 @@ class ArrivalData {
 
     for (var i=0;i<ArrivalData.articles.length;i++) {
       data[ArrivalData.articles[i].cryptlink] =
-        ArrivalData.articles[i].toString();
+        jsonEncode(ArrivalData.articles[i].toJson());
     }
 
     await file.write(data);
@@ -69,20 +70,24 @@ class ArrivalData {
     try {
       (await ArrivalFiles('partners.json').readAll())
         .forEach((String key, dynamic value) =>
-          ArrivalData.innocentAdd(ArrivalData.partners, Business.parse(value)));
+          ArrivalData.innocentAdd(ArrivalData.partners, Business.json(
+            jsonDecode(value)
+          )));
     } catch(e) {
       print('-------');
-      print('Arrival Error when loading parter data');
+      print('Arrival Error: when loading partner data');
       print(e);
       print('-------');
     }
     try {
       (await ArrivalFiles('articles.json').readAll())
         .forEach((String key, dynamic value) =>
-          ArrivalData.innocentAdd(ArrivalData.articles, Article.parse(value)));
+          ArrivalData.innocentAdd(ArrivalData.articles, Article.json(
+            jsonDecode(value)
+        )));
     } catch(e) {
       print('-------');
-      print('Arrival Error when loading article data');
+      print('Arrival Error: when loading article data');
       print(e);
       print('-------');
     }
@@ -92,7 +97,7 @@ class ArrivalData {
       ArrivalFiles('partners.json').delete();
     } catch(e) {
       print('-------');
-      print('Arrival Error when deleting partners file');
+      print('Arrival Error: when deleting partner file');
       print(e);
       print('-------');
     }
@@ -100,7 +105,7 @@ class ArrivalData {
       ArrivalFiles('articles.json').delete();
     } catch(e) {
       print('-------');
-      print('Arrival Error when deleting articles file');
+      print('Arrival Error: when deleting article file');
       print(e);
       print('-------');
     }

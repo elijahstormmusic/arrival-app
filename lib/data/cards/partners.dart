@@ -2,6 +2,7 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
@@ -161,7 +162,21 @@ class ContactList {
     }
     return str;
   }
-
+  dynamic toJson() {
+    return {
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip': zip,
+      'website': website,
+      'email': email,
+      'facebook': facebook,
+      'twitter': twitter,
+      'instagram': instagram,
+      'pintrest': pintrest,
+    };
+  }
   ContactList({
     this.phoneNumber,
     this.email,
@@ -265,6 +280,20 @@ class Business {
     str += 'contact:{' + contact.toString() + '},';
     str += 'sales:{' + sales.toString() + '}';
     return str;
+  }
+  dynamic toJson() {
+    return {
+      'name': name,
+      'cryptlink': cryptlink,
+      'lat': location.lat,
+      'lng': location.lng,
+      'info': shortDescription,
+      'rating': rating,
+      'ratingAmount': ratingAmount,
+      'icon': industry.index,
+      'images': images.input,
+      'contact': contact.toJson(),
+    };
   }
   bool isOpen() {
     return true;

@@ -62,13 +62,13 @@ class _LoginState extends State<LoginPage> {
                 if (split[0]=='connect') {
                   UserData.username = split[1];
                   UserData.password = split[2];
-                  
-                  // pop off this login page
+
+                    // pop off this login page
                   Navigator.pop(context);
 
-                  // request userdata
-                  socket.emit('userdata get link', {
-                    'link': UserData.client.cryptlink,
+                    // request userdata
+                  socket.emit('userdata get', {
+                    'username': UserData.username,
                     'password': UserData.password,
                   });
                 }

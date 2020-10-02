@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/scheduler.dart';
 import '../data/socket.dart';
+import '../users/data.dart';
 import '../foryou/list.dart';
 import '../login/login.dart';
 import '../maps/maps.dart';
@@ -35,6 +36,8 @@ class _MainAppStates extends State<HomeScreen> {
     setState(() => _pulltoforyou = true);
   void forceLogin() =>
     setState(() => _forcelogin = true);
+  void refresh() =>
+    setState(() => true);
 
   void _selectedTab(BuildContext context, int index) {
     if (_selectedIndex == index) {
@@ -44,6 +47,19 @@ class _MainAppStates extends State<HomeScreen> {
       }
     }
     setState(() => _selectedIndex = index);
+  }
+
+  Widget _loadingScreen(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Styles.ArrivalPalletteRed,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -65,35 +81,37 @@ class _MainAppStates extends State<HomeScreen> {
       _pulltoforyou = false;
     }
 
-    return Scaffold(
-      body: _selectedIndex==0 ? ForYouPage() : Maps(),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => _selectedTab(context, index),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('for you'),
+    return (UserData.client.cryptlink=='')
+        ? _loadingScreen(context)
+        : Scaffold(
+          body: _selectedIndex==0 ? ForYouPage() : Maps(),
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (index) => _selectedTab(context, index),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                title: Text('for you'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.map),
+                title: Text('maps'),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            backgroundColor: Styles.ArrivalPalletteRed,
+            selectedIconTheme: IconThemeData(
+              color: Styles.ArrivalPalletteYellow,
+              size: 24.0,
+            ),
+            unselectedIconTheme: IconThemeData(
+              color: Styles.ArrivalPalletteWhite,
+              size: 24.0,
+            ),
+            selectedFontSize: 12.0,
+            unselectedFontSize: 12.0,
+            selectedItemColor: Styles.ArrivalPalletteYellow,
+            unselectedItemColor: Styles.ArrivalPalletteWhite,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            title: Text('maps'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        backgroundColor: Styles.ArrivalPalletteRed,
-        selectedIconTheme: IconThemeData(
-          color: Styles.ArrivalPalletteYellow,
-          size: 24.0,
-        ),
-        unselectedIconTheme: IconThemeData(
-          color: Styles.ArrivalPalletteWhite,
-          size: 24.0,
-        ),
-        selectedFontSize: 12.0,
-        unselectedFontSize: 12.0,
-        selectedItemColor: Styles.ArrivalPalletteYellow,
-        unselectedItemColor: Styles.ArrivalPalletteWhite,
-      ),
-    );
+        );
   }
 }

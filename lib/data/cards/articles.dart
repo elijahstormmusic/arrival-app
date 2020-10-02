@@ -2,6 +2,7 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
@@ -34,6 +35,18 @@ class Article {
     str += 'images:' + jsonEncode(images) + ',';
     str += 'extra_info:' + extra_info + ',';
     return str;
+  }
+  dynamic toJson() {
+    return {
+      'link': cryptlink,
+      'title': title,
+      'author': author,
+      'date': date,
+      'topic': topic,
+      'body': body,
+      'images': images,
+      'extra_info': extra_info,
+    };
   }
 
   Article({

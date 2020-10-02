@@ -42,13 +42,6 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return PressableCard(
       onPressed: () {
-
-          // request data
-        socket.emit('posts get data', {
-          'link': post.cryptlink,
-        });
-
-          // display post
         Navigator.of(context).push<void>(CupertinoPageRoute(
           builder: (context) => PostDisplayPage(post.cryptlink),
           fullscreenDialog: true,

@@ -152,6 +152,14 @@ class _PostDisPState extends State<PostDisplayPage> {
   @override
   void initState() {
     socket.post = this;
+
+        // request data if absent
+    if (ArrivalData.posts[widget.postIndex].user==null) {
+      socket.emit('posts get data', {
+        'link': ArrivalData.posts[widget.postIndex].cryptlink,
+      });
+    }
+
     socket.emit('posts get comments', {
       'link': ArrivalData.posts[widget.postIndex].cryptlink,
       'page': _page,

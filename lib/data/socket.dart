@@ -37,7 +37,7 @@ class socket {
       if (data['type']==900) { // for you download
         if (foryou==null) return;
 
-        foryou.responded(data['response']);
+        await foryou.responded(data['response']);
       }
 
       else if (data['type']==801) { // post data
@@ -85,26 +85,27 @@ class socket {
       }
 
       else if (data['type']==803) { // profile page download
-        if (profile==null) return;
-
         int index;
 
         try {
-          Profile profile = Profile.json(data['response']);
+          Profile cur_profile = Profile.json(data['response']);
           for (var i=0;i<ArrivalData.profiles.length;i++) {
-            if (ArrivalData.profiles[i].cryptlink==profile.cryptlink) {
+            if (ArrivalData.profiles[i].cryptlink==cur_profile.cryptlink) {
               index = i;
-              ArrivalData.profiles[i] = profile;
+              ArrivalData.profiles[i] = cur_profile;
               break;
             }
           }
         }
         catch (e) {
-          print('arrival connection error 803');
-          profile.responded(index);
+          print('----------- Arrival Error ----------');
+          print('connection error 803');
+          print('     -> profile decoding issue');
+          print('------------------------------------');
           return;
         }
 
+        if (profile==null) return;
         profile.responded(index);
       }
 
@@ -124,6 +125,28 @@ class socket {
           print('arrival connection error 804');
           return;
         }
+      }
+
+      else if (data['type']==805) { // profile posts download
+        if (profile==null) return;
+
+        List<Post> post_list = List<Post>();
+        var json_list = data['response']['list'];
+
+        for (int i=0;i<json_list.length;i++) {
+          try {
+            post_list.add(Post.json(json_list[i]));
+          }
+          catch (e) {
+            print('----------- Arrival Error ----------');
+            print('connection error 805');
+            print('     -> post decoding issue');
+            print('------------------------------------');
+            return;
+          }
+        }
+
+        profile.loadedPosts(post_list, data['response']['at_end']);
       }
 
       else if (data['type']==810) { //  single partner link downoad
@@ -160,9 +183,7 @@ class socket {
          */
 
       else if (data['type']==600) { // client userdata download
-        if (UserData.client==null) return;
-
-        UserData.refreshClientDate(data['response']);
+        UserData.refreshClientData(data['response']);
       }
 
       else if (data['type']==601) { // updated user password

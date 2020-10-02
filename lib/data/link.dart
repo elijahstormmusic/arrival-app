@@ -1,4 +1,8 @@
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -140,8 +144,7 @@ class DataState extends State<Data> {
                 if (split.length==0) return;
                 if (split[0]=='response') {
                   if (split.length!=2) return;
-                  UserData.client = Profile.parse(split[1]);
-                  UserData.client_string = split[1];
+                  UserData.client = Profile.json(jsonEncode(split[1]));
                   UserData.save();
 
                   // pop off this data pull page

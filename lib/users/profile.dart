@@ -2,6 +2,7 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,17 @@ class Profile {
     str += 'level:' + level.toString() + ',';
     str += 'points:' + points.toString() + ',';
     return str;
+  }
+  dynamic toJson() {
+    return {
+      'name': name,
+      'pic': pic,
+      'cryptlink': cryptlink,
+      'email': email,
+      'shortBio': shortBio,
+      'level': level,
+      'points': points,
+    };
   }
 
   Profile({

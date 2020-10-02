@@ -21,6 +21,7 @@ import '../data/preferences.dart';
 import '../data/cards/partners.dart';
 import '../data/socket.dart';
 import '../login/login.dart';
+import '../foryou/list.dart';
 import '../users/data.dart';
 import '../users/profile.dart';
 import '../arrival_team/contact.dart';
@@ -286,19 +287,19 @@ class SubSettings extends StatefulWidget {
               variableState.path,
               filename: image_name,
               folder: 'profile/' + UserData.client.name,
-            )).secure_url;
+            )).secure_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', '');
 
             if (img_url!=null) {
               socket.emit('userdata update', {
                 'link': UserData.client.cryptlink,
                 'password': UserData.password,
                 'type': 'pic',
-                'value': img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
+                'value': img_url,
               });
             }
 
             UserData.client = Profile(
-              pic: img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
+              pic: img_url,
               name: UserData.client.name,
               email: UserData.client.email,
               shortBio: UserData.client.shortBio,
@@ -306,6 +307,7 @@ class SubSettings extends StatefulWidget {
               level: UserData.client.level,
               points: UserData.client.points,
             );
+            ForYouPage.refresh_state();
             SubSettings.state.reload(null);
           } catch (e) {
             print('------------- Arrival Error ------------');

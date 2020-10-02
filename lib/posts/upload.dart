@@ -48,14 +48,14 @@ class _PostUploadState extends State<PostUploadScreen> {
         _image.path,
         filename: image_name,
         folder: 'posts/' + UserData.client.name,
-      )).secure_url;
+      )).secure_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', '');
 
       if (img_url!=null) {
         socket.emit('posts upload', {
-          'cloudlink': img_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', ''),
           'userlink': UserData.client.cryptlink,
-          'id': image_name,
+          'cloudlink': img_url,
           'caption': caption,
+          'id': image_name,
         });
       }
 

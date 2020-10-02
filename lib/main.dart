@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter/scheduler.dart';
 import 'data/app_state.dart';
 import 'data/preferences.dart';
 
@@ -25,12 +26,19 @@ void main() async {
 
   await UserData.load();
   await ArrivalData.load();
+  await ArrivalData.refresh();
   await socket.init();
   ArrivalData.carry = false;
-  socket.emit('userdata get link', {
-    'link': UserData.client.cryptlink,
-    'password': UserData.password,
-  });
+  if (UserData.client.cryptlink=='') {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      socket.home.forceLogin();
+    });
+  } else {
+    socket.emit('userdata get link', {
+      'link': UserData.client.cryptlink,
+      'password': UserData.password,
+    });
+  }
 
   runApp(
     ScopedModel<AppState>(

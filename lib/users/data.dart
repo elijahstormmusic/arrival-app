@@ -2,13 +2,15 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:convert';
 import 'package:meta/meta.dart';
 import '../users/profile.dart';
 import '../data/local.dart';
+import '../data/arrival.dart';
+import '../data/socket.dart';
 
 class UserData {
   static Profile client;
-  static String client_string;
   static String username;
   static String password;
   static double DefaultTip = 0.2;
@@ -16,23 +18,17 @@ class UserData {
   static bool LocationOn = true;
   static bool NewsLetterSubscription = true;
 
-  static void refreshClientDate(var input_data) {
+  static void refreshClientData(var input_data) {
     UserData.MembershipTier = input_data['settings']['membership']['tier'];
     UserData.DefaultTip = input_data['settings']['membership']['default_tip'];
     UserData.LocationOn = input_data['settings']['legal']['location'];
     UserData.NewsLetterSubscription = input_data['settings']['membership']['newsletter'];
 
-    UserData.client = Profile(
-      name: input_data['name'],
-      pic: input_data['pic'],
-      email: input_data['email'],
-      shortBio: input_data['bio'],
-      level: input_data['level'],
-      points: input_data['points'],
-      cryptlink: input_data['cryptlink']
-    );
+    UserData.client = Profile.json(input_data);
+    ArrivalData.innocentAdd(ArrivalData.profiles, UserData.client);
 
     UserData.save();
+    socket.home.refresh();
   }
 
   static void save() async {
@@ -42,7 +38,7 @@ class UserData {
 
     data['username'] = UserData.username;
     data['password'] = UserData.password;
-    data['info'] = UserData.client_string;
+    data['info'] = jsonEncode(UserData.client.toJson());
 
     await file.write(data);
   }
@@ -52,14 +48,13 @@ class UserData {
     try {
       UserData.username = await file.read('username');
       UserData.password = await file.read('password');
-      UserData.client_string = await file.read('info');
-      UserData.client = Profile.parse(UserData.client_string);
+      UserData.client = Profile.json(jsonDecode(await file.read('info')));
     } catch (e) {
       print('-------');
-      print('Arrival Error:');
-      print('Some error happened in data.dart @ 36');
+      print('Arrival Error: issue loading user data file');
       print(e);
       print('-------');
+      UserData.client = Profile.empty;
     }
   }
   static void refresh() async {

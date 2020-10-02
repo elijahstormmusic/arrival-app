@@ -31,9 +31,14 @@ import 'search.dart';
 
 class ForYouPage extends StatefulWidget {
   static _ListState currentState;
+
   static void scrollToTop() {
     if(ForYouPage.currentState==null) return;
     currentState.scrollToTop();
+  }
+  static void refresh_state() {
+    if(ForYouPage.currentState==null) return;
+    currentState.refresh_state();
   }
 
   static void showUploadButton() =>
@@ -165,6 +170,7 @@ class _ListState extends State<ForYouPage> {
 
     _requestFailed = false;
     setState(() => ArrivalData.foryou += list);
+    ArrivalData.save();
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
   }
@@ -188,6 +194,9 @@ class _ListState extends State<ForYouPage> {
       curve: Curves.easeOut,
       duration: const Duration(milliseconds: 300),
     );
+  }
+  void refresh_state() {
+    setState(() => 0);
   }
 
   void _gotoUpload(BuildContext context) {
