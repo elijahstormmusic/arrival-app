@@ -324,12 +324,14 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
         }
         else if (widget.article.body[index]['type']==1) {
           if (index+1<widget.article.body.length) {
-            skipNext = true;
-            return _buildImageTextWrap(
-              widget.article.body[index]['content'],
-              widget.article.body[index+1]['content'],
-              index%2==0,
-            );
+            if (widget.article.body[index+1]['type']==0) {
+              skipNext = true;
+              return _buildImageTextWrap(
+                widget.article.body[index]['content'],
+                widget.article.body[index+1]['content'],
+                index%2==0,
+              );
+            }
           }
           return _buildImage(widget.article.body[index]['content']);
         }

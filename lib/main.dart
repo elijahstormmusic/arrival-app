@@ -7,15 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'data/app_state.dart';
 import 'data/preferences.dart';
-
+import 'data/socket.dart';
 import 'screens/home.v2.dart';
 import 'users/data.dart';
-import 'data/link.dart';
+import 'users/profile.dart';
 import 'data/arrival.dart';
 import 'login/login.dart';
-import 'data/socket.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ void main() async {
 
   await UserData.load();
   await ArrivalData.load();
+  await UserData.refresh();
   await ArrivalData.refresh();
   await socket.init();
   ArrivalData.carry = false;
@@ -45,14 +47,17 @@ void main() async {
       model: AppState(),
       child: ScopedModel<Preferences>(
         model: Preferences()..load(),
-        child: CupertinoApp(
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-            DefaultCupertinoLocalizations.delegate,
-          ],
-          home: HomeScreen(),
+        child: RefreshConfiguration(
+          enableLoadingWhenFailed: true,
+          child: CupertinoApp(
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+              DefaultCupertinoLocalizations.delegate,
+            ],
+            home: HomeScreen(),
+          ),
         ),
       ),
     ),

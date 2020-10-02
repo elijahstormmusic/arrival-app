@@ -16,7 +16,6 @@ class ArrivalFiles {
     if (_file=='') return;
 
     name = _file;
-
     _setup();
   }
   void _setup() async {
@@ -24,7 +23,7 @@ class ArrivalFiles {
       final file = await _localFile;
       file.create();
       _valid = true;
-    } catch(e) {
+    } catch (e) {
       _valid = false;
       print('Arrival Error: Cannot create file');
       print(e);
@@ -45,7 +44,7 @@ class ArrivalFiles {
 
     try {
       _contents = json.decode(await file.readAsString());
-    } catch(e) {
+    } catch (e) {
       _contents = Map<String, dynamic>();
     }
     _contents.addAll(data);
@@ -87,7 +86,22 @@ class ArrivalFiles {
 
     return _contents;
   }
-  bool delete() {
-    return false;
+  Future<bool> delete() async {
+    if (!_valid) return null;
+
+    if (_contents==null) {
+      try {
+        final file = await _localFile;
+
+        file.deleteSync(recursive: true);
+      } catch (e) {
+        print('Arrival Error: Unreadable @ delete()');
+        print(e);
+        throw e;
+        return false;
+      }
+    }
+
+    return true;
   }
 }

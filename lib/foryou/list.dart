@@ -65,13 +65,17 @@ class _ListState extends State<ForYouPage> {
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _refreshController = RefreshController(initialRefresh: false);
+    _refreshController = RefreshController(
+      initialRefresh: true,
+    );
     _loadingCard = RowLoading();
     _search = Search();
     socket.foryou = this;
     ForYouPage.currentState = this;
     super.initState();
-    if(ArrivalData.foryou==null) _refresh();
+    if (ArrivalData.foryou==null) {
+      ArrivalData.foryou = List<RowCard>();
+    }
   }
   @override
   void dispose() {
@@ -98,7 +102,8 @@ class _ListState extends State<ForYouPage> {
   void responded(var data) async {
     if (data.length==0) {
       _requestFailed = true;
-      _refreshController.loadFailed();
+      _refreshController.loadComplete();
+      _refreshController.refreshCompleted();
       return;
     }
 
@@ -163,7 +168,8 @@ class _ListState extends State<ForYouPage> {
     }
     catch (e) {
       _requestFailed = true;
-      _refreshController.loadFailed();
+      _refreshController.loadComplete();
+      _refreshController.refreshCompleted();
       print(e);
       return;
     }
@@ -309,8 +315,6 @@ class _ListState extends State<ForYouPage> {
           label: input['action-label'],
           onPressed: input['action'],
         ),
-        // animation: Animation<double>(),
-        // behavior: SnackBarBehavior.fixed,
       ));
     } catch (e) {
 

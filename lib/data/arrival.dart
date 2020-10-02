@@ -26,6 +26,8 @@ class ArrivalData {
   static List<Article> articles;
   static List<Sale> sales;
   static final DateTime default_time = new DateTime(1996, 9, 29);
+  static final PARTNERS = 'partners.json';
+  static final ARTICLES = 'articles.json';
 
   static List<dynamic> innocentAdd(List<dynamic> _list, dynamic _input) {
     for (int i=0;i<_list.length;i++) {
@@ -38,7 +40,7 @@ class ArrivalData {
   }
 
   static void save() async {
-    ArrivalFiles file = ArrivalFiles('partners.json');
+    ArrivalFiles file = ArrivalFiles(PARTNERS);
 
     Map<String, dynamic> data = Map<String, dynamic>();
 
@@ -49,7 +51,7 @@ class ArrivalData {
 
     await file.write(data);
 
-    file = ArrivalFiles('articles.json');
+    file = ArrivalFiles(ARTICLES);
 
     data = Map<String, dynamic>();
 
@@ -68,24 +70,24 @@ class ArrivalData {
     ArrivalData.sales = List<Sale>();
 
     try {
-      (await ArrivalFiles('partners.json').readAll())
+      (await ArrivalFiles(PARTNERS).readAll())
         .forEach((String key, dynamic value) =>
           ArrivalData.innocentAdd(ArrivalData.partners, Business.json(
             jsonDecode(value)
           )));
-    } catch(e) {
+    } catch (e) {
       print('-------');
       print('Arrival Error: when loading partner data');
       print(e);
       print('-------');
     }
     try {
-      (await ArrivalFiles('articles.json').readAll())
+      (await ArrivalFiles(ARTICLES).readAll())
         .forEach((String key, dynamic value) =>
           ArrivalData.innocentAdd(ArrivalData.articles, Article.json(
             jsonDecode(value)
         )));
-    } catch(e) {
+    } catch (e) {
       print('-------');
       print('Arrival Error: when loading article data');
       print(e);
@@ -94,16 +96,16 @@ class ArrivalData {
   }
   static void refresh() async {
     try {
-      ArrivalFiles('partners.json').delete();
-    } catch(e) {
+      ArrivalFiles(PARTNERS).delete();
+    } catch (e) {
       print('-------');
       print('Arrival Error: when deleting partner file');
       print(e);
       print('-------');
     }
     try {
-      ArrivalFiles('articles.json').delete();
-    } catch(e) {
+      ArrivalFiles(ARTICLES).delete();
+    } catch (e) {
       print('-------');
       print('Arrival Error: when deleting article file');
       print(e);

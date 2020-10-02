@@ -232,20 +232,12 @@ class socket {
       else if (data['type']==500) { // error reporting
         foryou.openSnackBar({
           'text': 'Database error ' + data['error_code'].toString(),
-          'action': () => {
-            print('closed')
-          },
-          'action-label': 'Test',
           'duration': error_report_time,
         });
       }
       else if (data['type']==530) { // post successfully uploaded
         foryou.openSnackBar({
           'text': 'Comment posted succesful',
-          'action': () => {
-            print('open')
-          },
-          'action-label': 'Test',
           'duration': error_report_time,
         });
         ArrivalData.foryou.insert(0, RowPost(Post.link(data['link'])));
@@ -255,10 +247,6 @@ class socket {
       else if (data['type']==531) { // post failed upload
         foryou.openSnackBar({
           'text': 'Post failed',
-          'action': () => {
-            print('closed')
-          },
-          'action-label': 'Test',
           'duration': error_report_time,
         });
       }
@@ -266,20 +254,12 @@ class socket {
         // goto comment
         foryou.openSnackBar({
           'text': 'Successful upload',
-          'action': () => {
-            print('closed')
-          },
-          'action-label': 'Test',
           'duration': error_report_time,
         });
       }
       else if (data['type']==533) { // comment failed upload
         foryou.openSnackBar({
           'text': 'Comment failed',
-          'action': () => {
-            print('closed')
-          },
-          'action-label': 'Test',
           'duration': error_report_time,
         });
       }

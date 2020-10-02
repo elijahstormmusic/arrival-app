@@ -62,7 +62,7 @@ class UserData {
 
     try {
       file.delete();
-    } catch(e) {
+    } catch (e) {
       print('-------');
       print('Arrival Error:');
       print('Could not delete file in data.dart @ 48');
