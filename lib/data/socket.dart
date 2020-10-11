@@ -18,9 +18,10 @@ import '../foryou/list.dart';
 class socket {
   static SocketIO _socket;
   static var home, post, profile, foryou;
-  static int error_report_time = 8;
+  static int error_report_time = 3;
 
   static void init() {
+    if (_socket!=null) return;
     _socket = SocketIOManager().createSocketIO(
       'https://arrival-app.herokuapp.com', '/');
     _socket.init();
@@ -43,17 +44,7 @@ class socket {
       else if (data['type']==801) { // post data
         if (post==null) {
           await Future.delayed(const Duration(seconds: 5));
-          if (post==null) {
-            foryou.openSnackBar({
-              'text': 'Connection error P25',
-              'action': () => {
-                print('closed')
-              },
-              'action-label': 'Close',
-              'duration': 10,
-            });
-            return;
-          }
+          if (post==null) return;
         }
         Post postData = Post.json(data['response']);
         for (int i=0;i<ArrivalData.posts.length;i++) {
@@ -69,16 +60,28 @@ class socket {
       else if (data['type']==802) { // comments
         if (post==null) return;
 
-        var commentList = data['response'];
-        var postLink = data['query']['cryptlink'];
+        try {
+          var commentList = data['response'];
+          var postLink = data['query']['cryptlink'];
 
-        for (int i=0;i<ArrivalData.posts.length;i++) {
-          if (ArrivalData.posts[i].cryptlink==postLink) {
-            for (int j=0;j<commentList.length;j++) {
-              ArrivalData.posts[i].comments.add(commentList[j]);
+          for (int i=0;i<ArrivalData.posts.length;i++) {
+            if (ArrivalData.posts[i].cryptlink==postLink) {
+              for (int j=0;j<commentList.length;j++) {
+                ArrivalData.posts[i].comments.add(commentList[j]);
+              }
+              ArrivalData.posts[i].commentPage++;
+              break;
             }
-            break;
           }
+        }
+        catch (e)
+        {
+          print('''
+            =======================================
+                      Arrival Error #802
+                $e
+            =======================================
+          ''');
         }
 
         post.responded();
@@ -98,10 +101,12 @@ class socket {
           }
         }
         catch (e) {
-          print('----------- Arrival Error ----------');
-          print('connection error 803');
-          print('     -> profile decoding issue');
-          print('------------------------------------');
+          print('''
+            =======================================
+                      Arrival Error #803
+                $e
+            =======================================
+          ''');
           return;
         }
 
@@ -120,9 +125,15 @@ class socket {
               break;
             }
           }
+          foryou.refresh_state();
         }
         catch (e) {
-          print('arrival connection error 804');
+          print('''
+            =======================================
+                      Arrival Error #804
+                $e
+            =======================================
+          ''');
           return;
         }
       }
@@ -138,10 +149,12 @@ class socket {
             post_list.add(Post.json(json_list[i]));
           }
           catch (e) {
-            print('----------- Arrival Error ----------');
-            print('connection error 805');
-            print('     -> post decoding issue');
-            print('------------------------------------');
+            print('''
+              =======================================
+                        Arrival Error #805
+                  $e
+              =======================================
+            ''');
             return;
           }
         }
@@ -155,7 +168,12 @@ class socket {
           _business = Business.json(data['response']);
         }
         catch (e) {
-          print('Arrival Error -- Failure parsing Business E810');
+          print('''
+            =======================================
+                      Arrival Error #E810
+                $e
+            =======================================
+          ''');
           return;
         }
         for (var i=0;i<ArrivalData.partners.length;i++) {
@@ -165,7 +183,12 @@ class socket {
                   ArrivalData.innocentAdd(_business.sales, ArrivalData.partners[i].sales[j]);
                 }
                 catch (e) {
-                  print('Arrival Error -- Failure adding Sales E810');
+                  print('''
+                    =======================================
+                              Arrival Error #E810
+                        $e
+                    =======================================
+                  ''');
                 }
             }
             ArrivalData.partners[i] = _business;
@@ -213,6 +236,7 @@ class socket {
         else if (data['code']==2) error_msg = 'Unknown error.';
         else if (data['code']==5) error_msg = 'Password not correct';
         else if (data['code']==666) {
+          await UserData.refresh();
           home.forceLogin();
           return;
         }
@@ -236,13 +260,10 @@ class socket {
         });
       }
       else if (data['type']==530) { // post successfully uploaded
-        foryou.openSnackBar({
-          'text': 'Comment posted succesful',
-          'duration': error_report_time,
-        });
-        ArrivalData.foryou.insert(0, RowPost(Post.link(data['link'])));
-        home.gotoForyou();
-        ForYouPage.scrollToTop();
+        ArrivalData.posts.add(Post.link(data['link']));
+        ArrivalData.foryou.insert(0, RowPost(
+          ArrivalData.posts.length - 1
+        ));
       }
       else if (data['type']==531) { // post failed upload
         foryou.openSnackBar({
@@ -263,28 +284,22 @@ class socket {
           'duration': error_report_time,
         });
       }
-
-      // else if (data['type']==520) { // article successfully uploaded
-      //   var article = Article.link(data['link']);
-      //   ArrivalData.innocentAdd(ArrivalData.articles, article);
-      //   ArrivalData.foryou.insert(RowArticle(article));
-      //   home.gotoForyouTop();
-      // }
-      // else if (data['type']==521) { // article failed upload
-      //   foryou.openSnackBar({
-      //     'text': 'Your article failed to upload',
-      //     'action': 'RETRY',
-      //     'function': () => 3,
-      //   });
-      // }
     });
 
     _socket.connect();
   }
 
   static void emit(String _req, var _data) {
+    if (_socket==null) return;
     _socket.sendMessage(
       _req, json.encode(_data),
     );
+  }
+
+  static void close() {
+    if (_socket==null) return;
+    _socket.unSubscribesAll();
+    _socket.disconnect();
+    SocketIOManager().destroySocket(_socket);
   }
 }

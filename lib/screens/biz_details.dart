@@ -12,6 +12,7 @@ import '../foryou/sale_card.dart';
 import '../data/app_state.dart';
 import '../data/preferences.dart';
 import '../data/cards/partners.dart';
+import '../data/link.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
 import '../widgets/cards.dart';
@@ -29,7 +30,7 @@ class SellerView extends StatelessWidget {
     final prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
     final themeData = CupertinoTheme.of(context);
 
-    if(biz.sales.length==0) {
+    if (biz.sales.length==0) {
       return Padding(
         padding: EdgeInsets.all(64),
         child: DecoratedBox(
@@ -127,7 +128,7 @@ class InfoView extends StatelessWidget {
               ],
             ),
             onTap: () {
-              Navigator.of(context).push<void>(CupertinoPageRoute(
+              Arrival.navigator.currentState.push(MaterialPageRoute(
                 builder: (context) => Maps.directions(biz.name),
                 fullscreenDialog: true,
               ));

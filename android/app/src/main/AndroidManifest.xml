@@ -9,6 +9,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="arrival_kc"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+          android:value="AIzaSyDGiAXusfesRoqC7Nmanca3F1bHY0poyxc"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -46,4 +48,5 @@
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 </manifest>

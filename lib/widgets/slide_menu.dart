@@ -12,6 +12,7 @@ import '../users/page.dart';
 import '../users/data.dart';
 import '../login/login.dart';
 import '../arrival_team/contact.dart';
+import '../data/link.dart';
 
 class SlideMenu extends StatefulWidget {
 
@@ -41,7 +42,7 @@ class _SlideState extends State<SlideMenu> {
 
   void _logout() async {
     await UserData.refresh();
-    Navigator.of(context).push<void>(CupertinoPageRoute(
+    Arrival.navigator.currentState.push(MaterialPageRoute(
       builder: (context) => LoginPage(),
       fullscreenDialog: true,
     ));
@@ -57,6 +58,7 @@ class _SlideState extends State<SlideMenu> {
       ),
       child: Drawer(
         child: ListView(
+          physics: ClampingScrollPhysics(),
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
@@ -94,7 +96,7 @@ class _SlideState extends State<SlideMenu> {
                 style: TextStyle(color: Styles.ArrivalPalletteBlack),
               ),
               onTap: () => {
-                Navigator.of(context).push<void>(CupertinoPageRoute(
+                Arrival.navigator.currentState.push(MaterialPageRoute(
                   builder: (context) => ProfilePage(),
                   fullscreenDialog: true,
                 ))
@@ -107,7 +109,7 @@ class _SlideState extends State<SlideMenu> {
                 style: TextStyle(color: Styles.ArrivalPalletteBlack),
               ),
               onTap: () => {
-                Navigator.of(context).push<void>(CupertinoPageRoute(
+                Arrival.navigator.currentState.push(MaterialPageRoute(
                   builder: (context) => SettingsScreen(),
                   fullscreenDialog: true,
                 ))
@@ -120,7 +122,7 @@ class _SlideState extends State<SlideMenu> {
                 style: TextStyle(color: Styles.ArrivalPalletteBlack),
               ),
               onTap: () => {
-                Navigator.of(context).push<void>(CupertinoPageRoute(
+                Arrival.navigator.currentState.push(MaterialPageRoute(
                   builder: (context) => ContactUs(),
                   fullscreenDialog: true,
                 ))

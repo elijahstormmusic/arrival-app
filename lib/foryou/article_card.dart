@@ -3,9 +3,11 @@
 // for use only in ARRIVAL Project
 
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../data/cards/articles.dart';
+import '../data/link.dart';
 import '../screens/article.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
@@ -39,7 +41,7 @@ class ArticleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return PressableCard(
       onPressed: () {
-        Navigator.of(context).push<void>(CupertinoPageRoute(
+        Arrival.navigator.currentState.push(MaterialPageRoute(
           builder: (context) => ArticleDisplayPage(article),
           fullscreenDialog: true,
         ));

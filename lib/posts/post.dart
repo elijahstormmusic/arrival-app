@@ -18,20 +18,23 @@ class Post {
   final String cryptlink;
   final String cloudlink;
   final int likes;
-  final Profile user;
+  final int views;
+  final Map<String, dynamic> location;
+  String userlink;
   final DateTime uploadDate;
+  int commentPage = -1;
   List<Map<String, dynamic>> comments = [];
   final bool full;
 
-  String toString() {
-    String str = '';
-    str += 'caption:' + caption + ',';
-    str += 'cryptlink:' + cryptlink + ',';
-    str += 'cloudlink:' + cloudlink + ',';
-    str += 'date:' + uploadDate.toString() + ',';
-    str += 'likes:' + likes.toString() + ',';
-    str += 'user:{' + user.toString() + '}';
-    return str;
+  Profile get user {
+    if (userlink=='') {
+      int _newPostIndex =
+        ArrivalData.posts.indexWhere((v) => v.cryptlink==cryptlink);
+      userlink = ArrivalData.posts[_newPostIndex].userlink;
+    }
+    int _index = ArrivalData.profiles.indexWhere((v) => v.cryptlink==userlink);
+    if (_index==-1) return ArrivalData.profiles[0];
+    return ArrivalData.profiles[_index];
   }
 
   Post({
@@ -39,26 +42,31 @@ class Post {
     @required this.cryptlink,
     @required this.cloudlink,
     @required this.likes,
+    @required this.views,
+    @required this.location,
     @required this.uploadDate,
-    @required this.user,
+    @required this.userlink,
     this.full = true,
   });
   Post.icon({
     @required this.cryptlink,
     @required this.cloudlink,
+    @required this.userlink,
     this.caption = 'loading...',
     this.likes = 0,
+    this.views = 0,
+    this.location = const {'name': '', 'lat': 0, 'lng': 0},
     this.uploadDate = null,
     this.full = false,
-    this.user = null,
   });
   static final Post empty = Post(
     caption: '',
     cryptlink: '',
     cloudlink: 'v1599325166/sample.jpg',
     likes: 0,
+    views: 0,
+    location: {'name': '', 'lat': 0, 'lng': 0},
     uploadDate: ArrivalData.default_time,
-    user: Profile.empty,
   );
 
   NetworkImage card_image() {
@@ -80,70 +88,33 @@ class Post {
   }
 
   static Post json(var input) {
+    Profile.lite(input['user']);
     return Post(
       caption: input['caption'],
       cryptlink: input['cryptlink'],
       cloudlink: input['cloudlink'],
       likes: input['likes'],
+      views: input['views'],
+      location: input['location'],
       uploadDate: DateTime.parse(input['date']),
-      user: Profile.lite(input['user']),
-    );
-  }
-  static Post parse(String input) {
-    if (input.substring(0, 1)=='{')
-      input = input.substring(1, input.length-1);
-
-    var caption, cryptlink, likes,
-        uploadDate, cloudlink, user;
-
-    var startDataLoc, endDataLoc = 0;
-
-    startDataLoc = input.indexOf('caption')            + 8;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    caption = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('likes')           + 6;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    likes = int.parse(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('uploadDate')      + 11;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    uploadDate = DateTime.parse(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('cryptlink')       + 10;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    cryptlink = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('cloudlink')       + 10;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    cloudlink = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('user')           + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    user = Profile.link(input.substring(startDataLoc, endDataLoc));
-
-    return Post(
-      caption: caption,
-      cryptlink: cryptlink,
-      cloudlink: cloudlink,
-      uploadDate: uploadDate,
-      likes: likes,
-      user: user,
+      userlink: input['user'],
     );
   }
   static Post link(String input) {
-    for (var i=0;i<ArrivalData.posts.length;i++) {
+    for (int i=0;i<ArrivalData.posts.length;i++) {
       if (ArrivalData.posts[i].cryptlink==input) {
         return ArrivalData.posts[i];
       }
     }
-    var P = Post(
+    Post P = Post(
       caption: '',
       cryptlink: input,
       cloudlink: 'v1599325166/sample.jpg',
       likes: 0,
+      views: 0,
+      location: {'name': '', 'lat': 0, 'lng': 0},
       uploadDate: ArrivalData.default_time,
-      user: Profile.empty,
+      userlink: '',
     );
     socket.emit('posts get', {
       'link': input,

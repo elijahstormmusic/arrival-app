@@ -3,6 +3,7 @@
 // for use only in ARRIVAL Project
 
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../posts/post.dart';
@@ -10,15 +11,16 @@ import '../posts/page.dart';
 import '../screens/biz_details.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
+import '../data/arrival.dart';
 import '../data/preferences.dart';
 import '../data/socket.dart';
+import '../data/link.dart';
 import 'row_card.dart';
 
 class PostCard extends StatelessWidget {
-  PostCard(this.post, this.isNear);
+  PostCard(this.post);
 
   final Post post;
-  final bool isNear;
 
   Widget _buildDetails() {
     return FrostyBackground(
@@ -28,9 +30,22 @@ class PostCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'post ' + post.caption,
-              style: Styles.cardTitleText,
+            Text.rich(
+              TextSpan(
+                style: Styles.postCardText,
+                children: [
+                  TextSpan(
+                    text: post.user.name
+                    + '  ',
+                    style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(text: '  ' + post.caption),
+                ],
+              ),
+              textAlign: TextAlign.left,
             ),
           ],
         ),
@@ -42,7 +57,7 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return PressableCard(
       onPressed: () {
-        Navigator.of(context).push<void>(CupertinoPageRoute(
+        Arrival.navigator.currentState.push(MaterialPageRoute(
           builder: (context) => PostDisplayPage(post.cryptlink),
           fullscreenDialog: true,
         ));
@@ -50,14 +65,12 @@ class PostCard extends StatelessWidget {
       child: Stack(
         children: [
           Semantics(
-            label: 'Logo for ${post.caption}',
+            label: 'Post Image',
             child: Container(
-              height: isNear ? 300 : 150,
+              height: 300.0,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  colorFilter:
-                      isNear ? null : Styles.desaturatedColorFilter,
                   image: post.card_image(),
                 ),
               ),
@@ -76,20 +89,17 @@ class PostCard extends StatelessWidget {
 }
 
 class RowPost extends RowCard {
-
-  final Post post;
-  final bool isNear = true;
+  final int postIndex;
 
   RowPost(
-    @required this.post,
-    // this.isNear,
+    @required this.postIndex,
   );
 
   @override
   Widget generate(Preferences prefs) {
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-      child: PostCard(post, isNear),
+      padding: EdgeInsets.only(left: 0, right: 0, bottom: 24),
+      child: PostCard(ArrivalData.posts[postIndex]),
     );
   }
 }

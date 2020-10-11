@@ -12,6 +12,7 @@ import '../data/app_state.dart';
 import '../data/preferences.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
+import '../data/link.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
 import '../posts/post.dart';
@@ -22,8 +23,11 @@ import '../widgets/cards.dart';
 
 
 class UserPosts extends StatefulWidget {
-  _ProfilePageState parentPage;
-  UserPosts(this.parentPage);
+  final List<Post> userPosts;
+  final String cryptlink;
+  final bool has_reached_end;
+
+  UserPosts(this.userPosts, this.cryptlink, this.has_reached_end);
 
   @override
   _UserPostsState createState() => _UserPostsState();
@@ -37,11 +41,11 @@ class _UserPostsState extends State<UserPosts> {
   @override
   void initState() {
     userstate = {
-      'link': widget.parentPage.widget.profile.cryptlink,
+      'link': widget.cryptlink,
       'amount': 18,
       'index': 0,
     };
-    if (!widget.parentPage.has_reached_end) {
+    if (!widget.has_reached_end) {
       socket.emit('profile get posts', userstate);
     }
     _scrollController = ScrollController();
@@ -57,8 +61,8 @@ class _UserPostsState extends State<UserPosts> {
   void _pullNext() {
     if (!_allowRequest) return;
     _allowRequest = false;
-    if (widget.parentPage.has_reached_end) return;
-    userstate['index'] = widget.parentPage.userPosts.length;
+    if (widget.has_reached_end) return;
+    userstate['index'] = widget.userPosts.length;
     socket.emit('profile get posts', userstate);
   }
   void _loadMore() {
@@ -85,12 +89,12 @@ class _UserPostsState extends State<UserPosts> {
         controller: _scrollController,
         physics: NeverScrollableScrollPhysics(),
         children: new List<Widget>.generate(
-          widget.parentPage.userPosts.length, (index) {
+          widget.userPosts.length, (index) {
             return PressableCard(
               onPressed: () {
-                Navigator.of(context).push<void>(CupertinoPageRoute(
+                Arrival.navigator.currentState.push(MaterialPageRoute(
                   builder: (context) => PostDisplayPage(
-                    widget.parentPage.userPosts[index].cryptlink
+                    widget.userPosts[index].cryptlink
                   ), fullscreenDialog: true,
                 ));
               },
@@ -100,7 +104,7 @@ class _UserPostsState extends State<UserPosts> {
                 ),
                 child: FittedBox(
                   fit: BoxFit.cover,
-                  child: widget.parentPage.userPosts[index].icon(),
+                  child: widget.userPosts[index].icon(),
                 ),
               ),
             );
@@ -156,15 +160,13 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedViewIndex = 0;
   bool loaded = false;
   List<Post> userPosts;
-  UserPosts _postScroller;
   bool has_reached_end = false;
 
   @override
   void initState() {
     userPosts = List<Post>();
-    _postScroller = UserPosts(this);
     socket.profile = this;
-    if(widget.profile.email=='') {
+    if (widget.profile.email=='') {
       socket.emit('profile get', {
         'link': widget.profile.cryptlink,
       });
@@ -173,7 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void responded(int index) {
-    if(index==null) return;
+    if (index==null) return;
     widget.profile = ArrivalData.profiles[index];
     setState(() => loaded = true);
   }
@@ -181,7 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
     for (int i=0;i<input.length;i++) {
       ArrivalData.innocentAdd(userPosts, input[i]);
     }
-
     setState(() => has_reached_end = at_end);
   }
 
@@ -267,7 +268,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 CupertinoSegmentedControl<int>(
                   children: {
                     0: Text('Posts'),
-                    1: Text('Second'),
+                    1: Text('ID'),
                     2: Text('Message'),
                   },
                   groupValue: _selectedViewIndex,
@@ -277,7 +278,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 SizedBox(height: 20),
                 _selectedViewIndex == 0
-                  ? _postScroller
+                  ? UserPosts(userPosts, widget.profile.cryptlink, has_reached_end)
                   : _selectedViewIndex == 1
                     ? Second(widget.profile)
                     : UserContact(widget.profile),

@@ -16,27 +16,25 @@ import '../foryou/row_card.dart';
 
 class ArrivalData {
   static List<RowCard> foryou;
-  static DataState server;
-  static String result;
-  static String sendMessage;
-  static bool carry;
+
   static List<Post> posts;
   static List<Profile> profiles;
   static List<Business> partners;
   static List<Article> articles;
   static List<Sale> sales;
+
   static final DateTime default_time = new DateTime(1996, 9, 29);
   static final PARTNERS = 'partners.json';
   static final ARTICLES = 'articles.json';
 
-  static List<dynamic> innocentAdd(List<dynamic> _list, dynamic _input) {
+  static int innocentAdd(List<dynamic> _list, dynamic _input) {
     for (int i=0;i<_list.length;i++) {
       if (_list[i].cryptlink==_input.cryptlink) {
-        return _list;
+        return i;
       }
     }
     _list.add(_input);
-    return _list;
+    return _list.length - 1;
   }
 
   static void save() async {

@@ -20,6 +20,7 @@ import 'package:cloudinary_client/cloudinary_client.dart';
 import '../data/preferences.dart';
 import '../data/cards/partners.dart';
 import '../data/socket.dart';
+import '../data/link.dart';
 import '../login/login.dart';
 import '../foryou/list.dart';
 import '../users/data.dart';
@@ -1226,7 +1227,7 @@ class ProfileScreen extends StatelessWidget {
         label: 'Profile Picture',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.ProfilePicture,
@@ -1242,7 +1243,7 @@ class ProfileScreen extends StatelessWidget {
         label: 'Email',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.Email,
@@ -1258,7 +1259,7 @@ class ProfileScreen extends StatelessWidget {
         label: 'Password',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.Password,
@@ -1276,7 +1277,7 @@ class ProfileScreen extends StatelessWidget {
         label: 'Membership Tier',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.Membership,
@@ -1315,7 +1316,7 @@ class PaymentsScreen extends StatelessWidget {
         label: 'Billing Info',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.Billing,
@@ -1331,7 +1332,7 @@ class PaymentsScreen extends StatelessWidget {
         //subtitle: 'Can be changed at order checkout',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.Tipping,
@@ -1377,7 +1378,7 @@ class ContactUsSettings extends StatelessWidget {
         label: 'Contact Us',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => ContactUs(),
               title: 'Contact Us',
@@ -1390,7 +1391,7 @@ class ContactUsSettings extends StatelessWidget {
         label: 'Legal',
         content: SettingsNavigationIndicator(),
         onPress: () {
-          Navigator.of(context).push<void>(
+          Arrival.navigator.currentState.push(
             CupertinoPageRoute(
               builder: (context) => SubSettings(
                 buildPage: SubSettings.Legal,
@@ -1438,7 +1439,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       content: SettingsNavigationIndicator(),
       onPress: () {
-        Navigator.of(context).push<void>(
+        Arrival.navigator.currentState.push(
           CupertinoPageRoute(
             builder: (context) => ProfileScreen(),
             title: 'Edit Profile',
@@ -1471,7 +1472,7 @@ class SettingsScreen extends StatelessWidget {
         },
       ),
       onPress: () {
-        Navigator.of(context).push<void>(
+        Arrival.navigator.currentState.push(
           CupertinoPageRoute(
             builder: (context) => DistanceSettingsScreen(),
             title: 'Near Me Range',
@@ -1491,7 +1492,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       content: SettingsNavigationIndicator(),
       onPress: () {
-        Navigator.of(context).push<void>(
+        Arrival.navigator.currentState.push(
           CupertinoPageRoute(
             builder: (context) => SourceIndustrySettingsScreen(),
             title: 'Preferred Industries',
@@ -1511,7 +1512,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       content: SettingsNavigationIndicator(),
       onPress: () {
-        Navigator.of(context).push<void>(
+        Arrival.navigator.currentState.push(
           CupertinoPageRoute(
             builder: (context) => PaymentsScreen(),
             title: 'Payments',
@@ -1530,7 +1531,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       content: SettingsNavigationIndicator(),
       onPress: () {
-        Navigator.of(context).push<void>(
+        Arrival.navigator.currentState.push(
           CupertinoPageRoute(
             builder: (context) => ContactUsSettings(),
             title: 'Contact Us',

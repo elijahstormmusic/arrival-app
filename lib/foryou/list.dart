@@ -19,6 +19,7 @@ import '../data/preferences.dart';
 import '../data/cards/partners.dart';
 import '../data/cards/articles.dart';
 import '../data/cards/sales.dart';
+import '../data/link.dart';
 import '../posts/post.dart';
 import '../posts/upload.dart';
 import '../styles.dart';
@@ -32,14 +33,13 @@ import 'search.dart';
 class ForYouPage extends StatefulWidget {
   static _ListState currentState;
 
-  static void scrollToTop() {
-    if(ForYouPage.currentState==null) return;
+  static void scrollToTop() =>
     currentState.scrollToTop();
-  }
-  static void refresh_state() {
-    if(ForYouPage.currentState==null) return;
+  static void refresh_state() =>
     currentState.refresh_state();
-  }
+
+  static void openSnackBar(Map<String, dynamic> input) =>
+    currentState.openSnackBar(input);
 
   static void showUploadButton() =>
     currentState.setState(() => currentState.showUploadButton = true);
@@ -133,8 +133,9 @@ class _ListState extends State<ForYouPage> {
         else if (data[i]['type']==2) {
           try {
             result = Post.json(data[i]);
-            card = RowPost(result);
-            ArrivalData.innocentAdd(ArrivalData.posts, result);
+            card = RowPost(
+              ArrivalData.innocentAdd(ArrivalData.posts, result)
+            );
           } catch (e) {
             print(e);
             continue;
@@ -201,12 +202,10 @@ class _ListState extends State<ForYouPage> {
       duration: const Duration(milliseconds: 300),
     );
   }
-  void refresh_state() {
-    setState(() => 0);
-  }
+  void refresh_state() => setState(() => 0);
 
   void _gotoUpload(BuildContext context) {
-    Navigator.of(context).push<void>(CupertinoPageRoute(
+    Arrival.navigator.currentState.push(MaterialPageRoute(
       builder: (context) => PostUploadScreen(),
       fullscreenDialog: true,
     ));
@@ -300,7 +299,6 @@ class _ListState extends State<ForYouPage> {
     );
   }
 
-  BuildContext _context;
   SnackBar _snackBar;
   void openSnackBar(Map<String, dynamic> input) {
     try {
@@ -323,8 +321,7 @@ class _ListState extends State<ForYouPage> {
 
   @override
   Widget build(BuildContext context) {
-    _context = context;
-
+    
     return CupertinoTabView(
       builder: (context) {
         var appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);

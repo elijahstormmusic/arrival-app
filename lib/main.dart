@@ -27,16 +27,14 @@ void main() async {
 
   await UserData.load();
   await ArrivalData.load();
-  await UserData.refresh();
   await ArrivalData.refresh();
   await socket.init();
-  ArrivalData.carry = false;
   if (UserData.client.cryptlink=='') {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       socket.home.forceLogin();
     });
   } else {
-    socket.emit('userdata get link', {
+    socket.emit('client set state', {
       'link': UserData.client.cryptlink,
       'password': UserData.password,
     });

@@ -1,39 +1,14 @@
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
-import 'package:location/location.dart';
+import 'dart:async';
+import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class MyLocation {
-  double lat = 34.0;
-  double lng = -94.0;
-  LocationData currentLocation;
-  Location location;
-  _MapState _state;
-
-  void initState() {
-    location = new Location();
-    location.onLocationChanged.listen((LocationData cLoc) {
-      currentLocation = cLoc;
-      if (_state != null) {
-        _state.relocate();
-      }
-    });
-    setInitialLocation();
-  }
-  void setInitialLocation() async {
-    currentLocation = await location.getLocation();
-    lat = currentLocation.latitude;
-    lng = currentLocation.longitude;
-  }
-  void relocationHandler(_MapState state) {
-    _state = state;
-  }
-
-  @override
-  String toString() {
-    return '{lat:' + lat.toString() + ',lng:' + lng.toString() + '}';
-  }
-}
+import 'locator.dart';
 
 class Maps extends StatefulWidget {
   static MyLocation myself = MyLocation();
@@ -55,8 +30,12 @@ class Maps extends StatefulWidget {
 class _MapState extends State<Maps> {
   final String query;
   MyLocation myself;
-  WebViewController _webViewController;
+  Completer<GoogleMapController> _controller = Completer();
+  final Set<Marker> _markers = {};
+  dynamic _currentMapType = MapType.normal;
+
   _MapState(this.query, this.myself);
+
 
   @override
   void initState() {
@@ -65,32 +44,28 @@ class _MapState extends State<Maps> {
   }
 
   void relocate() {
-    _webViewController?.evaluateJavascript(
-        'Data.Relocate(' + myself.toString() + ');'
-    );
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return WebView(
-      initialUrl: 'https://arrival-app.herokuapp.com/maps'+query,
-      javascriptMode: JavascriptMode.unrestricted,
-      javascriptChannels: Set.from([
-        JavascriptChannel(
-            name: 'AppAndPageCommunication',
-            onMessageReceived: (JavascriptMessage message) {
-              if (message.message=='reached dest') {
-                print('you have reached your destination!');
-              }
-              else if (message.message=='directions') {
-                print('finding directions');
-              }
-              else print('function could not be found');
-            })
-      ]),
-      onWebViewCreated: (WebViewController w) {
-        _webViewController = w;
-      },
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          // GoogleMap(
+          //   // mapType: _currentMapType,
+          //   markers: _markers,
+          //   onCameraMove: _onCameraMove,
+          //   initialCameraPosition: CameraPosition(
+          //     target: LatLng(myself.lat, myself.lng),
+          //     zoom: 7,
+          //   ),
+          //   onMapCreated: (GoogleMapController controller) {
+          //     _controller.complete(controller);
+          //   },
+          // ),
+        ],
+      ),
     );
   }
 }

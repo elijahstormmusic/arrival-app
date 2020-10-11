@@ -23,17 +23,6 @@ class Profile {
   final int level;
   final int points;
 
-  String toString() {
-    String str = '';
-    str += 'name:' + name + ',';
-    str += 'pic:' + pic + ',';
-    str += 'bio:' + shortBio + ',';
-    str += 'email:' + email + ',';
-    str += 'cryptlink:' + cryptlink + ',';
-    str += 'level:' + level.toString() + ',';
-    str += 'points:' + points.toString() + ',';
-    return str;
-  }
   dynamic toJson() {
     return {
       'name': name,
@@ -97,54 +86,14 @@ class Profile {
       semanticLabel: 'Profile image for ' + name,
     );
   }
+  String image_href() {
+    if (pic=='' || pic==null || pic=='null') {
+      return Profile.default_img;
+    }
 
-  static Profile parse(String input) {
-    if (input.substring(0, 1)=='{')
-      input = input.substring(1, input.length-1);
-
-    var name, email, level, shortBio, pic,
-        points, cryptlink;
-
-    var startDataLoc, endDataLoc = 0;
-
-    startDataLoc = input.indexOf('name')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    name = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('pic')             + 4;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    pic = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('bio')             + 4;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    shortBio = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('email')           + 6;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    email = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('cryptlink')       + 10;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    cryptlink = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('level')           + 6;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    level = int.parse(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('points')          + 7;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    points = int.parse(input.substring(startDataLoc, endDataLoc));
-
-    return Profile(
-      name: name,
-      pic: pic,
-      email: email,
-      shortBio: shortBio,
-      cryptlink: cryptlink,
-      level: level,
-      points: points,
-    );
+    return Profile.source + pic;
   }
+
   static Profile json(var input) {
     return Profile(
       name: input['name'],
@@ -168,12 +117,12 @@ class Profile {
     );
   }
   static Profile lite(String input) {
-    for (var i=0;i<ArrivalData.profiles.length;i++) {
+    for (int i=0;i<ArrivalData.profiles.length;i++) {
       if (ArrivalData.profiles[i].cryptlink==input) {
         return ArrivalData.profiles[i];
       }
     }
-    var P = Profile(
+    Profile P = Profile(
       name: '',
       pic: '',
       email: '',
@@ -189,12 +138,12 @@ class Profile {
     return P;
   }
   static Profile link(String input) {
-    for (var i=0;i<ArrivalData.profiles.length;i++) {
+    for (int i=0;i<ArrivalData.profiles.length;i++) {
       if (ArrivalData.profiles[i].cryptlink==input) {
         return ArrivalData.profiles[i];
       }
     }
-    var P = Profile(
+    Profile P = Profile(
       name: '',
       pic: '',
       email: '',

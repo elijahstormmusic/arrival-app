@@ -22,14 +22,6 @@ class Sale {
   final String shortDescription;
   final Business partner;
 
-  String toString() {
-    String str = '';
-    str += 'cryptlink:' + cryptlink + ',';
-    str += 'name:' + name + ',';
-    str += 'info:' + shortDescription + ',';
-    str += 'partner:' + partner.cryptlink + ',';
-    return str;
-  }
   bool isOpen() {
     return true;
   }
@@ -60,38 +52,6 @@ class Sale {
       name: data['name'],
       shortDescription: data['info'],
       partner: Business.link(data['partner']),
-    );
-  }
-  static Sale parse(String input) {
-    var id, name, partner,
-        shortDescription, cryptlink;
-
-    var startDataLoc, endDataLoc = 0;
-
-    id = Sale.index++;
-
-    startDataLoc = input.indexOf('cryptlink')        + 10;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    cryptlink = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('name')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    name = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('info')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    shortDescription = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('partner')            + 8;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    partner = Business.link(input.substring(startDataLoc, endDataLoc));
-
-    return Sale(
-      id: id,
-      cryptlink: cryptlink,
-      name: name,
-      shortDescription: shortDescription,
-      partner: partner,
     );
   }
   static int index = 0;

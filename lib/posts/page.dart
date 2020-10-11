@@ -13,6 +13,7 @@ import 'package:loading/indicator/ball_pulse_indicator.dart';
 import '../adobe/pinned.dart';
 
 import '../data/app_state.dart';
+import '../data/link.dart';
 import '../styles.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
@@ -160,10 +161,13 @@ class _PostDisPState extends State<PostDisplayPage> {
       });
     }
 
-    socket.emit('posts get comments', {
-      'link': ArrivalData.posts[widget.postIndex].cryptlink,
-      'page': _page,
-    });
+    if (ArrivalData.posts[widget.postIndex].commentPage==-1) {
+      socket.emit('posts get comments', {
+        'link': ArrivalData.posts[widget.postIndex].cryptlink,
+        'page': _page,
+      });
+    }
+
     _scrollController = ScrollController();
     _textInputController.addListener(_onTextChanged);
     super.initState();
@@ -223,7 +227,7 @@ class _PostDisPState extends State<PostDisplayPage> {
     );
   }
   Widget _buildComment(Map<String, dynamic> _comment) {
-    if(_comment==null) return Container();
+    if (_comment==null) return Container();
     return Text.rich(
       TextSpan(
         style: Styles.postText,
@@ -370,9 +374,12 @@ class _PostDisPState extends State<PostDisplayPage> {
             Positioned(
               top: 8,
               left: 8,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(9999.0),
-                child: user.iconBySize(35.0),
+              child: Container(
+                // padding: EdgeInsets.all(4.0),
+                child: CircleAvatar(
+                  radius: 19.0,
+                  backgroundImage: NetworkImage(user.image_href()),
+                ),
               ),
             ),
             Positioned(
@@ -387,7 +394,7 @@ class _PostDisPState extends State<PostDisplayPage> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push<void>(CupertinoPageRoute(
+        Arrival.navigator.currentState.push(MaterialPageRoute(
           builder: (context) => ProfilePage.user(user),
           fullscreenDialog: true,
         ));
@@ -398,6 +405,8 @@ class _PostDisPState extends State<PostDisplayPage> {
   String _showTimeSinceDate(DateTime date) {
     Duration timeSince = DateTime.now().difference(date);
     String output = 'just now';
+
+    if (timeSince.inSeconds<0) return output;
 
     if (timeSince.inDays==0) {
       if (timeSince.inHours==0) {
@@ -568,10 +577,29 @@ class _PostDisPState extends State<PostDisplayPage> {
       navigationBar: CupertinoNavigationBar(
         leading: GestureDetector(
           onTap: () => setState(() => _commentsPageOpen = false),
-          child: Text('Back'),
+          child: Container(
+            width: 40,
+            child: Center(
+              child: Text('Back'),
+            ),
+          ),
         ),
       ),
-      child: _buildCommentsList(ArrivalData.posts[widget.postIndex].comments),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+            child: _buildCommentsList(ArrivalData.posts[widget.postIndex].comments),
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: _buildCommentAdder(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -596,9 +624,14 @@ class _PostDisPState extends State<PostDisplayPage> {
                   controller: _textInputController,
                   focusNode: _focusNode,
                   decoration: null,
-                  // selectionHeightStyle: BoxHeightStyle.includeLineSpacingTop,
+                  minLines: 1,
+                  maxLines: 3,
+                  placeholder: 'Comment...',
+                  placeholderStyle: TextStyle(
+                    fontSize: 18,
+                  ),
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 18,
                     color: Styles.ArrivalPalletteBlack,
                   ),
                   cursorColor: Styles.searchCursorColor,

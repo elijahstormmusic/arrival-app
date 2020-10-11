@@ -3,9 +3,11 @@
 // for use only in ARRIVAL Project
 
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../data/cards/partners.dart';
+import '../data/link.dart';
 import '../screens/biz_details.dart';
 import '../styles.dart';
 import '../widgets/cards.dart';
@@ -45,7 +47,7 @@ class BusinessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return PressableCard(
       onPressed: () {
-        Navigator.of(context).push<void>(CupertinoPageRoute(
+        Arrival.navigator.currentState.push(MaterialPageRoute(
           builder: (context) => BusinessDisplayPage(biz.cryptlink),
           fullscreenDialog: true,
         ));

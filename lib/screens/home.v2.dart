@@ -4,9 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
+// import 'package:flutter/widgets.dart';
 import 'package:flutter/scheduler.dart';
 import '../data/socket.dart';
+import '../data/link.dart';
 import '../users/data.dart';
 import '../foryou/list.dart';
 import '../login/login.dart';
@@ -17,6 +18,11 @@ import '../styles.dart';
 
 
 class HomeScreen extends StatefulWidget {
+  static _MainAppStates currentState;
+
+  static void gotoForyou() =>
+    currentState.gotoForyou();
+
   @override
   _MainAppStates createState() => _MainAppStates();
 }
@@ -29,6 +35,7 @@ class _MainAppStates extends State<HomeScreen> {
   @override
   void initState() {
     socket.home = this;
+    HomeScreen.currentState = this;
     super.initState();
   }
 
@@ -42,7 +49,7 @@ class _MainAppStates extends State<HomeScreen> {
   void _selectedTab(BuildContext context, int index) {
     if (_selectedIndex == index) {
       if (index == 0) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
         ForYouPage.scrollToTop();
       }
     }
@@ -67,7 +74,7 @@ class _MainAppStates extends State<HomeScreen> {
 
     if (_forcelogin) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).push<void>(CupertinoPageRoute(
+        Arrival.navigator.currentState.push(MaterialPageRoute(
           builder: (context) => LoginPage(),
           fullscreenDialog: true,
         ));
@@ -76,42 +83,64 @@ class _MainAppStates extends State<HomeScreen> {
     }
     else if (_pulltoforyou) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
       });
       _pulltoforyou = false;
     }
 
-    return (UserData.client.cryptlink=='')
+    return WillPopScope(
+      onWillPop: () {
+        if (Arrival.navigator.currentState.canPop()) {
+          Arrival.navigator.currentState.pop();
+          return Future.value(false);
+        }
+        else {
+          socket.close();
+          return Future.value(true);
+        }
+      },
+      child: (UserData.client.cryptlink=='')
         ? _loadingScreen(context)
         : Scaffold(
-          body: _selectedIndex==0 ? ForYouPage() : Maps(),
-          bottomNavigationBar: BottomNavigationBar(
-            onTap: (index) => _selectedTab(context, index),
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                title: Text('for you'),
+            body: Navigator(
+              key: Arrival.navigator,
+              onPopPage: (route, result) {
+                print('poped');
+                return true;
+              },
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) => _selectedIndex==0 ? ForYouPage() : Maps(),
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.map),
-                title: Text('maps'),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              onTap: (index) => _selectedTab(context, index),
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  title: Text('for you'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  title: Text('maps'),
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              backgroundColor: Styles.ArrivalPalletteRed,
+              selectedIconTheme: IconThemeData(
+                color: Styles.ArrivalPalletteYellow,
+                size: 24.0,
               ),
-            ],
-            currentIndex: _selectedIndex,
-            backgroundColor: Styles.ArrivalPalletteRed,
-            selectedIconTheme: IconThemeData(
-              color: Styles.ArrivalPalletteYellow,
-              size: 24.0,
+              unselectedIconTheme: IconThemeData(
+                color: Styles.ArrivalPalletteWhite,
+                size: 24.0,
+              ),
+              selectedFontSize: 12.0,
+              unselectedFontSize: 12.0,
+              selectedItemColor: Styles.ArrivalPalletteYellow,
+              unselectedItemColor: Styles.ArrivalPalletteWhite,
             ),
-            unselectedIconTheme: IconThemeData(
-              color: Styles.ArrivalPalletteWhite,
-              size: 24.0,
-            ),
-            selectedFontSize: 12.0,
-            unselectedFontSize: 12.0,
-            selectedItemColor: Styles.ArrivalPalletteYellow,
-            unselectedItemColor: Styles.ArrivalPalletteWhite,
-          ),
-        );
+        ),
+    );
   }
 }

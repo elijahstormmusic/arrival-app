@@ -44,7 +44,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   ScrollController _scrollController;
 
   String _breakLines(String input, int size) {
-    if(input.length<=size) return input;
+    if (input.length<=size) return input;
     return input.substring(0, size) + '' + _breakLines(
       input.substring(size, input.length), size);
   }

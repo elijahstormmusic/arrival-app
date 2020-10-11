@@ -4,13 +4,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../adobe/pinned.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../adobe/pinned.dart';
 import '../styles.dart';
 import './level_progress_bar.dart';
 import './cards.dart';
 import '../users/data.dart';
 import '../users/page.dart';
+import '../data/link.dart';
 
 class UserProfilePlacecard extends StatelessWidget {
   UserProfilePlacecard({
@@ -22,7 +23,7 @@ class UserProfilePlacecard extends StatelessWidget {
     try {
       return PressableCard(
         onPressed: () {
-          Navigator.of(context).push<void>(CupertinoPageRoute(
+          Arrival.navigator.currentState.push(MaterialPageRoute(
             builder: (context) => ProfilePage(),
             fullscreenDialog: true,
           ));

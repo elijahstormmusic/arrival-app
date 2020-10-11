@@ -218,6 +218,14 @@ abstract class Styles {
     fontSize: 32,
   );
 
+  static TextStyle activeTabButton = TextStyle(
+        color: Styles.ArrivalPalletteBlue,
+        fontFamily: 'Helvetica',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
+
   static TextStyle headlineName(CupertinoThemeData themeData) => TextStyle(
         color: themeData.textTheme.textStyle.color,
         fontFamily: 'Helvetica',
@@ -241,6 +249,13 @@ abstract class Styles {
     fontSize: 32,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
+  );
+
+  static const postCardText = TextStyle(
+    color: Styles.ArrivalPalletteBlack,
+    fontFamily: 'Helvetica',
+    fontSize: 20,
+    fontStyle: FontStyle.normal,
   );
 
   static const cardCategoryText = TextStyle(

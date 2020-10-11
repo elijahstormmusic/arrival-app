@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../data/cards/partners.dart';
+import '../data/link.dart';
 import '../screens/biz_details.dart';
 import '../styles.dart';
 
@@ -72,7 +74,7 @@ class BusinessHeadline extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = CupertinoTheme.of(context);
     return GestureDetector(
-      onTap: () => Navigator.of(context).push<void>(CupertinoPageRoute(
+      onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
         builder: (context) => BusinessDisplayPage(biz.cryptlink),
         fullscreenDialog: true,
       )),

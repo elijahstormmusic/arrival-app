@@ -74,7 +74,7 @@ class _SearchScreenState extends State<SearchScreen> {
             });
 
               // display post
-            Navigator.of(context).push<void>(CupertinoPageRoute(
+            Arrival.navigator.currentState.push(MaterialPageRoute(
               builder: (context) => PostDisplayPage(
                                   explorePosts[index].cryptlink
               ), fullscreenDialog: true,
