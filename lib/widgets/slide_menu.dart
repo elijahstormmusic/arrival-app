@@ -43,7 +43,7 @@ class _SlideState extends State<SlideMenu> {
   void _logout() async {
     await UserData.refresh();
     Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => LoginPage(),
+      builder: (context) => LoginScreen(),
       fullscreenDialog: true,
     ));
   }

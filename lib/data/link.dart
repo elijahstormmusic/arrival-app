@@ -5,7 +5,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../data/cards/partners.dart';
 import '../posts/post.dart';
 import '../posts/page.dart';

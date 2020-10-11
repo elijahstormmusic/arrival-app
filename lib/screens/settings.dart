@@ -833,7 +833,7 @@ class SubSettings extends StatefulWidget {
           ),
           Container(
             child: GestureDetector(
-              onTap: () => LoginPage.forgotPassword(UserData.username),
+              onTap: () => LoginScreen.forgotPassword(UserData.username),
               child: Container(
                 child: Text(
                   'Forgot your password?',

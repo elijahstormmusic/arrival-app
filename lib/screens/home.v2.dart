@@ -72,10 +72,10 @@ class _MainAppStates extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    if (_forcelogin) {
+    if (_forcelogin && false) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Arrival.navigator.currentState.push(MaterialPageRoute(
-          builder: (context) => LoginPage(),
+          builder: (context) => LoginScreen(),
           fullscreenDialog: true,
         ));
       });
