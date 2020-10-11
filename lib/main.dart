@@ -15,6 +15,7 @@ import 'data/app_state.dart';
 import 'data/preferences.dart';
 import 'data/socket.dart';
 import 'screens/home.v2.dart';
+import 'maps/maps.dart';
 import 'users/data.dart';
 import 'users/profile.dart';
 import 'login/login.dart';
