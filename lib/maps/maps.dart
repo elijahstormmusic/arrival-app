@@ -11,6 +11,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'locator.dart';
 
 class Maps extends StatefulWidget {
+  static const routeName = '/maps';
+
   static MyLocation myself = MyLocation();
   String _query;
   Maps() {

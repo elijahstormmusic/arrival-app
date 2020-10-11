@@ -19,6 +19,7 @@ class socket {
   static SocketIO _socket;
   static var home, post, profile, foryou;
   static int error_report_time = 3;
+  static String authenicator;
 
   static void init() {
     if (_socket!=null) return;
@@ -223,6 +224,32 @@ class socket {
         });
       }
 
+      else if (data['type']==605) { // updated user email
+        switch (data['response']) {
+          case 0:
+            authenicator = '>' + data['link'];
+            break;
+          case 1:
+            authenicator = 'Incorrect password';
+            break;
+          case 2:
+            authenicator = 'That username was not found';
+            break;
+          case 3:
+            authenicator = 'That email was not found';
+            break;
+          case 4:
+            authenicator = 'No input sent to server';
+            break;
+          case 5:
+            authenicator = 'User link not valid';
+            break;
+          default:
+            authenicator = 'Unknown error';
+            break;
+        }
+      }
+
       else if (data['type']==666) { // error with settings update
         String error_msg = '';
 
@@ -301,5 +328,16 @@ class socket {
     _socket.unSubscribesAll();
     _socket.disconnect();
     SocketIOManager().destroySocket(_socket);
+  }
+
+  static Future<String> check_vaildation() async {
+    authenicator = '';
+    for (int i=0;i<5;i++) {
+      if (authenicator!='') {
+        return authenicator;
+      }
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+    return 'Our servers are dealing with high volume, please try again in a few minutes.';
   }
 }
