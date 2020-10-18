@@ -5,7 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'data/cards/partners.dart';
+import 'partners/partner.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,6 +31,7 @@ abstract class Styles {
   static const ArrivalPalletteWhite = Color(0xffF8F8F9);
   static const ArrivalPalletteBlack = Color(0xff231F20);
   static const ArrivalPalletteGrey = Color(0xffD9D5D3);
+  static const ArrivalPalletteLightGrey = Color(0xffEEEEE9);
   static const ArrivalPalletteBlue = Color(0xff5AA6DC);
   static const ArrivalPalletteYellow = Color(0xffFFCF01);
   static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
@@ -40,6 +41,7 @@ abstract class Styles {
   static const ArrivalPalletteWhiteTransparent = Color(0xccF8F8F9);
   static const ArrivalPalletteCreamTransparent = Color(0xccF9EDD3);
   static const ArrivalPalletteGreyTransparent = Color(0xccD9D5D3);
+  static const ArrivalPalletteLightGreyTransparent = Color(0x77EEEEE9);
   static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
   static const ArrivalPalletteBlueTransparent = Color(0x595AA6DC);
   static const ArrivalPalletteYellowTransparent = Color(0xccFFCF01);
@@ -49,8 +51,18 @@ abstract class Styles {
   static const ArrivalPalletteGreyFrosted = Color(0x80E8E7E6);
   static const ArrivalPalletteBlackFrosted = Color(0x80837979);
   static const ArrivalPalletteBlueFrosted = Color(0x8078B6E2);
-  static const ArrivalPalletteYellowFrosted = Color(0x80FFE570);
+  static const ArrivalPalletteYellowFrosted = Color(0x99FFE985);
   static const ArrivalPalletteClearFrosted = Color(0x80F9EDD3);
+
+  static Widget ArrivalAppbarTitle() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
+      child: Text(
+        'ARRIVAL',
+        style: Styles.arrTitleText,
+      ),
+    );
+  }
 
   static const Color mainColor = Styles.ArrivalPalletteRed;
   static const Color activeColor = Styles.ArrivalPalletteYellow;
@@ -73,18 +85,19 @@ abstract class Styles {
         color: Styles.ArrivalPalletteRed,
       ),
       child: Container(
-        height: 300,
+        height: 200,
+        padding: EdgeInsets.all(16),
         child: Stack(
           children: [
-            Positioned(
-              top: 16,
-              left: 16,
-              child: SafeArea(
-                child: ArrCloseButton(() {
-                  Navigator.of(context).pop();
-                }),
-              ),
-            ),
+            // Positioned(
+            //   top: 16,
+            //   left: 16,
+            //   child: SafeArea(
+            //     child: ArrCloseButton(() {
+            //       Navigator.of(context).pop();
+            //     }),
+            //   ),
+            // ),
             Center(
               child: Text(
                 'error: ' + err,
@@ -191,7 +204,23 @@ abstract class Styles {
 
 
 
-  static TextStyle headlineText(CupertinoThemeData themeData) => TextStyle(
+  static TextStyle profilePageHeader = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'Helvetica',
+        fontSize: 22,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+        decoration: TextDecoration.none,
+      );
+  static TextStyle profilePageText = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'Helvetica',
+        fontSize: 20,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+        decoration: TextDecoration.none,
+      );
+  static TextStyle headlineText = TextStyle(
         color: Styles.ArrivalPalletteBlack,
         fontFamily: 'UraeNium',
         fontSize: 32,
@@ -220,6 +249,14 @@ abstract class Styles {
 
   static TextStyle activeTabButton = TextStyle(
         color: Styles.ArrivalPalletteBlue,
+        fontFamily: 'Helvetica',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
+
+  static TextStyle inactiveTabButton = TextStyle(
+        color: Styles.ArrivalPalletteGrey,
         fontFamily: 'Helvetica',
         fontSize: 18,
         fontStyle: FontStyle.normal,
@@ -274,7 +311,7 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
-  static TextStyle businessNameText = TextStyle(
+  static TextStyle PartnerNameText = TextStyle(
         color: Styles.ArrivalPalletteBlack,
         fontFamily: 'Helvetica',
         fontSize: 30,
@@ -356,19 +393,6 @@ abstract class Styles {
     fontWeight: FontWeight.bold,
   );
 
-  static const noTextInput = TextStyle(
-    color: Color.fromRGBO(106, 106, 106, 1),
-    fontFamily: 'BebasNeue',
-    fontSize: 20,
-    fontStyle: FontStyle.italic,
-  );
-  static const shortBio = TextStyle(
-    color: Styles.ArrivalPalletteBlack,
-    fontFamily: 'BebasNeue',
-    fontSize: 20,
-    fontStyle: FontStyle.normal,
-  );
-
   static TextStyle detailsServingLabelText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
@@ -435,7 +459,7 @@ abstract class Styles {
 
   static const frostedBackground = Color(0xccf8f8a3);
 
-  static const closeButtonUnpressed = Color(0xff101010);
+  static const closeButtonUnpressed = Styles.ArrivalPalletteRed;
 
   static const closeButtonPressed = Color(0xff808080);
 

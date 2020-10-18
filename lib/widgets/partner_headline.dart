@@ -4,9 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import '../data/link.dart';
-import '../screens/biz_details.dart';
+import '../partners/page.dart';
 import '../styles.dart';
 
 class ZoomClipAssetImage extends StatelessWidget {
@@ -66,16 +66,16 @@ class StarRating extends StatelessWidget {
   }
 }
 
-class BusinessHeadline extends StatelessWidget {
-  final Business biz;
-  const BusinessHeadline(this.biz);
+class PartnerHeadline extends StatelessWidget {
+  final Partner biz;
+  const PartnerHeadline(this.biz);
 
   @override
   Widget build(BuildContext context) {
     final themeData = CupertinoTheme.of(context);
     return GestureDetector(
       onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
-        builder: (context) => BusinessDisplayPage(biz.cryptlink),
+        builder: (context) => PartnerDisplayPage(biz.cryptlink),
         fullscreenDialog: true,
       )),
       child: Row(

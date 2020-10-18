@@ -8,16 +8,16 @@ import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'dart:convert';
 import '../users/data.dart';
 import '../data/arrival.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 import '../posts/post.dart';
-import '../foryou/post_card.dart';
-import '../foryou/list.dart';
+import '../foryou/cards/post_card.dart';
+import '../screens/home.dart';
 
 class socket {
   static SocketIO _socket;
-  static var home, post, profile, foryou;
+  static var home, post, profile, foryou, articles;
   static int error_report_time = 3;
   static String authenicator;
 
@@ -65,11 +65,18 @@ class socket {
           var commentList = data['response'];
           var postLink = data['query']['cryptlink'];
 
+
           for (int i=0;i<ArrivalData.posts.length;i++) {
             if (ArrivalData.posts[i].cryptlink==postLink) {
+              if (ArrivalData.posts[i].commentPage==-1) {
+                ArrivalData.posts[i].comments = [];
+              }
+
               for (int j=0;j<commentList.length;j++) {
+                commentList[j]['user'] = Profile.link(commentList[j]['userlink']);
                 ArrivalData.posts[i].comments.add(commentList[j]);
               }
+
               ArrivalData.posts[i].commentPage++;
               break;
             }
@@ -143,6 +150,7 @@ class socket {
         if (profile==null) return;
 
         List<Post> post_list = List<Post>();
+
         var json_list = data['response']['list'];
 
         for (int i=0;i<json_list.length;i++) {
@@ -164,9 +172,9 @@ class socket {
       }
 
       else if (data['type']==810) { //  single partner link downoad
-        Business _business;
+        Partner _Partner;
         try {
-          _business = Business.json(data['response']);
+          _Partner = Partner.json(data['response']);
         }
         catch (e) {
           print('''
@@ -178,10 +186,10 @@ class socket {
           return;
         }
         for (var i=0;i<ArrivalData.partners.length;i++) {
-          if (ArrivalData.partners[i].cryptlink==_business.cryptlink) {
+          if (ArrivalData.partners[i].cryptlink==_Partner.cryptlink) {
               for (var j=0;j<ArrivalData.partners[i].sales.length;j++) {
                 try {
-                  ArrivalData.innocentAdd(_business.sales, ArrivalData.partners[i].sales[j]);
+                  ArrivalData.innocentAdd(_Partner.sales, ArrivalData.partners[i].sales[j]);
                 }
                 catch (e) {
                   print('''
@@ -192,11 +200,11 @@ class socket {
                   ''');
                 }
             }
-            ArrivalData.partners[i] = _business;
+            ArrivalData.partners[i] = _Partner;
             return;
           }
         }
-        ArrivalData.innocentAdd(ArrivalData.partners, _business);
+        ArrivalData.innocentAdd(ArrivalData.partners, _Partner);
       }
 
 
@@ -211,14 +219,14 @@ class socket {
       }
 
       else if (data['type']==601) { // updated user password
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': 'Password updated.',
           'duration': socket.error_report_time,
         });
       }
 
       else if (data['type']==602) { // updated user email
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': 'A verification email was sent to '+ data['response'] + ' and will expire in 24 hours.',
           'duration': socket.error_report_time,
         });
@@ -244,6 +252,36 @@ class socket {
           case 5:
             authenicator = 'User link not valid';
             break;
+          case 6:
+            authenicator = 'Your email was unable to be processed';
+            break;
+
+          case 10:
+            authenicator = '>' + data['link'];
+            break;
+          case 11:
+            authenicator = 'Empty inputs found';
+            break;
+          case 12:
+            authenicator = 'Your email was unable to be processed';
+            break;
+          case 13:
+            authenicator = 'An account with that email already exists';
+            break;
+
+          case 20:
+            authenicator = 'A confirmation email was sent to that address';
+            break;
+          case 21:
+            authenicator = 'Your email input was empty when it reached our servers';
+            break;
+          case 22:
+            authenicator = 'Your email was unable to be processed';
+            break;
+          case 23:
+            authenicator = 'Your email does not match any in our records';
+            break;
+
           default:
             authenicator = 'Unknown error';
             break;
@@ -268,7 +306,7 @@ class socket {
           return;
         }
 
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': error_msg,
           'duration': socket.error_report_time,
         });
@@ -281,32 +319,30 @@ class socket {
          */
 
       else if (data['type']==500) { // error reporting
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': 'Database error ' + data['error_code'].toString(),
           'duration': error_report_time,
         });
       }
       else if (data['type']==530) { // post successfully uploaded
         ArrivalData.posts.add(Post.link(data['link']));
-        ArrivalData.foryou.insert(0, RowPost(
-          ArrivalData.posts.length - 1
-        ));
+        ArrivalData.foryou.insert(0, RowPost(data['link']));
       }
       else if (data['type']==531) { // post failed upload
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': 'Post failed',
           'duration': error_report_time,
         });
       }
       else if (data['type']==532) { // comment made successful
         // goto comment
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': 'Successful upload',
           'duration': error_report_time,
         });
       }
       else if (data['type']==533) { // comment failed upload
-        foryou.openSnackBar({
+        HomeScreen.openSnackBar({
           'text': 'Comment failed',
           'duration': error_report_time,
         });

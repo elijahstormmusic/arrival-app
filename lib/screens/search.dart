@@ -10,7 +10,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../data/socket.dart';
 import '../data/link.dart';
 import '../data/app_state.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import '../styles.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/cards.dart';
@@ -94,7 +94,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ).toList(),
     );
   }
-  Widget _buildSearchLines(List<Business> places) {
+  Widget _buildSearchLines(List<Partner> places) {
     if (places.isEmpty) {
       return Center(
         child: Padding(
@@ -112,19 +112,19 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (context, i) {
         return Padding(
           padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: BusinessHeadline(places[i]),
+          child: PartnerHeadline(places[i]),
         );
       },
     );
   }
   Widget _buildSearch(AppState model, String terms) {
     List<Post> posts = model.searchPosts(terms);
-    List<Business> businesses = model.searchBusinesses(terms);
+    List<Partner> Partners = model.searchPartners(terms);
 
     if (!posts.isEmpty || terms=='') {
       return _buildExploreBoxes(posts);
     }
-    return _buildSearchLines(businesses);
+    return _buildSearchLines(Partners);
   }
   Widget _createSearchBox() {
     return DecoratedBox(

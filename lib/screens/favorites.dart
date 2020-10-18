@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../data/app_state.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import '../styles.dart';
 import '../widgets/partner_headline.dart';
 
@@ -22,11 +22,11 @@ class FavoritesScreen extends StatelessWidget {
             middle: Text('My Favorites'),
           ),
           child: Center(
-            child: model.favoriteBusinesses.isEmpty
+            child: model.favoritePartners.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
-                      'You haven\'t added any favorite businesses to your group yet.',
+                      'You haven\'t added any favorite Partners to your group yet.',
                       style: Styles.headlineDescription(
                           CupertinoTheme.of(context)),
                     ),
@@ -34,10 +34,10 @@ class FavoritesScreen extends StatelessWidget {
                 : ListView(
                     children: [
                       SizedBox(height: 24),
-                      for (Business biz in model.favoriteBusinesses)
+                      for (Partner biz in model.favoritePartners)
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
-                          child: BusinessHeadline(biz),
+                          child: PartnerHeadline(biz),
                         ),
                     ],
                   ),

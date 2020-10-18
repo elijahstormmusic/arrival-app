@@ -4,24 +4,33 @@
 
 import 'dart:convert';
 import '../posts/post.dart';
-import '../data/cards/partners.dart';
-import '../data/cards/articles.dart';
-import '../data/cards/sales.dart';
+import '../partners/partner.dart';
+import '../articles/article.dart';
+import '../partners/sale.dart';
 import '../posts/page.dart';
 import '../users/profile.dart';
 import '../users/data.dart';
 import '../data/local.dart';
 import '../data/link.dart';
-import '../foryou/row_card.dart';
+import '../foryou/cards/row_card.dart';
 
 class ArrivalData {
   static List<RowCard> foryou;
+  static List<RowCard> article_feed;
+  static List<RowCard> partner_feed;
+  static List<RowCard> post_feed;
 
   static List<Post> posts;
   static List<Profile> profiles;
-  static List<Business> partners;
+  static List<Partner> partners;
   static List<Article> articles;
   static List<Sale> sales;
+
+  static Post getPost(String link) => ArrivalData.posts.singleWhere((v) => v.cryptlink == link);
+  static Profile getProfile(String link) => ArrivalData.profiles.singleWhere((v) => v.cryptlink == link);
+  static Partner getPartner(String link) => ArrivalData.partners.singleWhere((v) => v.cryptlink == link);
+  static Article getArticle(String link) => ArrivalData.articles.singleWhere((v) => v.cryptlink == link);
+  static Sale getSale(String link) => ArrivalData.sales.singleWhere((v) => v.cryptlink == link);
 
   static final DateTime default_time = new DateTime(1996, 9, 29);
   static final PARTNERS = 'partners.json';
@@ -61,7 +70,7 @@ class ArrivalData {
     await file.write(data);
   }
   static void load() async {
-    ArrivalData.partners = List<Business>();
+    ArrivalData.partners = List<Partner>();
     ArrivalData.posts = List<Post>();
     ArrivalData.profiles = List<Profile>();
     ArrivalData.articles = List<Article>();
@@ -70,7 +79,7 @@ class ArrivalData {
     try {
       (await ArrivalFiles(PARTNERS).readAll())
         .forEach((String key, dynamic value) =>
-          ArrivalData.innocentAdd(ArrivalData.partners, Business.json(
+          ArrivalData.innocentAdd(ArrivalData.partners, Partner.json(
             jsonDecode(value)
           )));
     } catch (e) {

@@ -1,6 +1,7 @@
 
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class FrostyBackground extends StatelessWidget {
@@ -35,7 +36,7 @@ class FrostyBackground extends StatelessWidget {
 class PressableCard extends StatefulWidget {
   const PressableCard({
     @required this.child,
-    this.borderRadius = const BorderRadius.all(Radius.circular(5)),
+    this.borderRadius = const BorderRadius.all(Radius.circular(0)),
     this.upElevation = 2,
     this.downElevation = 0,
     this.shadowColor = CupertinoColors.black,
@@ -91,6 +92,72 @@ class _PressableCardState extends State<PressableCard> {
     color: CupertinoColors.lightBackgroundGray,
     child: ClipRRect(
           borderRadius: widget.borderRadius,
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+class PressableCircle extends StatefulWidget {
+  const PressableCircle({
+    @required this.child,
+    this.radius = 30,
+    this.upElevation = 2,
+    this.downElevation = 0,
+    this.shadowColor = CupertinoColors.black,
+    this.duration = const Duration(milliseconds: 100),
+    this.onPressed,
+    Key key,
+  })  : assert(child != null),
+        assert(radius != null),
+        assert(upElevation != null),
+        assert(downElevation != null),
+        assert(shadowColor != null),
+        assert(duration != null),
+        super(key: key);
+
+  final VoidCallback onPressed;
+
+  final Widget child;
+
+  final double radius;
+
+  final double upElevation;
+
+  final double downElevation;
+
+  final Color shadowColor;
+
+  final Duration duration;
+
+  @override
+  _PressableCircleState createState() => _PressableCircleState();
+}
+
+class _PressableCircleState extends State<PressableCircle> {
+  bool cardIsDown = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() => cardIsDown = false);
+        if (widget.onPressed != null) {
+          widget.onPressed();
+        }
+      },
+      onTapDown: (details) => setState(() => cardIsDown = true),
+      onTapCancel: () => setState(() => cardIsDown = false),
+      child: AnimatedPhysicalModel(
+        elevation: cardIsDown ? widget.downElevation : widget.upElevation,
+        borderRadius: const BorderRadius.all(Radius.circular(9999)),
+        shape: BoxShape.rectangle,
+        shadowColor: widget.shadowColor,
+        duration: widget.duration,
+        color: CupertinoColors.lightBackgroundGray,
+        child: Transform.scale(
+          scale: cardIsDown ? 0.95 : 1.0,
           child: widget.child,
         ),
       ),

@@ -8,33 +8,45 @@ import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:camera/camera.dart';
 
 import 'data/link.dart';
 import 'data/arrival.dart';
 import 'data/app_state.dart';
 import 'data/preferences.dart';
 import 'data/socket.dart';
-import 'screens/home.v2.dart';
+import 'screens/home.dart';
 import 'maps/maps.dart';
 import 'users/data.dart';
 import 'users/profile.dart';
 import 'login/login.dart';
 import 'login/transition_route_observer.dart';
 
+import 'posts/upload.dart';
+
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    cameras = await availableCameras();
+  }
+  catch (e) {
+    print('''
+    ===================
+          Error in main
+        $e
+    ===================
+    ''');
+  }
 
   await UserData.load();
   await ArrivalData.load();
   await ArrivalData.refresh();
   await socket.init();
-
-print(UserData.client.cryptlink);
 
   if (UserData.client.cryptlink=='') {
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -61,7 +73,26 @@ print(UserData.client.cryptlink);
               DefaultWidgetsLocalizations.delegate,
               DefaultCupertinoLocalizations.delegate,
             ],
-            home: HomeScreen(),
+            home: WillPopScope(
+              onWillPop: () {
+                if (Arrival.navigator.currentState.canPop()) {
+                  if (UserData.password=='') return Future.value(false);
+                  Arrival.navigator.currentState.pop();
+                  return Future.value(false);
+                }
+                else {
+                  socket.close();
+                  return Future.value(true);
+                }
+              },
+              child: Navigator(
+                key: Arrival.navigator,
+                onGenerateRoute: (route) => MaterialPageRoute(  // route.name
+                  settings: route,  /// find what the route is for this with print
+                  builder: (route) => HomeScreen(),
+                ),
+              ),
+            ),
             navigatorObservers: [TransitionRouteObserver()],
             routes: {
               LoginScreen.routeName: (context) => LoginScreen(),

@@ -46,6 +46,8 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Arrival would like to let you upload from you library.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We would like your location to take you to your destination.</string>
 	<key>NSLocationAlwaysUsageDescription</key>

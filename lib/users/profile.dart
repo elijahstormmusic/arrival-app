@@ -7,7 +7,9 @@ import 'package:meta/meta.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import '../data/arrival.dart';
+import '../data/link.dart';
 import '../data/socket.dart';
+import 'page.dart';
 
 class Profile {
   static final String default_img =
@@ -15,13 +17,13 @@ class Profile {
   static final String source =
     'https://res.cloudinary.com/arrival-kc/image/upload/';
 
-  final String name;
-  final String pic;
-  final String shortBio;
-  final String email;
   final String cryptlink;
-  final int level;
-  final int points;
+  String name;
+  String pic;
+  String shortBio;
+  String email;
+  int level;
+  int points;
 
   dynamic toJson() {
     return {
@@ -94,6 +96,21 @@ class Profile {
     return Profile.source + pic;
   }
 
+  void navigateToProfile() {
+    Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => ProfilePage.user(this),
+      fullscreenDialog: true,
+    ));
+  }
+  void levelUp() {
+    if (points<Profile.findPointsToNextLevel(level)) return;
+    level += 1;
+  }
+  void earnPoints(int amount) {
+    points += amount;
+    if (points>=Profile.findPointsToNextLevel(level)) levelUp();
+  }
+
   static Profile json(var input) {
     return Profile(
       name: input['name'],
@@ -157,5 +174,9 @@ class Profile {
     });
     ArrivalData.innocentAdd(ArrivalData.profiles, P);
     return P;
+  }
+
+  static int findPointsToNextLevel(int level) {
+    return ((100 * level).toDouble() * .85).toInt();
   }
 }

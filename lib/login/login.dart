@@ -34,9 +34,15 @@ class LoginScreen extends StatelessWidget {
 
   Future<String> _loginUser(LoginData data) {
     return Future.delayed(loginTime).then((_) async {
+      if (data.name.contains('\\/#\$\'\"'))
+        return 'Some of those characters in the email are invaild';
+      if (data.name=='')
+        return 'Make sure to enter an email';
+      if (data.password=='')
+        return 'Make sure to enter a password';
 
       socket.emit('check user auth', {
-        'name': data.name,
+        'email': data.name,
         'pass': data.password,
       });
 
@@ -55,23 +61,46 @@ class LoginScreen extends StatelessWidget {
     });
   }
   Future<String> _signupNewUser(LoginData data) {
-    return Future.delayed(loginTime).then((_) {
-      // if (!mockUsers.containsKey(data.name)) {
-      //   return 'Username not exists';
-      // }
-      // if (mockUsers[data.name] != data.password) {
-      //   return 'Password does not match';
-      // }
-      return null;
+    return Future.delayed(loginTime).then((_) async {
+      if (data.name.contains('\\/#\$\'\"'))
+        return 'Some of those characters in the email are invaild';
+      if (data.name=='')
+        return 'Make sure to enter an email';
+      if (data.password=='')
+        return 'Make sure to enter a password';
+
+      socket.emit('new app user', {
+        'email': data.name,
+        'pass': data.password,
+      });
+
+      String response = await socket.check_vaildation();
+
+      if (response[0]=='>') {
+        socket.emit('client set state', {
+          'link': response.substring(1, response.length),
+          'password': data.password,
+        });
+        UserData.password = data.password;
+        response = null;
+      }
+
+      return response;
     });
   }
 
   Future<String> _recoverPassword(String name) {
-    return Future.delayed(loginTime).then((_) {
-      // if (!mockUsers.containsKey(name)) {
-      //   return 'Username not exists';
-      // }
-      return null;
+    return Future.delayed(loginTime).then((_) async {
+      if (name.contains('\\/#\$\'\"'))
+        return 'Some of those characters in the email are invaild';
+      if (name=='')
+        return 'Make sure to enter an email';
+
+      socket.emit('forgot password', {
+        'email': name,
+      });
+
+      return await socket.check_vaildation();
     });
   }
 
@@ -87,20 +116,20 @@ class LoginScreen extends StatelessWidget {
       title: '',
       logo: 'assets/arrival/titleasset.png',
       logoTag: 'ArrivalKC.logo',
-      // messages: LoginMessages(
-      //   usernameHint: 'Username',
-      //   passwordHint: 'Pass',
-      //   confirmPasswordHint: 'Confirm',
-      //   loginButton: 'LOG IN',
-      //   signupButton: 'REGISTER',
-      //   forgotPasswordButton: 'Forgot huh?',
-      //   recoverPasswordButton: 'HELP ME',
-      //   goBackButton: 'GO BACK',
-      //   confirmPasswordError: 'Not match!',
-      //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
-      //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-      //   recoverPasswordSuccess: 'Password rescued successfully',
-      // ),
+      messages: LoginMessages(
+        usernameHint: 'Email',
+        passwordHint: 'Password',
+        confirmPasswordHint: 'Confirm Password',
+        loginButton: 'LOGIN',
+        signupButton: 'REGISTER',
+        forgotPasswordButton: 'Forgot Password?',
+        recoverPasswordButton: 'SEND EMAIL',
+        goBackButton: 'BACK',
+        confirmPasswordError: 'Your password do not match',
+        recoverPasswordIntro: 'Tell us your email',
+        recoverPasswordDescription: 'Then we can help you set a new, secure password',
+        recoverPasswordSuccess: 'Email Sent',
+      ),
       theme: LoginTheme(
         primaryColor: Styles.ArrivalPalletteRed,
         accentColor: Styles.ArrivalPalletteCream,
@@ -111,11 +140,10 @@ class LoginScreen extends StatelessWidget {
         // afterHeroFontSize: 20,
         bodyStyle: TextStyle(
           fontStyle: FontStyle.italic,
-          decoration: TextDecoration.underline,
         ),
         textFieldStyle: TextStyle(
           color: Styles.ArrivalPalletteBlue,
-          shadows: [Shadow(color: Styles.ArrivalPalletteYellow, blurRadius: 2)],
+          // shadows: [Shadow(color: Styles.ArrivalPalletteYellow, blurRadius: 2)],
         ),
         buttonStyle: TextStyle(
           fontWeight: FontWeight.w800,
@@ -133,8 +161,8 @@ class LoginScreen extends StatelessWidget {
           fillColor: Styles.ArrivalPalletteRed.withOpacity(.1),
           contentPadding: EdgeInsets.zero,
           errorStyle: TextStyle(
-            backgroundColor: Styles.ArrivalPalletteBlue,
-            color: Styles.ArrivalPalletteWhite,
+            backgroundColor: Styles.ArrivalPalletteCream,
+            color: Styles.ArrivalPalletteRed,
           ),
           labelStyle: TextStyle(fontSize: 12),
           enabledBorder: UnderlineInputBorder(
@@ -173,9 +201,10 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
       emailValidator: (value) {
-        return null;
-        if (!value.contains('@') || !value.endsWith('.com')) {
-          return "Email must contain '@' and end with '.com'";
+        if (value=='')
+          return 'Email cannot be blank';
+        if (!value.contains('@') || (!value.endsWith('.com') && !value.endsWith('.edu') && !value.endsWith('.gov') && !value.endsWith('.net') && !value.endsWith('.org'))) {
+          return "Email must contain '@' and end with '.[***]'";
         }
         return null;
       },
@@ -196,7 +225,6 @@ class LoginScreen extends StatelessWidget {
       },
       onRecoverPassword: (name) {
         return _recoverPassword(name);
-        // Show new password dialog
       },
       showDebugButtons: false,
     );

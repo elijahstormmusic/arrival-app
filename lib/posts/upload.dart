@@ -11,23 +11,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
-import 'package:image_gallery/image_gallery.dart';
+import 'package:media_gallery/media_gallery.dart';
 import 'package:camera/camera.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:video_player/video_player.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
-import 'package:loading/loading.dart';
-import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../data/socket.dart';
 import '../data/link.dart';
 import '../users/data.dart';
 import '../widgets/close_button.dart';
-import '../foryou/list.dart';
-import '../screens/home.v2.dart';
+import '../foryou/foryou.dart';
+import '../screens/home.dart';
 import '../maps/locator.dart';
 import '../styles.dart';
+import 'uploader/media.dart';
+import 'uploader/picker/picker.dart';
+import 'uploader/picker/selection.dart';
+import 'uploader/picker/thumbnail.dart';
+import 'uploader/picker/collections.dart';
+import 'uploader/picker/labels.dart';
+import 'uploader/picker/selection.dart';
 
 
 class PostUploadEditingScreen extends StatefulWidget {
@@ -243,6 +250,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
         keyboardType: TextInputType.multiline,
         minLines: 1,
         maxLines: 10,
+        maxLength: 500,
         decoration: InputDecoration(
           labelText: 'Caption',
         ),
@@ -406,11 +414,18 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
 }
 
 
+
+List<CameraDescription> cameras = [];
+
+
+
+
 class PostUploadScreen extends StatefulWidget {
   @override
   _PostUploadState createState() => new _PostUploadState();
 }
-class _PostUploadState extends State<PostUploadScreen> {
+class _PostUploadState extends State<PostUploadScreen>
+        with WidgetsBindingObserver {
   var _image;
 
   ScrollController _galleryScrollController;
@@ -419,9 +434,11 @@ class _PostUploadState extends State<PostUploadScreen> {
   List _galleryImages, _galleryImageNames;
 
   Future<void> _loadImageList() async {
+    return;
+
     Map allImageTemp;
     try {
-      allImageTemp = await FlutterGallaryPlugin.getAllImages;
+      // allImageTemp = await FlutterGallaryPlugin.getAllImages;
     }
     catch (e) {
       print('''
@@ -439,21 +456,22 @@ class _PostUploadState extends State<PostUploadScreen> {
     });
   }
 
-  List<CameraDescription> _allCameras;
   CameraController _cameraController;
   bool _cameraFailed = false;
   Future<void> _initializeControllerFuture;
 
   void _initalizeCamera() async {
+    return;
+
     try {
-      _allCameras = await availableCameras();
-      _cameraController = CameraController(_allCameras[0], ResolutionPreset.medium);
-      _cameraController.initialize().then((_) {
-        if (!mounted) {
-          _cameraFailed = true;
-        }
-      });
-      _initializeControllerFuture = _cameraController.initialize();
+      // _allCameras = await availableCameras();
+      // _cameraController = CameraController(_allCameras[0], ResolutionPreset.medium);
+      // _cameraController.initialize().then((_) {
+      //   if (!mounted) {
+      //     _cameraFailed = true;
+      //   }
+      // });
+      // _initializeControllerFuture = _cameraController.initialize();
     }
     catch (e) {
       print('''
@@ -467,6 +485,10 @@ class _PostUploadState extends State<PostUploadScreen> {
   @override
   void initState() {
     super.initState();
+
+    // WidgetsBinding.instance.addObserver(this);
+
+
     _galleryImages = List();
     _galleryImageNames = List();
     _galleryScrollController = ScrollController();
@@ -480,6 +502,9 @@ class _PostUploadState extends State<PostUploadScreen> {
   }
   @override
   void dispose() {
+
+    // WidgetsBinding.instance.removeObserver(this);
+
     _cameraController?.dispose();
     _galleryScrollController.dispose();
     _uploadContainerScrollController.dispose();
@@ -498,6 +523,8 @@ class _PostUploadState extends State<PostUploadScreen> {
       // _loadMore();
     }
   }
+
+  // [inpuut upload camera]
 
 
   Map<String, double> _imageValues = {
@@ -545,7 +572,7 @@ class _PostUploadState extends State<PostUploadScreen> {
                 onTap: () => print('tapped folder change'),
                 child: Text(
                   'Recent Gallery',
-                  style: Styles.activeTabButton,
+                  style: Styles.inactiveTabButton,
                 ),
               ),
           ),
@@ -567,7 +594,7 @@ class _PostUploadState extends State<PostUploadScreen> {
                       ));
                     },
                     child: Text(
-                      'NEXT',
+                      _image==null ? '' : 'NEXT',
                       style: Styles.activeTabButton,
                     ),
                   ),
@@ -622,7 +649,7 @@ class _PostUploadState extends State<PostUploadScreen> {
                           radius: _imageValues['circle'],
                           backgroundColor: Styles.ArrivalPalletteGrey,
                           child: Icon(
-                            Icons.person,
+                            Icons.edit,
                             size: _imageValues['circle'],
                             color: Styles.ArrivalPalletteWhite,
                           ),
@@ -638,7 +665,55 @@ class _PostUploadState extends State<PostUploadScreen> {
       ),
     );
   }
+  MediaPickerSelection selection;
   Widget _buildGalleryCasing(BuildContext context) {
+
+    return Container(
+      margin: EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Styles.ArrivalPalletteWhite,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - 450,
+      child: selection == null || selection.selectedMedias.isEmpty
+          ? Center(
+            child: GestureDetector(
+              onTap: () async {
+                final result = await MediaPicker.show(context);
+                if (result != null) {
+                  var output = await result.selectedMedias[0].getFile();
+                  setState(() => _image = output);
+                  // setState(() => selection = result);
+                }
+              },
+              child: Icon(
+                Icons.cloud_upload,
+                color: Styles.ArrivalPalletteRed,
+                size: 65,
+              ),
+            ),
+          )
+          : Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              children: <Widget>[
+                ...selection.selectedMedias.map<Widget>(
+                  (x) => GestureDetector(
+                    onTap: () {
+                      setState(() => _image = x.getFile());
+                    },
+                    child: SizedBox(
+                      width: 128,
+                      height: 128,
+                      child: MediaThumbnailImage(media: x),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+
     return GridView.count(
       shrinkWrap: true,
       childAspectRatio: 1,
@@ -662,14 +737,26 @@ class _PostUploadState extends State<PostUploadScreen> {
     );
   }
 
+  bool _imageTaken = false;
   Map<String, double> _cameraValues = {
     'outter UI glow': 42.0,
     'outter UI button': 40.0,
     'inner UI button': 35.0,
   };
-  bool _imageTaken = false;
   Widget _buildCameraVisualDisplay(BuildContext context) {
-    if (!_cameraController.value.isInitialized || _cameraFailed) {
+
+    return Container(
+      child: Center(
+        child: Text(
+          'Camera upload available in next update.',
+          style: TextStyle(
+            color: Styles.ArrivalPalletteWhite,
+          ),
+        ),
+      ),
+    );
+
+    if (!_cameraController.value.isInitialized) {
       return Container();
     }
     return FutureBuilder<void>(
@@ -730,10 +817,10 @@ class _PostUploadState extends State<PostUploadScreen> {
                   $e
               =========================
               ''');
-ForYouPage.openSnackBar({
-'text': 'Camera Error $e',
-'duration': 10,
-});
+              ForYouPage.openSnackBar({
+              'text': 'Camera Error $e',
+              'duration': 10,
+              });
             }
           },
           child: CircleAvatar(

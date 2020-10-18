@@ -5,7 +5,7 @@
 import 'dart:async';
 
 import 'package:scoped_model/scoped_model.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// A model class that mirrors the options in [SettingsScreen] and stores data

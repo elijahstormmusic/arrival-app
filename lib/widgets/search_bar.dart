@@ -51,6 +51,7 @@ class SearchBar extends StatelessWidget {
                 child: CupertinoTextField(
                   controller: controller,
                   focusNode: focusNode,
+                  placeholder: 'Find where you Arrive...',
                   decoration: null,
                   style: Styles.searchText(themeData),
                   cursorColor: Styles.searchCursorColor,

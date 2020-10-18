@@ -23,7 +23,7 @@ class FrostedBox extends StatelessWidget {
       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Styles.frostedBackground,
+          color: Styles.ArrivalPalletteWhite,
         ),
         child: child,
       ),

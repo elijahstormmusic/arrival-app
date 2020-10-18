@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import '../posts/post.dart';
 import '../posts/page.dart';
 import '../users/profile.dart';
@@ -16,4 +16,6 @@ import '../data/arrival.dart';
 
 class Arrival {
   static final navigator = GlobalKey<NavigatorState>();
+
+  static void forceLogin() => HomeScreen.forceLogin();
 }

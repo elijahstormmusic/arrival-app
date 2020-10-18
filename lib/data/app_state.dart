@@ -5,38 +5,38 @@
 import 'package:scoped_model/scoped_model.dart';
 import 'arrival.dart';
 import 'link.dart';
-import 'cards/partners.dart';
-import 'cards/articles.dart';
-import 'cards/sales.dart';
+import '../partners/partner.dart';
+import '../articles/article.dart';
+import '../partners/sale.dart';
 import '../posts/post.dart';
 
 class AppState extends Model {
 
-  List<Business> get allBusinesses => List<Business>.from(ArrivalData.partners);
+  List<Partner> get allPartners => List<Partner>.from(ArrivalData.partners);
 
-  Business getBusiness(String link) => ArrivalData.partners.singleWhere((v) => v.cryptlink == link);
+  Partner getPartner(String link) => ArrivalData.partners.singleWhere((v) => v.cryptlink == link);
 
-  List<Business> get availableBusinesses {
+  List<Partner> get availablePartners {
     return ArrivalData.partners.where((v) => v.isOpen()).toList();
   }
 
-  List<Business> get unavailableBusinesses {
+  List<Partner> get unavailablePartners {
     return ArrivalData.partners.where((v) => !v.isOpen()).toList();
   }
 
-  List<Business> get favoriteBusinesses =>
+  List<Partner> get favoritePartners =>
       ArrivalData.partners.where((v) => v.isFavorite).toList();
 
   List<Post> searchPosts(String terms) => ArrivalData.posts
       .where((v) => v.caption.toLowerCase().contains(terms.toLowerCase()))
       .toList();
-  List<Business> searchBusinesses(String terms) => ArrivalData.partners
+  List<Partner> searchPartners(String terms) => ArrivalData.partners
       .where((v) => v.name.toLowerCase().contains(terms.toLowerCase()))
       .toList();
 
   void setFavorite(String link, bool isFavorite) {
-    var business = getBusiness(link);
-    business.isFavorite = isFavorite;
+    var Partner = getPartner(link);
+    Partner.isFavorite = isFavorite;
     notifyListeners();
   }
 

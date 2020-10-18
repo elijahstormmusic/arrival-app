@@ -6,7 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../screens/settings.dart';
-import '../foryou/list.dart';
+import '../foryou/foryou.dart';
 import '../styles.dart';
 import '../users/page.dart';
 import '../users/data.dart';
@@ -42,10 +42,7 @@ class _SlideState extends State<SlideMenu> {
 
   void _logout() async {
     await UserData.refresh();
-    Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => LoginScreen(),
-      fullscreenDialog: true,
-    ));
+    Arrival.forceLogin();
   }
 
   @override

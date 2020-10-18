@@ -18,11 +18,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
 
 import '../data/preferences.dart';
-import '../data/cards/partners.dart';
+import '../partners/partner.dart';
 import '../data/socket.dart';
 import '../data/link.dart';
 import '../login/login.dart';
-import '../foryou/list.dart';
+import '../foryou/foryou.dart';
 import '../users/data.dart';
 import '../users/profile.dart';
 import '../arrival_team/contact.dart';
@@ -105,56 +105,94 @@ class SubSettings extends StatefulWidget {
         previousPageTitle: 'Profile',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
-            .onDrag, // Make this behave such that touching outside of text field dismisses keyboard
-        children: [
-          Container(
-            //padding: EdgeInsets.all(12),
-            child: Container(
-              child: Text(
-                'Card Number:',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: billingFontSize, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
-              ),
-              padding: EdgeInsets.fromLTRB(32.0, 18.0, 25.0, 5.0),
-            ),
-          ),
-          Container(
-            //padding: EdgeInsets.all(12),
-            child: Container(
-              height: 70,
-              child: CupertinoTextField(
-                selectionHeightStyle: BoxHeightStyle.max,
-                placeholder: '1234 5678 1234 5678',
-                placeholderStyle: TextStyle(fontSize: 16.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black12,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(4.0),
+      child: Material(
+        child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+              .onDrag, // Make this behave such that touching outside of text field dismisses keyboard
+          children: [
+            Container(
+              //padding: EdgeInsets.all(12),
+              child: Container(
+                child: Text(
+                  'Card Number:',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontSize: billingFontSize, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
                 ),
-                onChanged: (String str) {
-                  // here you write code that activates when the user types in
-                  print(str);
-                },
-                onSubmitted: (String str) {
-                  // here you write code that activates when the presses enter
-                  print(str);
-                },
+                padding: EdgeInsets.fromLTRB(32.0, 18.0, 25.0, 5.0),
               ),
-              padding: EdgeInsets.fromLTRB(30, 10, 30, 15),
             ),
-          ),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  child: Column(
+            Container(
+              //padding: EdgeInsets.all(12),
+              child: Container(
+                height: 70,
+                child: CupertinoTextField(
+                  selectionHeightStyle: BoxHeightStyle.max,
+                  placeholder: '1234 5678 1234 5678',
+                  placeholderStyle: TextStyle(fontSize: 16.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black12,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  onChanged: (String str) {
+                    // here you write code that activates when the user types in
+                    print(str);
+                  },
+                  onSubmitted: (String str) {
+                    // here you write code that activates when the presses enter
+                    print(str);
+                  },
+                ),
+                padding: EdgeInsets.fromLTRB(30, 10, 30, 15),
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: rowH / 2,
+                            width: rowW,
+                            child: Text(
+                              'Exp Date:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                          ),
+                          Container(
+                            height: rowH / 2 + 20,
+                            width: rowW,
+                            child: CupertinoTextField(
+                              placeholder: 'MM/YY',
+                              placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black12,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              keyboardType: TextInputType.datetime,
+                            ),
+                            padding: EdgeInsets.fromLTRB(2,2,2,18),
+                          ),
+                        ]
+                    ),
+                  ),
+                  Container(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -162,11 +200,10 @@ class SubSettings extends StatefulWidget {
                           height: rowH / 2,
                           width: rowW,
                           child: Text(
-                            'Exp Date:',
+                            'CVV:',
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
+                                fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
                           ),
                           padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                         ),
@@ -174,7 +211,7 @@ class SubSettings extends StatefulWidget {
                           height: rowH / 2 + 20,
                           width: rowW,
                           child: CupertinoTextField(
-                            placeholder: 'MM/YY',
+                            placeholder: '000',
                             placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
                             decoration: BoxDecoration(
                               border: Border.all(
@@ -183,89 +220,54 @@ class SubSettings extends StatefulWidget {
                               ),
                               borderRadius: BorderRadius.circular(4.0),
                             ),
-                            keyboardType: TextInputType.datetime,
+                            keyboardType: TextInputType.number,
                           ),
                           padding: EdgeInsets.fromLTRB(2,2,2,18),
                         ),
-                      ]
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: rowH / 2,
-                        width: rowW,
-                        child: Text(
-                          'CVV:',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                      ),
-                      Container(
-                        height: rowH / 2 + 20,
-                        width: rowW,
-                        child: CupertinoTextField(
-                          placeholder: '000',
-                          placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black12,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(4.0),
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: rowH / 2,
+                          width: rowW,
+                          child: Text(
+                            'ZIP Code:',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
                           ),
-                          keyboardType: TextInputType.number,
+                          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                         ),
-                        padding: EdgeInsets.fromLTRB(2,2,2,18),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: rowH / 2,
-                        width: rowW,
-                        child: Text(
-                          'ZIP Code:',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: 'HelveticaRegular'),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                      ),
-                      Container(
-                        height: rowH / 2 + 20,
-                        width: rowW,
-                        child: CupertinoTextField(
-                          placeholder: '11111',
-                          placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black12,
-                              width: 1,
+                        Container(
+                          height: rowH / 2 + 20,
+                          width: rowW,
+                          child: CupertinoTextField(
+                            placeholder: '11111',
+                            placeholderStyle: TextStyle(fontSize: 15.0, color: Colors.black54, fontFamily: 'HelveticaHeavy'),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black12,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(4.0),
                             ),
-                            borderRadius: BorderRadius.circular(4.0),
+                            keyboardType: TextInputType.number,
                           ),
-                          keyboardType: TextInputType.number,
+                          padding: EdgeInsets.fromLTRB(2,2,2,18),
                         ),
-                        padding: EdgeInsets.fromLTRB(2,2,2,18),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -317,42 +319,44 @@ class SubSettings extends StatefulWidget {
         }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
-        child: ListView(
-          children: [
-            Container(
-              height: 150.0,
-              decoration: BoxDecoration(
-                border: Border.all(color: Styles.ArrivalPalletteBlack),
-                borderRadius: BorderRadius.circular(8.0),
+      child: Material(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
+          child: ListView(
+            children: [
+              Container(
+                height: 150.0,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Styles.ArrivalPalletteBlack),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Center(
+                  child: variableState==null
+                    ? (UserData.client.pic==null
+                      ? Text('No image selected')
+                      : UserData.client.icon())
+                    : Image(
+                      image: FileImage(variableState),
+                      fit: BoxFit.cover,
+                    ),
+                ),
               ),
-              child: Center(
-                child: variableState==null
-                  ? (UserData.client.pic==null
-                    ? Text('No image selected')
-                    : UserData.client.icon())
-                  : Image(
-                    image: FileImage(variableState),
-                    fit: BoxFit.cover,
-                  ),
+              SizedBox(height: 20.0),
+              Container(
+                padding: EdgeInsets.fromLTRB(10,20,10,0),
+                child: MaterialButton(
+                  child: Text('Pick Image'),
+                  textColor: Styles.ArrivalPalletteWhite,
+                  color: Styles.ArrivalPalletteBlue,
+                  onPressed: () async {
+                    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                    SubSettings.state.reload(image);
+                  },
+                ),
               ),
-            ),
-            SizedBox(height: 20.0),
-            Container(
-              padding: EdgeInsets.fromLTRB(10,20,10,0),
-              child: MaterialButton(
-                child: Text('Pick Image'),
-                textColor: Styles.ArrivalPalletteWhite,
-                color: Styles.ArrivalPalletteBlue,
-                onPressed: () async {
-                  var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-                  SubSettings.state.reload(image);
-                },
-              ),
-            ),
-            SubSettings.ChangesNeedSavingWarning(),
-          ],
+              SubSettings.ChangesNeedSavingWarning(),
+            ],
+          ),
         ),
       ),
     );
@@ -382,126 +386,128 @@ class SubSettings extends StatefulWidget {
         }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: membershipTierSpacing,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    SubSettings.state.reload(0);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-                    child: Container(
-                      height: 60,
-                      width: 400,
-                      decoration: BoxDecoration(
-                        color: (variableState==0)
-                          ? currentTierColor : notCurrentTierColor,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
+      child: Material(
+        child: ListView(
+          children: [
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: membershipTierSpacing,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      SubSettings.state.reload(0);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
                       child: Container(
-                        alignment: Alignment(0,0),
-                        child: Text(
-                          'Free    0.00/mo',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: tierFontSize,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'HelveticaHeavy',
-                            color: (variableState==0)
+                        height: 60,
+                        width: 400,
+                        decoration: BoxDecoration(
+                          color: (variableState==0)
+                            ? currentTierColor : notCurrentTierColor,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Container(
+                          alignment: Alignment(0,0),
+                          child: Text(
+                            'Free    0.00/mo',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: tierFontSize,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.normal,
+                              fontFamily: 'HelveticaHeavy',
+                              color: (variableState==0)
+                                ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: membershipTierSpacing,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      SubSettings.state.reload(1);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
+                      child: Container(
+                        height: 60,
+                        width: 400,
+                        decoration: BoxDecoration(
+                          color: (variableState==1)
+                            ? currentTierColor : notCurrentTierColor,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Container(
+                          alignment: Alignment(0,0),
+                          child: Text(
+                            'Lite    2.99/mo',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: tierFontSize,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.normal,
+                              fontFamily: 'HelveticaHeavy',
+                              color: (variableState==1)
                               ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  height: membershipTierSpacing,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    SubSettings.state.reload(1);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-                    child: Container(
-                      height: 60,
-                      width: 400,
-                      decoration: BoxDecoration(
-                        color: (variableState==1)
-                          ? currentTierColor : notCurrentTierColor,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
+                  Container(
+                    height: membershipTierSpacing,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      SubSettings.state.reload(2);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
                       child: Container(
-                        alignment: Alignment(0,0),
-                        child: Text(
-                          'Lite    2.99/mo',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: tierFontSize,
-                            fontWeight: FontWeight.normal,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'HelveticaHeavy',
-                            color: (variableState==1)
-                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                        height: 60,
+                        width: 400,
+                        decoration: BoxDecoration(
+                          color: (variableState==2)
+                            ? currentTierColor : notCurrentTierColor,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Container(
+                          alignment: Alignment(0,0),
+                          child: Text(
+                            'Max    9.99/mo',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: tierFontSize,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.normal,
+                              fontFamily: 'HelveticaHeavy',
+                              color: (variableState==2)
+                              ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  height: membershipTierSpacing,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    SubSettings.state.reload(2);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-                    child: Container(
-                      height: 60,
-                      width: 400,
-                      decoration: BoxDecoration(
-                        color: (variableState==2)
-                          ? currentTierColor : notCurrentTierColor,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Container(
-                        alignment: Alignment(0,0),
-                        child: Text(
-                          'Max    9.99/mo',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: tierFontSize,
-                            fontWeight: FontWeight.normal,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'HelveticaHeavy',
-                            color: (variableState==2)
-                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
-                          ),
-                        ),
-                      ),
-                    ),
+                  Container(
+                    height: membershipTierSpacing,
                   ),
-                ),
-                Container(
-                  height: membershipTierSpacing,
-                ),
-                SubSettings.ChangesNeedSavingWarning(),
-              ],
+                  SubSettings.ChangesNeedSavingWarning(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -533,174 +539,176 @@ class SubSettings extends StatefulWidget {
         }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: tippingTierSpacing,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    SubSettings.state.reload([0, .15]);
-                  },
-                  child: Container(
-                    height: tippingTierHeight,
-                    width: 400,
-                    decoration: BoxDecoration(
-                      color: (variableState[0]==0)
-                        ? currentTierColor : notCurrentTierColor,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Container(
-                      alignment: Alignment(-0.90,0),
-                      child: Text(
-                        '15%',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: tierFontSize,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'HelveticaHeavy',
-                            color: (variableState[0]==0)
-                              ? Colors.white70 : Styles.ArrivalPalletteBlack,
-                          ),
-                      ),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+      child: Material(
+        child: ListView(
+          children: [
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: tippingTierSpacing,
                   ),
-                ),
-                Container(
-                  height: tippingTierSpacing,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    SubSettings.state.reload([1, .2]);
-                  },
-                  child: Container(
-                    height: tippingTierHeight,
-                    width: 400,
-                    decoration: BoxDecoration(
-                      color: (variableState[0]==1)
-                        ? currentTierColor : notCurrentTierColor,
-                      border: Border.all(
-                        color: Colors.black12,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
+                  GestureDetector(
+                    onTap: () {
+                      SubSettings.state.reload([0, .15]);
+                    },
                     child: Container(
-                      alignment: Alignment(-0.9,0),
-                      child: Text(
-                        '20%',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: tierFontSize,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                          fontFamily: 'HelveticaHeavy',
-                          color: (variableState[0]==1)
-                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
-                        ),
-                      ),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
-                  ),
-                ),
-                Container(
-                  height: tippingTierSpacing,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    SubSettings.state.reload([2, .25]);
-                  },
-                  child: Container(
-                    height: tippingTierHeight,
-                    width: 400,
-                    decoration: BoxDecoration(
-                      color: (variableState[0]==2)
-                        ? currentTierColor : notCurrentTierColor,
-                      border: Border.all(
-                        color: Colors.black12,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Container(
-                      alignment: Alignment(-0.9,0),
-                      child: Text(
-                        '25%',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: tierFontSize,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                          fontFamily: 'HelveticaHeavy',
-                          color: (variableState[0]==2)
-                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
-                        ),
-                      ),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
-                  ),
-                ),
-                Container(
-                  height: tippingTierSpacing,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
-                  child: Container(
-                    height: tippingTierHeight,
-                    child: CupertinoTextField(
-                      selectionHeightStyle: BoxHeightStyle.max,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        // FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(5),
-                        BlacklistingTextInputFormatter.singleLineFormatter,
-                      ],
-                      style: TextStyle(
-                        color: (variableState[0]==3)
-                          ? Colors.white70 : Styles.ArrivalPalletteBlack,
-                      ),
-                      placeholder: 'Custom Amount',
-                      placeholderStyle: TextStyle(
-                        fontSize: tierFontSize,
-                        fontWeight: FontWeight.normal,
-                        fontStyle: FontStyle.normal,
-                        fontFamily: 'HelveticaHeavy',
-                      ),
+                      height: tippingTierHeight,
+                      width: 400,
                       decoration: BoxDecoration(
-                        color: (variableState[0]==3)
-                        ? currentTierColor : notCurrentTierColor,
+                        color: (variableState[0]==0)
+                          ? currentTierColor : notCurrentTierColor,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Container(
+                        alignment: Alignment(-0.90,0),
+                        child: Text(
+                          '15%',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize: tierFontSize,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.normal,
+                              fontFamily: 'HelveticaHeavy',
+                              color: (variableState[0]==0)
+                                ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                            ),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                    ),
+                  ),
+                  Container(
+                    height: tippingTierSpacing,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      SubSettings.state.reload([1, .2]);
+                    },
+                    child: Container(
+                      height: tippingTierHeight,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: (variableState[0]==1)
+                          ? currentTierColor : notCurrentTierColor,
                         border: Border.all(
                           color: Colors.black12,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      onChanged: (String data_input) {
-                        double _validNumber;
-                        try {
-                          _validNumber = double.parse(data_input);
-                        } catch (e) {
-                          return;
-                        }
-                        if (_validNumber<0) return;
-                        if (_validNumber>1) return; // should up have an upper limit?
-                        SubSettings.state.reload([3, _validNumber]);
-                      },
+                      child: Container(
+                        alignment: Alignment(-0.9,0),
+                        child: Text(
+                          '20%',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: tierFontSize,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'HelveticaHeavy',
+                            color: (variableState[0]==1)
+                              ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                          ),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
                     ),
                   ),
-                ),
-                SubSettings.ChangesNeedSavingWarning(),
-              ],
+                  Container(
+                    height: tippingTierSpacing,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      SubSettings.state.reload([2, .25]);
+                    },
+                    child: Container(
+                      height: tippingTierHeight,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        color: (variableState[0]==2)
+                          ? currentTierColor : notCurrentTierColor,
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Container(
+                        alignment: Alignment(-0.9,0),
+                        child: Text(
+                          '25%',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: tierFontSize,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'HelveticaHeavy',
+                            color: (variableState[0]==2)
+                              ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                          ),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                    ),
+                  ),
+                  Container(
+                    height: tippingTierSpacing,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                    child: Container(
+                      height: tippingTierHeight,
+                      child: CupertinoTextField(
+                        selectionHeightStyle: BoxHeightStyle.max,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          // FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(5),
+                          BlacklistingTextInputFormatter.singleLineFormatter,
+                        ],
+                        style: TextStyle(
+                          color: (variableState[0]==3)
+                            ? Colors.white70 : Styles.ArrivalPalletteBlack,
+                        ),
+                        placeholder: 'Custom Amount',
+                        placeholderStyle: TextStyle(
+                          fontSize: tierFontSize,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                          fontFamily: 'HelveticaHeavy',
+                        ),
+                        decoration: BoxDecoration(
+                          color: (variableState[0]==3)
+                          ? currentTierColor : notCurrentTierColor,
+                          border: Border.all(
+                            color: Colors.black12,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        onChanged: (String data_input) {
+                          double _validNumber;
+                          try {
+                            _validNumber = double.parse(data_input);
+                          } catch (e) {
+                            return;
+                          }
+                          if (_validNumber<0) return;
+                          if (_validNumber>1) return; // should up have an upper limit?
+                          SubSettings.state.reload([3, _validNumber]);
+                        },
+                      ),
+                    ),
+                  ),
+                  SubSettings.ChangesNeedSavingWarning(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -741,115 +749,117 @@ class SubSettings extends StatefulWidget {
         }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        children: [
-          Container(
-            child: Container(
-              height: 65.0,
-              child: CupertinoTextField(
-                placeholder: 'Current Password',
-                placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black38,
-                    width: 1,
-                  ),
-                  color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                onChanged: (String str) {
-                  for (int i=0;i<str.length;i++) {
-                    if (valid_chars.indexOf(str[i])==-1) {
-                      variableState[0] = '.';
-                      SubSettings.state.reload(variableState);
-                      return;
-                    }
-                  }
-                  variableState[0] = str;
-                  SubSettings.state.reload(variableState);
-                },
-              ),
-              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-            ),
-          ),
-          Container(
-            child: Container(
-              height: 65.0,
-              child: CupertinoTextField(
-                placeholder: 'New Password',
-                placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black38,
-                    width: 1,
-                  ),
-                  color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                onChanged: (String str) {
-                  for (int i=0;i<str.length;i++) {
-                    if (valid_chars.indexOf(str[i])==-1) {
-                      variableState[1] = '.';
-                      SubSettings.state.reload(variableState);
-                      return;
-                    }
-                  }
-                  variableState[1] = str;
-                  SubSettings.state.reload(variableState);
-                },
-              ),
-              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-            ),
-          ),
-          Container(
-            child: Container(
-              height: 65.0,
-              child: CupertinoTextField(
-                placeholder: 'Confirm New Password',
-                placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black38,
-                    width: 1,
-                  ),
-                  color: variableState[2]=='.' ? Styles.ArrivalPalletteRed : null,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                onChanged: (String str) {
-                  for (int i=0;i<str.length;i++) {
-                    if (valid_chars.indexOf(str[i])==-1) {
-                      variableState[2] = '.';
-                      SubSettings.state.reload(variableState);
-                      return;
-                    }
-                  }
-                  variableState[2] = str;
-                  SubSettings.state.reload(variableState);
-                },
-              ),
-              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
-            ),
-          ),
-          Container(
-            child: GestureDetector(
-              onTap: () => LoginScreen.forgotPassword(UserData.username),
+      child: Material(
+        child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          children: [
+            Container(
               child: Container(
-                child: Text(
-                  'Forgot your password?',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: passwordFontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.indigo,
+                height: 65.0,
+                child: CupertinoTextField(
+                  placeholder: 'Current Password',
+                  placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                    color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
+                    borderRadius: BorderRadius.circular(4.0),
                   ),
+                  onChanged: (String str) {
+                    for (int i=0;i<str.length;i++) {
+                      if (valid_chars.indexOf(str[i])==-1) {
+                        variableState[0] = '.';
+                        SubSettings.state.reload(variableState);
+                        return;
+                      }
+                    }
+                    variableState[0] = str;
+                    SubSettings.state.reload(variableState);
+                  },
                 ),
-                padding: EdgeInsets.fromLTRB(15.0,8.0,15.0,8.0),
+                padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
               ),
             ),
-          ),
-          SubSettings.ChangesNeedSavingWarning(),
-        ],
+            Container(
+              child: Container(
+                height: 65.0,
+                child: CupertinoTextField(
+                  placeholder: 'New Password',
+                  placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                    color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  onChanged: (String str) {
+                    for (int i=0;i<str.length;i++) {
+                      if (valid_chars.indexOf(str[i])==-1) {
+                        variableState[1] = '.';
+                        SubSettings.state.reload(variableState);
+                        return;
+                      }
+                    }
+                    variableState[1] = str;
+                    SubSettings.state.reload(variableState);
+                  },
+                ),
+                padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+              ),
+            ),
+            Container(
+              child: Container(
+                height: 65.0,
+                child: CupertinoTextField(
+                  placeholder: 'Confirm New Password',
+                  placeholderStyle: TextStyle(fontSize: passwordFontSize, color: Colors.black54),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                    color: variableState[2]=='.' ? Styles.ArrivalPalletteRed : null,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  onChanged: (String str) {
+                    for (int i=0;i<str.length;i++) {
+                      if (valid_chars.indexOf(str[i])==-1) {
+                        variableState[2] = '.';
+                        SubSettings.state.reload(variableState);
+                        return;
+                      }
+                    }
+                    variableState[2] = str;
+                    SubSettings.state.reload(variableState);
+                  },
+                ),
+                padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+              ),
+            ),
+            Container(
+              child: GestureDetector(
+                onTap: () => LoginScreen.forgotPassword(UserData.username),
+                child: Container(
+                  child: Text(
+                    'Forgot your password?',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: passwordFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(15.0,8.0,15.0,8.0),
+                ),
+              ),
+            ),
+            SubSettings.ChangesNeedSavingWarning(),
+          ],
+        ),
       ),
     );
   }
@@ -890,82 +900,84 @@ class SubSettings extends StatefulWidget {
         }),
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        children: [
-          Container(
-            //padding: EdgeInsets.all(12),
-            child: Container(
-              child: Text(
-                'Current Email: ' + UserData.client.email,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: emailFontSize,
-                ),
-              ),
-              padding: EdgeInsets.fromLTRB(15.0,15.0,15.0,6.0),
-            ),
-          ),
-          Container(
-            child: Container(
-              height: 65.0,
-              child: CupertinoTextField(
-                placeholder: 'New Email',
-                placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black38,
-                    width: 1,
+      child: Material(
+        child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          children: [
+            Container(
+              //padding: EdgeInsets.all(12),
+              child: Container(
+                child: Text(
+                  'Current Email: ' + UserData.client.email,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: emailFontSize,
                   ),
-                  color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
-                  borderRadius: BorderRadius.circular(4.0),
                 ),
-                onChanged: (String str) {
-                  for (int i=0;i<str.length;i++) {
-                    if (valid_chars.indexOf(str[i])==-1) {
-                      variableState[0] = '.';
-                      SubSettings.state.reload(variableState);
-                      return;
-                    }
-                  }
-                  variableState[0] = str;
-                  SubSettings.state.reload(variableState);
-                },
+                padding: EdgeInsets.fromLTRB(15.0,15.0,15.0,6.0),
               ),
-              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
             ),
-          ),
-          Container(
-            child: Container(
-              height: 65.0,
-              child: CupertinoTextField(
-                placeholder: 'Confirm New Email',
-                placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black38,
-                    width: 1,
+            Container(
+              child: Container(
+                height: 65.0,
+                child: CupertinoTextField(
+                  placeholder: 'New Email',
+                  placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                    color: variableState[0]=='.' ? Styles.ArrivalPalletteRed : null,
+                    borderRadius: BorderRadius.circular(4.0),
                   ),
-                  color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                onChanged: (String str) {
-                  for (int i=0;i<str.length;i++) {
-                    if (valid_chars.indexOf(str[i])==-1) {
-                      variableState[1] = '.';
-                      SubSettings.state.reload(variableState);
-                      return;
+                  onChanged: (String str) {
+                    for (int i=0;i<str.length;i++) {
+                      if (valid_chars.indexOf(str[i])==-1) {
+                        variableState[0] = '.';
+                        SubSettings.state.reload(variableState);
+                        return;
+                      }
                     }
-                  }
-                  variableState[1] = str;
-                  SubSettings.state.reload(variableState);
-                },
+                    variableState[0] = str;
+                    SubSettings.state.reload(variableState);
+                  },
+                ),
+                padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
               ),
-              padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
             ),
-          ),
-          SubSettings.ChangesNeedSavingWarning(),
-        ],
+            Container(
+              child: Container(
+                height: 65.0,
+                child: CupertinoTextField(
+                  placeholder: 'Confirm New Email',
+                  placeholderStyle: TextStyle(fontSize: emailFontSize, color: Colors.black54),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                    color: variableState[1]=='.' ? Styles.ArrivalPalletteRed : null,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  onChanged: (String str) {
+                    for (int i=0;i<str.length;i++) {
+                      if (valid_chars.indexOf(str[i])==-1) {
+                        variableState[1] = '.';
+                        SubSettings.state.reload(variableState);
+                        return;
+                      }
+                    }
+                    variableState[1] = str;
+                    SubSettings.state.reload(variableState);
+                  },
+                ),
+                padding: EdgeInsets.fromLTRB(12.0,12.0,12.0,6.0),
+              ),
+            ),
+            SubSettings.ChangesNeedSavingWarning(),
+          ],
+        ),
       ),
     );
   }
@@ -977,10 +989,12 @@ class SubSettings extends StatefulWidget {
         previousPageTitle: 'Profile',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('agreements'),
-        ],
+      child: Material(
+        child: ListView(
+          children: [
+            Text('agreements'),
+          ],
+        ),
       ),
     );
   }
@@ -991,10 +1005,12 @@ class SubSettings extends StatefulWidget {
         previousPageTitle: 'Profile',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('location'),
-        ],
+      child: Material(
+        child: ListView(
+          children: [
+            Text('location'),
+          ],
+        ),
       ),
     );
   }
@@ -1005,10 +1021,12 @@ class SubSettings extends StatefulWidget {
         previousPageTitle: 'Profile',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('security'),
-        ],
+      child: Material(
+        child: ListView(
+          children: [
+            Text('security'),
+          ],
+        ),
       ),
     );
   }
@@ -1020,10 +1038,12 @@ class SubSettings extends StatefulWidget {
         previousPageTitle: 'Settings',
       ),
       backgroundColor: Styles.scaffoldBackground(brightness),
-      child: ListView(
-        children: [
-          Text('legal'),
-        ],
+      child: Material(
+        child: ListView(
+          children: [
+            Text('legal'),
+          ],
+        ),
       ),
     );
   }

@@ -8,10 +8,20 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../styles.dart';
 import 'locator.dart';
 
 class Maps extends StatefulWidget {
   static const routeName = '/maps';
+  static _MapState currentState;
+
+  static void scrollToTop() =>
+    currentState.restart();
+  static void refresh_state() =>
+    currentState.refresh_state();
+
+  static void openSnackBar(Map<String, dynamic> input) =>
+    currentState.openSnackBar(input);
 
   static MyLocation myself = MyLocation();
   String _query;
@@ -38,6 +48,25 @@ class _MapState extends State<Maps> {
 
   _MapState(this.query, this.myself);
 
+  SnackBar _snackBar;
+  void openSnackBar(Map<String, dynamic> input) {
+    try {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(input['text']),
+        backgroundColor: Styles.ArrivalPalletteRed,
+        elevation: 15.0,
+        duration: input['duration']==null ? null : Duration(seconds: input['duration']),
+        action: input['action']==null ? null : SnackBarAction(
+          textColor: Styles.ArrivalPalletteBlue,
+          disabledTextColor: Styles.ArrivalPalletteGrey,
+          label: input['action-label'],
+          onPressed: input['action'],
+        ),
+      ));
+    } catch (e) {
+
+    }
+  }
 
   @override
   void initState() {
@@ -45,6 +74,12 @@ class _MapState extends State<Maps> {
     super.initState();
   }
 
+  void restart() {
+
+  }
+  void refresh_state() {
+
+  }
   void relocate() {
 
   }

@@ -14,11 +14,11 @@ import '../data/preferences.dart';
 import '../styles.dart';
 import '../data/app_state.dart';
 import '../data/preferences.dart';
-import '../data/cards/partners.dart';
-import '../data/cards/articles.dart';
-import '../data/cards/sales.dart';
+import '../partners/partner.dart';
+import '../articles/article.dart';
+import '../partners/sale.dart';
 import '../posts/post.dart';
-import 'list.dart';
+import 'foryou.dart';
 
 class Search extends StatefulWidget {
   _SearchState currentState;
@@ -50,13 +50,17 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
+  @override
   void toggleSearch() {
-    if (_searchOpen) ForYouPage.showUploadButton();
-    else ForYouPage.hideUploadButton();
+    try {
+      if (_searchOpen) ForYouPage.showUploadButton();
+      else ForYouPage.hideUploadButton();
+    } //  typically breaks if not on ForYouPage
+    catch (e) {}
     setState(() => _searchOpen = !_searchOpen);
   }
 
-  Widget _buildSearchLines(List<Business> places) {
+  Widget _buildSearchLines(List<Partner> places) {
     if (places.isEmpty) {
       return Center(
         child: Padding(
@@ -74,15 +78,15 @@ class _SearchState extends State<Search> {
       itemBuilder: (context, i) {
         return Padding(
           padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: BusinessHeadline(places[i]),
+          child: PartnerHeadline(places[i]),
         );
       },
     );
   }
   Widget _buildSearchResults(AppState model) {
     List<Post> posts = model.searchPosts(searchTerms);
-    List<Business> businesses = model.searchBusinesses(searchTerms);
-    return _buildSearchLines(businesses);
+    List<Partner> Partners = model.searchPartners(searchTerms);
+    return _buildSearchLines(Partners);
   }
   Widget _buildSearchBar() {
     return Padding(

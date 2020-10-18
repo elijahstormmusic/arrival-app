@@ -1,55 +1,312 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
-import '../foryou/list.dart';
+import 'package:flutter/scheduler.dart';
+
+import '../data/socket.dart';
+import '../data/link.dart';
+import '../users/data.dart';
+import '../foryou/foryou.dart';
+import '../foryou/feeds/article_feed.dart';
+import '../foryou/feeds/partner_feed.dart';
+import '../foryou/feeds/post_feed.dart';
+import '../login/login.dart';
 import '../maps/maps.dart';
-import '../screens/search.dart';
 import '../screens/settings.dart';
 import '../posts/upload.dart';
 import '../styles.dart';
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
+  static const routeName = '/home';
+  static _MainAppStates _s;
+
+  static void gotoForyou() => _s.gotoForyou();
+  static void forceLogin() => _s.forceLogin();
+  static void toggleVerion() => _s.toggleVerion();
+
+  static void openSnackBar(Map<String, dynamic> input) => _s.openSnackBar(input);
+
+  @override
+  _MainAppStates createState() {
+    _s = _MainAppStates();
+    return _s;
+  }
+}
+
+class _MainAppStates extends State<HomeScreen> {
+  int _selectedIndex = 2;
+  bool _pulltoforyou = false,
+        _runningLoginScreen = false,
+        _forcelogin = false;
+
+  @override
+  void initState() {
+    socket.home = this;
+    super.initState();
+  }
+
+  void gotoForyou() =>
+    setState(() => _pulltoforyou = true);
+  void forceLogin() =>
+    setState(() => _forcelogin = true);
+  void refresh() =>
+    setState(() => true);
+
+  bool versionTwo = true;
+  void toggleVerion() => setState(() => versionTwo = !versionTwo);
+
+  void scrollToTop() {
+    if (_selectedIndex==0) {
+      ArticleFeed.scrollToTop();
+    }
+    else if (_selectedIndex==1) {
+      PostFeed.scrollToTop();
+    }
+    else if (_selectedIndex==2) {
+      ForYouPage.scrollToTop();
+    }
+    else if (_selectedIndex==3) {
+      PartnerFeed.scrollToTop();
+    }
+    else if (_selectedIndex==4) {
+      Maps.scrollToTop();
+    }
+    else {
+      ForYouPage.scrollToTop();
+    }
+  }
+  void openSnackBar(Map<String, dynamic> input) {
+    if (_selectedIndex==0) {
+      ArticleFeed.openSnackBar(input);
+    }
+    else if (_selectedIndex==1) {
+      PostFeed.openSnackBar(input);
+    }
+    else if (_selectedIndex==2) {
+      ForYouPage.openSnackBar(input);
+    }
+    else if (_selectedIndex==3) {
+      PartnerFeed.openSnackBar(input);
+    }
+    else if (_selectedIndex==4) {
+      Maps.openSnackBar(input);
+    }
+    else {
+      ForYouPage.openSnackBar(input);
+    }
+  }
+  void _selectedTab(int index) {
+    if (_selectedIndex == index) {
+      Arrival.navigator.currentState.popUntil((route) => route.isFirst);
+      if (_selectedIndex==0) {
+        ArticleFeed.scrollToTop();
+      }
+      else if (_selectedIndex==1) {
+        PostFeed.scrollToTop();
+      }
+      else if (_selectedIndex==2) {
+        ForYouPage.scrollToTop();
+      }
+      else if (_selectedIndex==3) {
+        PartnerFeed.scrollToTop();
+      }
+      else if (_selectedIndex==4) {
+        Maps.scrollToTop();
+      }
+      else {
+        ForYouPage.scrollToTop();
+      }
+    }
+    setState(() => _selectedIndex = index);
+  }
+
+  Widget _loadingScreen(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Styles.ArrivalPalletteRed,
+        ),
+      ),
+    );
+  }
+  Widget _decideInteriorBody() {
+    var choice;
+    switch (_selectedIndex) {
+      case 0:
+        choice = ArticleFeed();
+        break;
+      case 1:
+        choice = PostFeed();
+        break;
+      case 2:
+        choice = ForYouPage();
+        break;
+      case 3:
+        choice = PartnerFeed();
+        break;
+      case 4:
+        choice = Maps();
+        break;
+      default:
+        choice = ForYouPage();
+        break;
+    }
+    return choice;
+  }
+
+  Widget _buildBottomNavBarVTwo(BuildContext context) {
+    return BottomNavigationBar(
+      onTap: _selectedTab,
+      type: BottomNavigationBarType.fixed,
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.subject),
+          title: Text('articles'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.supervisor_account),
+          title: Text('market'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Text('for you'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.business),
+          title: Text('sales'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.map),
+          title: Text('maps'),
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      backgroundColor: Styles.ArrivalPalletteWhite,
+      selectedIconTheme: IconThemeData(
+        color: Styles.ArrivalPalletteRed,
+        size: 24.0,
+      ),
+      unselectedIconTheme: IconThemeData(
+        color: Styles.ArrivalPalletteBlack,
+        size: 24.0,
+      ),
+      selectedFontSize: 16.0,
+      unselectedFontSize: 16.0,
+      selectedItemColor: Styles.ArrivalPalletteRed,
+      unselectedItemColor: Styles.ArrivalPalletteBlack,
+    );
+  }
+  BottomNavigationBar _buildBottomNavBarVOne(BuildContext context) {
+    return BottomNavigationBar(
+      onTap: _selectedTab,
+      type: BottomNavigationBarType.fixed,
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Text('for you'),
+          backgroundColor: Styles.ArrivalPalletteRed,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.subject),
+          title: Text('what\'s happenin'),
+          backgroundColor: Styles.ArrivalPalletteRed,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.business),
+          title: Text('partners'),
+          backgroundColor: Styles.ArrivalPalletteRed,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.map),
+          title: Text('maps'),
+          backgroundColor: Styles.ArrivalPalletteRed,
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      backgroundColor: Styles.ArrivalPalletteRed,
+      selectedIconTheme: IconThemeData(
+        color: Styles.ArrivalPalletteYellow,
+        size: 24.0,
+      ),
+      unselectedIconTheme: IconThemeData(
+        color: Styles.ArrivalPalletteWhite,
+        size: 24.0,
+      ),
+      selectedFontSize: 12.0,
+      unselectedFontSize: 12.0,
+      selectedItemColor: Styles.ArrivalPalletteYellow,
+      unselectedItemColor: Styles.ArrivalPalletteWhite,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home, size: 42.0),
+
+    if (_forcelogin) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
+        Arrival.navigator.currentState.push(MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+          fullscreenDialog: true,
+        ));
+      });
+      _forcelogin = false;
+    }
+    else if (_pulltoforyou) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
+      });
+      _pulltoforyou = false;
+    }
+
+    var scaffoldBody, bottomNav;
+    var _foryouFloatingVTwo = Container(
+      width: 60,
+      height: 60,
+      child: FittedBox(
+        child: FloatingActionButton(
+          elevation: 0,
+          backgroundColor: Styles.ArrivalPalletteWhite,
+          foregroundColor: Styles.ArrivalPalletteWhite,
+          child: CircleAvatar(
+            radius: 22,
+            child: Icon(
+              Icons.home,
+              color: Styles.ArrivalPalletteWhite,
+            ),
+            backgroundColor: Styles.ArrivalPalletteRed,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.location, size: 42.0),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Styles.cloud, size: 42.0),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.search, size: 42.0),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings, size: 42.0),
-          ),
-        ],
-        backgroundColor: Styles.mainColor,
-        activeColor: Styles.activeColor,
-        inactiveColor: Styles.inactiveColor,
+          onPressed: () => _selectedTab(2),
+        )
       ),
-      tabBuilder: (context, index) {
-        if (index == 0) {
-          return ForYouPage();
-        } else if (index == 1) {
-          return Maps();
-        } else if (index == 2) {
-          return PostUploadScreen();
-        } else if (index == 3) {
-          return SearchScreen();
-        } else {
-          return SettingsScreen();
-        }
-      },
-    );
+    ), _foryouFloatingSettingsVTwo = FloatingActionButtonLocation.centerDocked;
+    if (UserData.password!='') {
+      scaffoldBody = _decideInteriorBody();
+      if (versionTwo) {
+        bottomNav = _buildBottomNavBarVTwo(context);
+      }
+      else {
+        bottomNav = _buildBottomNavBarVOne(context);
+        _foryouFloatingSettingsVTwo = null;
+        _foryouFloatingVTwo = null;
+      }
+
+    }
+    else {
+      scaffoldBody = _loadingScreen(context);
+    }
+
+    return Scaffold(
+        body: scaffoldBody,
+        floatingActionButton: _foryouFloatingVTwo,
+        floatingActionButtonLocation: _foryouFloatingSettingsVTwo,
+        bottomNavigationBar: bottomNav,
+        resizeToAvoidBottomPadding: false,
+      );
   }
 }

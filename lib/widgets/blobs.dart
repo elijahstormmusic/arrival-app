@@ -9,6 +9,9 @@ import 'package:flutter/widgets.dart';
 import '../styles.dart';
 
 
+import '../screens/home.dart';
+
+
 class _SlideTransition extends StatelessWidget {
   _SlideTransition({
     this.child, this.animation,
@@ -129,7 +132,12 @@ class _Blobs extends State<Blob_Background> with SingleTickerProviderStateMixin 
               child: _SlideTransition(
                 positions: yellowPosition,
                 child: Container(
-                  child: Styles.ArrivalBlobYellow,
+                  child: GestureDetector(
+                    onTap: () => HomeScreen.openSnackBar({
+                      'text': 'test',
+                    }),
+                    child: Styles.ArrivalBlobYellow,
+                  ),
                 ),
                 animation: animation,
               ),
@@ -139,7 +147,10 @@ class _Blobs extends State<Blob_Background> with SingleTickerProviderStateMixin 
               child: _SlideTransition(
                 positions: bluePosition,
                 child: Container(
-                  child: Styles.ArrivalBlobBlue,
+                  child: GestureDetector(
+                    onTap: () => HomeScreen.toggleVerion(),
+                    child: Styles.ArrivalBlobBlue,
+                  ),
                 ),
                 animation: animation,
               ),

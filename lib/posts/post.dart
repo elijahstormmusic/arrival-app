@@ -23,7 +23,8 @@ class Post {
   String userlink;
   final DateTime uploadDate;
   int commentPage = -1;
-  List<Map<String, dynamic>> comments = [];
+  List<Map<String, dynamic>> comments;
+  List<Map<String, dynamic>> client_comments = List<Map<String, dynamic>>();
   final bool full;
 
   Profile get user {
@@ -46,6 +47,7 @@ class Post {
     @required this.location,
     @required this.uploadDate,
     @required this.userlink,
+    this.comments = const <Map<String, dynamic>>[],
     this.full = true,
   });
   Post.icon({
@@ -57,6 +59,7 @@ class Post {
     this.views = 0,
     this.location = const {'name': '', 'lat': 0, 'lng': 0},
     this.uploadDate = null,
+    this.comments = const <Map<String, dynamic>>[],
     this.full = false,
   });
   static final Post empty = Post(
@@ -74,6 +77,9 @@ class Post {
       return NetworkImage(Post.source + 'v1599325166/sample.jpg');
     return NetworkImage(Post.source + cloudlink);
   }
+  String image_href() {
+    return Post.source + cloudlink;
+  }
   Widget image() {
     return Image.network(
       Post.source + cloudlink,
@@ -89,6 +95,17 @@ class Post {
 
   static Post json(var input) {
     Profile.lite(input['user']);
+
+    var commentList = input['short_comments'];
+    var _comment_data = List<Map<String, dynamic>>();
+
+    if (commentList!=null) {
+      for (int j=0;j<commentList.length;j++) {
+        commentList[j]['user'] = Profile.link(commentList[j]['userlink']);
+        _comment_data.add(commentList[j]);
+      }
+    }
+
     return Post(
       caption: input['caption'],
       cryptlink: input['cryptlink'],
@@ -98,6 +115,7 @@ class Post {
       location: input['location'],
       uploadDate: DateTime.parse(input['date']),
       userlink: input['user'],
+      comments: _comment_data,
     );
   }
   static Post link(String input) {
