@@ -284,7 +284,8 @@ class _ListState extends State<ForYouPage> {
                   Blob_Background(height: 305.0),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(40, 24, 40, 16),
-                    child: UserProfilePlacecard(),
+                    child: Container(height: 400),
+                    // child: UserProfilePlacecard(),
                   ),
                 ],
               );
@@ -292,7 +293,7 @@ class _ListState extends State<ForYouPage> {
               return ArrivalData.foryou[index-1].generate(prefs);
             } else {
               if (index-2==ArrivalData.foryou.length && _forceFailCurrentState) {
-                return Styles.ArrivalErrorPage(context, 'Make sure you are conntected to the internet.');
+                return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);
             }

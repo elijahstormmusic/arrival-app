@@ -77,7 +77,7 @@ abstract class Styles {
         letterSpacing: 3,
   );
 
-  static Widget ArrivalErrorPage(BuildContext context, String err) => Padding(
+  static Widget ArrivalErrorPage(String err) => Padding(
     padding: EdgeInsets.all(42),
     child: DecoratedBox(
       decoration: BoxDecoration(
@@ -89,15 +89,6 @@ abstract class Styles {
         padding: EdgeInsets.all(16),
         child: Stack(
           children: [
-            // Positioned(
-            //   top: 16,
-            //   left: 16,
-            //   child: SafeArea(
-            //     child: ArrCloseButton(() {
-            //       Navigator.of(context).pop();
-            //     }),
-            //   ),
-            // ),
             Center(
               child: Text(
                 'error: ' + err,

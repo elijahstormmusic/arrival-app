@@ -228,7 +228,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
               return ArrivalData.partner_feed[index-1].generate(prefs);
             } else {
               if (index-2==ArrivalData.partner_feed.length && _forceFailCurrentState) {
-                return Styles.ArrivalErrorPage(context, 'Make sure you are conntected to the internet.');
+                return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);
             }

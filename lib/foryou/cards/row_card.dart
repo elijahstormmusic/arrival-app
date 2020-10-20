@@ -15,8 +15,7 @@ import '../../widgets/cards.dart';
 class RowCard {
   Widget generate(Preferences prefs) {
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-      child: Text('please input a vaild RowCard'),
+      child: Styles.ArrivalErrorPage('please input a valid RowCard'),
     );
   }
 }
@@ -27,27 +26,23 @@ class RowLoading extends RowCard {
   Widget generate(Preferences prefs) => Padding(
     padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
     child: PressableCard(
+      shadowColor: Styles.transparentColor,
+      color: Styles.transparentColor,
       onPressed: () {
-
+        // attempt reload
       },
-      child: Stack(
-        children: [
-          Semantics(
-            label: 'loading card',
-            child: Container(
-              height: 60,
-              decoration: BoxDecoration(
-                color: Styles.ArrivalPalletteGrey,
-              ),
-              child: Center(
-                child: Center(
-                  // child: SvgPicture.asset('assets/loading/Bucket-1s-200px.svg'),
-                  child: Image.asset('assets/loading/Bucket-1s-200px.gif'),
-                ),
-              ),
-            ),
+      child: Semantics(
+        label: 'loading card',
+        child: Container(
+          height: 60,
+          // color: Styles.transparentColor,
+          // decoration: BoxDecoration(
+          //   color: Styles.ArrivalPalletteGrey,
+          // ),
+          child: Center(
+            child: Image.asset('assets/loading/Bucket-1s-200px.gif'),
           ),
-        ],
+        ),
       ),
     ),
   );

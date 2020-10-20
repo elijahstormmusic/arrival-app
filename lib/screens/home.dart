@@ -131,6 +131,9 @@ class _MainAppStates extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: Styles.ArrivalPalletteRed,
         ),
+        child: Center(
+          child: Image.asset('assets/loading/Bucket-1s-200px.gif'),
+        ),
       ),
     );
   }

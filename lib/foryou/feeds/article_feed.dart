@@ -228,8 +228,8 @@ class _ArticleFeedState extends State<ArticleFeed> {
             } else if (index <= ArrivalData.article_feed.length) {
               return ArrivalData.article_feed[index-1].generate(prefs);
             } else {
-              if (index-2==ArrivalData.foarticle_feedryou.length && _forceFailCurrentState) {
-                return Styles.ArrivalErrorPage(context, 'Make sure you are conntected to the internet.');
+              if (index-2==ArrivalData.article_feed.length && _forceFailCurrentState) {
+                return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);
             }

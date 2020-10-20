@@ -259,28 +259,26 @@ class _PostDisState extends State<PostDisplay> {
   }
   Widget _profileDisplay(Profile user) {
     return GestureDetector(
-      child: SizedBox(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 6,
+        ),
         height: 50,
-        child: Stack(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Positioned(
-              top: 8,
-              left: 18,
-              child: Container(
-                // padding: EdgeInsets.all(4.0),
-                child: CircleAvatar(
-                  radius: 19.0,
-                  backgroundImage: NetworkImage(user.image_href()),
-                ),
+            Container(
+              padding: EdgeInsets.all(4.0),
+              child: CircleAvatar(
+                radius: 19.0,
+                backgroundImage: NetworkImage(user.image_href()),
               ),
             ),
-            Positioned(
-              top: 14,
-              left: 70,
-              child: Text(
-                user.name,
-                style: Styles.profileName
-              ),
+            Text(
+              user.name,
+              style: Styles.profileName
             ),
           ],
         ),

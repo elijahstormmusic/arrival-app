@@ -42,6 +42,7 @@ class PressableCard extends StatefulWidget {
     this.shadowColor = CupertinoColors.black,
     this.duration = const Duration(milliseconds: 100),
     this.onPressed,
+    this.color = CupertinoColors.lightBackgroundGray,
     Key key,
   })  : assert(child != null),
         assert(borderRadius != null),
@@ -54,6 +55,8 @@ class PressableCard extends StatefulWidget {
   final VoidCallback onPressed;
 
   final Widget child;
+
+  final Color color;
 
   final BorderRadius borderRadius;
 
@@ -89,7 +92,7 @@ class _PressableCardState extends State<PressableCard> {
     shape: BoxShape.rectangle,
     shadowColor: widget.shadowColor,
     duration: widget.duration,
-    color: CupertinoColors.lightBackgroundGray,
+    color: widget.color,
     child: ClipRRect(
           borderRadius: widget.borderRadius,
           child: widget.child,
