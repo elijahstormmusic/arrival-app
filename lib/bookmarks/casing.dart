@@ -55,7 +55,7 @@ class _CasingFavState extends State<CasingFavorites> {
 
   Widget _buildBookmarkedIcon(BuildContext context, bool hasBeenSeen, Widget display) {
     return CircleAvatar(
-      radius: 35,
+      radius: hasBeenSeen ? 32 : 35,
       backgroundColor: hasBeenSeen ? Styles.ArrivalPalletteGrey : Styles.ArrivalPalletteRed,
       child: CircleAvatar(
         radius: 31,

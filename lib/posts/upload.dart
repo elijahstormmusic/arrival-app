@@ -82,20 +82,28 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
   }
 
 
-  Future<String> _uploadImage(File _image) async {
-    if (_image == null) return '';
+  Future<Map<String, dynamic> > _uploadMedia(File _media) async {
+    if (_media == null) return {
+      'link': '',
+    };
 
     setState(() {
       isLoading = true;
     });
 
     try {
-      String img_url = (await cloudinary_client.uploadImage(
-        _image.path,
+      var media_data = await cloudinary_client.uploadImage(
+        _media.path,
         folder: 'posts/' + UserData.client.name,
-      )).secure_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', '');
+      );
 
-      return img_url;
+      return {
+        'link': media_data.secure_url.replaceAll(
+                  'https://res.cloudinary.com/arrival-kc/image/upload/', ''
+                ),
+        'height': media_data.height,
+        // 'duration': media_data.duration==null ? null : media_data.duration,
+      };
     } catch (e) {
       print('''
       =====================================
@@ -105,7 +113,12 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
       ''');
     }
 
-    return '';
+    return {
+      'link': '',
+    };
+  }
+  bool _isVideo(File _media) {
+    return false;
   }
 
 
@@ -265,7 +278,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
       height: (_captionValues['circle'] + _captionValues['padding']) * 2,
       child: CircleAvatar(
         radius: _captionValues['circle'],
-        backgroundImage: NetworkImage(UserData.client.image_href()),
+        backgroundImage: NetworkImage(UserData.client.media_href()),
       ),
     );
   }
@@ -345,24 +358,52 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                     }
                   };
 
-                  if (widget.upload_single!=null) {
-                    String link = await _uploadImage(widget.upload_single);
+                  if (widget.upload_single!=null || widget.upload_collection.length==1) {  // single upload
 
-                    if (link=='') return;
+                    Map<String, dynamic> media_data;
 
-                    database_info['type'] = 0;
-                    database_info['cloudlink'] = link;
+                    if (_isVideo(widget.upload_single)) {
+                      media_data = await _uploadMedia(widget.upload_single);
+                      database_info['type'] = 2;
+                      database_info['duration'] = media_data['duration'];
+                    }
+                    else {
+                      media_data = await _uploadMedia(widget.upload_single);
+                      database_info['type'] = 0;
+                    }
+
+                    if (media_data['link']=='') return;
+
+                    database_info['height'] = media_data['height'];
+                    database_info['cloudlink'] = media_data['link'];
                   }
-                  else {
+                  else if (widget.upload_collection.length>1) {  // gallery upload
+
+                    Map<String, dynamic> media_data = Map<String, dynamic>();
+                    List<Map<String, dynamic> > attributes = List<Map<String, dynamic> >();
                     List<String> links = List<String>();
+
                     for (int i=0;i<widget.upload_collection.length;i++) {
-                      links.add(await _uploadImage(widget.upload_collection[i]));
-                      if (links[i]=='') return;
+
+                      if (_isVideo(widget.upload_collection[i])) {
+                        media_data = await _uploadMedia(widget.upload_collection[i]);
+
+                        attributes[i]['duration'] = media_data['duration'];
+                      }
+                      else {
+                        media_data = await _uploadMedia(widget.upload_collection[i]);
+                      }
+
+                      if (media_data['link']=='') return;
+
+                      attributes[i]['height'] = media_data['height'];
                     }
 
                     database_info['type'] = 1;
                     database_info['cloudlink'] = links;
+                    database_info['attributes'] = attributes;
                   }
+                  else return;
 
                   socket.emit('posts upload', database_info);
 

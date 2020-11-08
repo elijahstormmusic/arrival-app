@@ -94,7 +94,7 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
                         ),
                         child: CircleAvatar(
                           radius: 50,
-                          backgroundImage: NetworkImage(UserData.client.image_href()),
+                          backgroundImage: NetworkImage(UserData.client.media_href()),
                         ),
                       ),
                     ),

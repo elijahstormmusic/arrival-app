@@ -24,7 +24,7 @@ class PostFavorites extends CasingFavorites {
   Map<String, dynamic> generateListData(int i) {
     return {
       'link': ArrivalData.profiles[i].cryptlink,
-      'icon': ArrivalData.profiles[i].image_href(),
+      'icon': ArrivalData.profiles[i].media_href(),
       'name': ArrivalData.profiles[i].name,
     };
   }

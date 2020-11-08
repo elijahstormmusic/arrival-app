@@ -121,7 +121,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
 
     List<RowCard> list = List<RowCard>();
     var card, result;
-
+    
     try {
       for (var i=0;i<data.length;i++) {
         try {
@@ -130,6 +130,15 @@ class _PartnerFeedState extends State<PartnerFeed> {
           card = RowPartner(result);
           ArrivalData.innocentAdd(ArrivalData.partners, result);
         } catch (e) {
+          print('''
+          ==========================
+            Partner Error ${i}
+          --------------------------
+                ${data[i]}
+          --------------------------
+                $e
+          ==========================
+          ''');
           continue;
         }
 

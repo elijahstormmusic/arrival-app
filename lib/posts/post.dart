@@ -9,6 +9,8 @@ import '../users/profile.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 
+import 'page.dart';
+
 
 class Post {
   static final String source =
@@ -26,6 +28,8 @@ class Post {
   List<Map<String, dynamic>> comments;
   List<Map<String, dynamic>> client_comments = List<Map<String, dynamic>>();
   final bool full;
+  final int type;
+  final double height;
 
   Profile get user {
     if (userlink=='') {
@@ -47,6 +51,8 @@ class Post {
     @required this.location,
     @required this.uploadDate,
     @required this.userlink,
+    @required this.type,
+    this.height = 400,
     this.comments = const <Map<String, dynamic>>[],
     this.full = true,
   });
@@ -54,6 +60,8 @@ class Post {
     @required this.cryptlink,
     @required this.cloudlink,
     @required this.userlink,
+    @required this.type,
+    this.height = 400,
     this.caption = 'loading...',
     this.likes = 0,
     this.views = 0,
@@ -70,6 +78,7 @@ class Post {
     views: 0,
     location: {'name': '', 'lat': 0, 'lng': 0},
     uploadDate: ArrivalData.default_time,
+    type: -1,
   );
 
   NetworkImage card_image() {
@@ -77,7 +86,7 @@ class Post {
       return NetworkImage(Post.source + 'v1599325166/sample.jpg');
     return NetworkImage(Post.source + cloudlink);
   }
-  String image_href() {
+  String media_href() {
     return Post.source + cloudlink;
   }
   Widget image() {
@@ -115,6 +124,8 @@ class Post {
       location: input['location'],
       uploadDate: DateTime.parse(input['date']),
       userlink: input['user'],
+      type: input['type'],
+      height: input['height'],
       comments: _comment_data,
     );
   }
@@ -133,12 +144,16 @@ class Post {
       location: {'name': '', 'lat': 0, 'lng': 0},
       uploadDate: ArrivalData.default_time,
       userlink: '',
+      type: -1,
     );
     socket.emit('posts get', {
       'link': input,
     });
     ArrivalData.innocentAdd(ArrivalData.posts, P);
     return P;
+  }
+  static PostDisplayPage navigateTo(String link) {
+    return PostDisplayPage(link);
   }
   static int index = 0;
 }

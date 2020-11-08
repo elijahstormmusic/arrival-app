@@ -28,6 +28,8 @@ class PostDisplay extends StatefulWidget {
 
   PostDisplay(@required this.post, {this.scrollable = false}) : assert(post!=null);
 
+  PostDisplay.video();
+
   @override
   _PostDisState createState() => _PostDisState();
 }
@@ -273,7 +275,7 @@ class _PostDisState extends State<PostDisplay> {
               padding: EdgeInsets.all(4.0),
               child: CircleAvatar(
                 radius: 19.0,
-                backgroundImage: NetworkImage(user.image_href()),
+                backgroundImage: NetworkImage(user.media_href()),
               ),
             ),
             Text(
@@ -316,7 +318,7 @@ class _PostDisState extends State<PostDisplay> {
                         padding: EdgeInsets.all(_commonCommentPadding),
                         child: CircleAvatar(
                           radius: _profilePicSize,
-                          backgroundImage: NetworkImage(widget.post.user.image_href()),
+                          backgroundImage: NetworkImage(widget.post.user.media_href()),
                         ),
                       ),
                     ),
@@ -356,8 +358,8 @@ class _PostDisState extends State<PostDisplay> {
                     padding: EdgeInsets.all(_commonCommentPadding),
                     child: CircleAvatar(
                       radius: _profilePicSize,
-                      // backgroundImage: NetworkImage(widget.post.user.image_href()),
-                      backgroundImage: NetworkImage(commentsList[index - 1]['user'].image_href()),
+                      // backgroundImage: NetworkImage(widget.post.user.media_href()),
+                      backgroundImage: NetworkImage(commentsList[index - 1]['user'].media_href()),
                     ),
                   ),
                 ),
@@ -466,6 +468,39 @@ class _PostDisState extends State<PostDisplay> {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
     final themeData = CupertinoTheme.of(context);
 
+    var _postDisplay;
+    if (widget.post.type==0) {
+      _postDisplay = PhotoView(
+        imageProvider: NetworkImage(widget.post.media_href()),
+        maxScale: PhotoViewComputedScale.contained,
+        minScale: PhotoViewComputedScale.contained,
+        initialScale: PhotoViewComputedScale.contained,
+      );
+    }
+    else if (widget.post.type==1) {
+      // TO DO: Make so all posts display, right now only first one displays
+      _postDisplay = SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            PhotoView(
+              imageProvider: NetworkImage(widget.post.media_href()),
+              maxScale: PhotoViewComputedScale.contained,
+              minScale: PhotoViewComputedScale.contained,
+              initialScale: PhotoViewComputedScale.contained,
+            ),
+            // plus more
+          ],
+        ),
+      );
+    }
+    else if (widget.post.type==2) {
+      _postDisplay = ArrivalVideoPlayer('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'); //widget.post.media_href());
+    }
+    else _postDisplay = Styles.ArrivalErrorPage('Problem loading post: AP300');
+
     var postContents = [
       _profileDisplay(
         (widget.post.user==null)
@@ -473,18 +508,12 @@ class _PostDisState extends State<PostDisplay> {
           : widget.post.user
       ),
       Container(
-        height: 400,
+        height: widget.post.height,
         child: GestureDetector(
           onDoubleTap: _likePost,
-          child: PhotoView(
-            imageProvider: NetworkImage(widget.post.image_href()),
-            maxScale: PhotoViewComputedScale.contained,
-            minScale: PhotoViewComputedScale.contained,
-            initialScale: PhotoViewComputedScale.contained,
-          ),
+          child: _postDisplay,
         ),
       ),
-      // widget.post.image(),
       Padding(
         padding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
         child: _drawSupportingElements(context),

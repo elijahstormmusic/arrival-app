@@ -163,7 +163,7 @@ class _CommentsPState extends State<CommentsPage> {
                         padding: EdgeInsets.all(_commonCommentPadding),
                         child: CircleAvatar(
                           radius: _profilePicSize,
-                          backgroundImage: NetworkImage(widget.post.user.image_href()),
+                          backgroundImage: NetworkImage(widget.post.user.media_href()),
                         ),
                       ),
                     ),
@@ -205,7 +205,7 @@ class _CommentsPState extends State<CommentsPage> {
                     padding: EdgeInsets.all(_commonCommentPadding),
                     child: CircleAvatar(
                       radius: _profilePicSize,
-                      backgroundImage: NetworkImage(commentsList[index - 1]['user'].image_href()),
+                      backgroundImage: NetworkImage(commentsList[index - 1]['user'].media_href()),
                     ),
                   ),
                 ),

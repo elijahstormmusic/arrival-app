@@ -24,14 +24,14 @@ class PartnerFavorites extends CasingFavorites {
   @override
   Map<String, dynamic> generateListData(int i) {
     return {
-      'link': ArrivalData.partners[i].cryptlink,
-      'icon': ArrivalData.partners[i].images.logo,
-      'name': ArrivalData.partners[i].name,
+      'link': ArrivalData.sales[i].partner.cryptlink,
+      'icon': ArrivalData.sales[i].media_href(),
+      'name': ArrivalData.sales[i].name,
     };
   }
 
   @override
   int listSize() {
-    return ArrivalData.partners.length;
+    return ArrivalData.sales.length;
   }
 }

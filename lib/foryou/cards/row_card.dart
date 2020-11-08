@@ -29,18 +29,16 @@ class RowLoading extends RowCard {
       shadowColor: Styles.transparentColor,
       color: Styles.transparentColor,
       onPressed: () {
-        // attempt reload
       },
       child: Semantics(
         label: 'loading card',
         child: Container(
-          height: 60,
-          // color: Styles.transparentColor,
-          // decoration: BoxDecoration(
-          //   color: Styles.ArrivalPalletteGrey,
-          // ),
+          height: 220,
           child: Center(
-            child: Image.asset('assets/loading/Bucket-1s-200px.gif'),
+            child: Container(
+              height: 100,
+              child: Image.asset('assets/loading/Bucket-1s-200px.gif'),
+            ),
           ),
         ),
       ),

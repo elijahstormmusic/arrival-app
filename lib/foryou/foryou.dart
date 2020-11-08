@@ -201,6 +201,9 @@ class _ListState extends State<ForYouPage> {
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
   }
+  void search_response(var data) {
+    _search.response(data);
+  }
 
   void _scrollListener() {
     if (_scrollController.offset + _scrollTargetDistanceFromBottom
@@ -281,11 +284,14 @@ class _ListState extends State<ForYouPage> {
             if (index == 0) {
               return Stack(
                 children: <Widget>[
+
+                  // Container(height: 400),
+                  // Image.asset('assets/test/shane_intro.gif'),
+
                   Blob_Background(height: 305.0),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(40, 24, 40, 16),
-                    child: Container(height: 400),
-                    // child: UserProfilePlacecard(),
+                    child: UserProfilePlacecard(),
                   ),
                 ],
               );

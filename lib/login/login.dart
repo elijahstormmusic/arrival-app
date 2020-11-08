@@ -23,11 +23,10 @@ class LoginScreen extends StatelessWidget {
   LoginScreen.login(String username, String password) {
 
   }
-  LoginScreen.forgotUsername(String email) {
-
-  }
-  LoginScreen.forgotPassword(String username) {
-
+  LoginScreen.forgotPassword() {
+    socket.emit('forgot password', {
+      'email': UserData.client.email,
+    });
   }
 
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
@@ -131,7 +130,7 @@ class LoginScreen extends StatelessWidget {
         recoverPasswordSuccess: 'Email Sent',
       ),
       theme: LoginTheme(
-        primaryColor: Styles.ArrivalPalletteRed,
+        primaryColor: Styles.ArrivalPalletteBlue,
         accentColor: Styles.ArrivalPalletteCream,
         errorColor: Styles.ArrivalPalletteBlue,
         pageColorLight: Styles.ArrivalPalletteRed,
@@ -147,7 +146,7 @@ class LoginScreen extends StatelessWidget {
         ),
         buttonStyle: TextStyle(
           fontWeight: FontWeight.w800,
-          color: Styles.ArrivalPalletteYellow,
+          color: Styles.ArrivalPalletteCream,
         ),
         cardTheme: CardTheme(
           color: Styles.ArrivalPalletteCream,
@@ -187,8 +186,8 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         buttonTheme: LoginButtonTheme(
-          splashColor: Colors.purple,
-          backgroundColor: Colors.pinkAccent,
+          splashColor: Styles.ArrivalPalletteBlue,
+          backgroundColor: Styles.ArrivalPalletteRed,
           highlightColor: Colors.lightGreen,
           elevation: 9.0,
           highlightElevation: 6.0,

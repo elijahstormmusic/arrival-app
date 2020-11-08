@@ -287,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 radius: 50,
                 backgroundImage: (_editingProfile && _newProfilePic!=null)
                   ? FileImage(_newProfilePic)
-                  : NetworkImage(widget.profile.image_href()),
+                  : NetworkImage(widget.profile.media_href()),
                 child: _editingProfile ? GestureDetector(
                   onTap: () async {
                     _newProfilePic = await ImagePicker.pickImage(source: ImageSource.gallery);

@@ -8,6 +8,8 @@ import 'package:meta/meta.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 
+import 'page.dart';
+
 class Article {
   static int index = 0;
   static final String source =
@@ -95,6 +97,9 @@ class Article {
       images: data['images'],
       extra_info: data['extra_info'],
     );
+  }
+  static ArticleDisplayPage navigateTo(String link) {
+    return ArticleDisplayPage(link);
   }
 }
 Article blankArticle = Article(

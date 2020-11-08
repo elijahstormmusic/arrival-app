@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
+
+import 'page.dart';
 import 'sale.dart';
 
 
@@ -20,32 +22,43 @@ class LatLng {
 
 enum SourceIndustry {
   none,
-  cosmetics,
-  entertainment,
-  media,
-  food,
-  music,
+  diner,
+  fastfood,
+  coffee,
+  bar,
+  musicstu,
+  musicshop,
+  photostu,
+  hair,
+  clothing,
+  shoes,
 }
 class StoreImages {
-  static const String source = 'https://arrival-app.herokuapp.com/partners/';
+  static const String source = 'https://res.cloudinary.com/arrival-kc/image/upload/';
 
-    // Strings are asset paths
-  String href;
   String logo;
   String storefront;
   List<String> extras;
-  String input;
+  List<String> _input;
 
-  String toString() {
-    return input;
+  List<String> toJson() {
+    return _input;
   }
 
-  StoreImages(String _href) {
-    input = _href;
-    href = StoreImages.source + _href;
-    logo = href + '/logo.jpg';
-    storefront = href + '/stft.jpg';
+  StoreImages(List<dynamic> input) {
+    _input = List<String>();
+    for (int i=0;i<input.length;i++) {
+      _input.add(input[i]);
+    }
+    logo = StoreImages.source + input[0];
+    if (input.length<2)
+      storefront = StoreImages.source + input[1];
+    else storefront = StoreImages.source + input[0];
+
     extras = List<String>();
+    for (int i=2;i<input.length;i++) {
+      extras.add(StoreImages.source + input[i]);
+    }
   }
 }
 class Industry {
@@ -71,29 +84,54 @@ Industry blankIndustry = Industry(
 class LocalIndustries {
   static List<Industry> all = [
     Industry(
-      name: 'Cosmetics',
-      type: SourceIndustry.cosmetics,
+      name: 'Dine In',
+      type: SourceIndustry.diner,
+      essential: true,
+    ),
+    Industry(
+      name: 'Fast Food',
+      type: SourceIndustry.fastfood,
+      essential: true,
+    ),
+    Industry(
+      name: 'Coffee',
+      type: SourceIndustry.coffee,
+      essential: true,
+    ),
+    Industry(
+      name: 'Bar',
+      type: SourceIndustry.bar,
       essential: false,
     ),
     Industry(
-      name: 'Entertainment',
-      type: SourceIndustry.entertainment,
+      name: 'Music Studio',
+      type: SourceIndustry.musicstu,
+      essential: false,
+    ),
+    Industry(
+      name: 'Music Gear',
+      type: SourceIndustry.musicshop,
+      essential: false,
+    ),
+    Industry(
+      name: 'Photo Studio',
+      type: SourceIndustry.photostu,
+      essential: false,
+    ),
+    Industry(
+      name: 'Hair Salon',
+      type: SourceIndustry.hair,
+      essential: false,
+    ),
+    Industry(
+      name: 'Clothing',
+      type: SourceIndustry.clothing,
       essential: true,
     ),
     Industry(
-      name: 'Media',
-      type: SourceIndustry.media,
-      essential: true,
-    ),
-    Industry(
-      name: 'Food',
-      type: SourceIndustry.food,
-      essential: true,
-    ),
-    Industry(
-      name: 'Music',
-      type: SourceIndustry.music,
-      essential: true,
+      name: 'Shoes',
+      type: SourceIndustry.shoes,
+      essential: false,
     ),
   ];
 
@@ -264,23 +302,6 @@ class Partner {
   List<Sale> sales = List<Sale>();
   bool isFavorite;
 
-  String toString() {
-    String str = '';
-    double lat = location.lat;
-    double lng = location.lng;
-    str += 'name:' + name + ',';
-    str += 'info:' + shortDescription + ',';
-    str += 'cryptlink:' + cryptlink + ',';
-    str += 'lat:' + lat.toString() + ',';
-    str += 'lng:' + lng.toString() + ',';
-    str += 'rating:' + rating.toString() + ',';
-    str += 'ratingAmount:' + ratingAmount.toString() + ',';
-    str += 'images:' + images.toString() + ',';
-    str += 'industry:' + industry.index.toString() + ',';
-    str += 'contact:{' + contact.toString() + '},';
-    str += 'sales:{' + sales.toString() + '}';
-    return str;
-  }
   dynamic toJson() {
     return {
       'name': name,
@@ -291,7 +312,7 @@ class Partner {
       'rating': rating,
       'ratingAmount': ratingAmount,
       'icon': industry.index,
-      'images': images.input,
+      'images': images.toJson(),
       'contact': contact.toJson(),
     };
   }
@@ -323,76 +344,9 @@ class Partner {
       shortDescription: data['info'],
       rating: data['rating'].toDouble(),
       ratingAmount: data['ratingAmount'],
-      industry: SourceIndustry.values[data['icon']],
+      industry: SourceIndustry.values[data['industry']],
       images: StoreImages(data['images']),
       contact: ContactList.json(data['contact']),
-      sales: List<Sale>(),
-    );
-  }
-  static Partner parse(String input) {
-    var id, name, rating, ratingAmount, lat, lng,
-        location, images, industry, contact,
-        shortDescription, sales, cryptlink;
-
-    var startDataLoc, endDataLoc = 0;
-
-    id = Partner.index++;
-
-    startDataLoc = input.indexOf('name')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    name = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('images')          + 7;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    images = StoreImages(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('lat')             + 4;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    lat = double.parse(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('lng')             + 4;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    lng = double.parse(input.substring(startDataLoc, endDataLoc));
-
-    location = LatLng(lat, lng);
-
-    startDataLoc = input.indexOf('info')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    shortDescription = input.substring(startDataLoc, endDataLoc).
-      replaceAll('~', ',');
-
-    startDataLoc = input.indexOf('rating')          + 7;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    rating = double.parse(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('ratingAmount')    + 13;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    ratingAmount = int.parse(input.substring(startDataLoc, endDataLoc));
-
-    startDataLoc = input.indexOf('icon')            + 5;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    industry = SourceIndustry.values[int.parse(input.substring(
-        startDataLoc, endDataLoc))];
-
-    startDataLoc = input.indexOf('cryptlink')       + 10;
-    endDataLoc = input.indexOf(',', startDataLoc);
-    cryptlink = input.substring(startDataLoc, endDataLoc);
-
-    startDataLoc = input.indexOf('contact')         + 9;
-    endDataLoc = input.indexOf('}', startDataLoc);
-    contact = ContactList.parse(input.substring(startDataLoc, endDataLoc));
-
-    return Partner(
-      id: id,
-      name: name,
-      rating: rating,
-      ratingAmount: ratingAmount,
-      location: location,
-      images: images,
-      industry: industry,
-      contact: contact,
-      shortDescription: shortDescription,
-      cryptlink: cryptlink,
       sales: List<Sale>(),
     );
   }
@@ -409,17 +363,20 @@ class Partner {
       rating: 0,
       ratingAmount: 0,
       location: LatLng(0, 0),
-      images: StoreImages('empty'),
+      images: StoreImages(<String>[]),
       industry: SourceIndustry.none,
       contact: ContactList(),
       shortDescription: 'description',
       sales: List<Sale>(),
     );
-    socket.emit('partners get link', {
+    socket.emit('partners link', {
       'link': input,
     });
     ArrivalData.innocentAdd(ArrivalData.partners, P);
     return P;
+  }
+  static PartnerDisplayPage navigateTo(String link) {
+    return PartnerDisplayPage(link);
   }
   static int index = 0;
 }
@@ -429,7 +386,7 @@ Partner blankPartner = Partner(
   rating: 0,
   ratingAmount: 0,
   location: LatLng(0, 0),
-  images: StoreImages('empty'),
+  images: StoreImages(<String>[]),
   industry: SourceIndustry.none,
   contact: ContactList(),
   shortDescription: 'description',

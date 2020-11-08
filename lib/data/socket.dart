@@ -42,6 +42,10 @@ class socket {
         await foryou.responded(data['response']);
       }
 
+      else if (data['type']==310) { // search content
+        foryou.search_response(data['response']);
+      }
+
       else if (data['type']==801) { // post data
         if (post==null) {
           await Future.delayed(const Duration(seconds: 5));
@@ -171,7 +175,7 @@ class socket {
         profile.loadedPosts(post_list, data['response']['at_end']);
       }
 
-      else if (data['type']==810) { //  single partner link downoad
+      else if (data['type']==810) { // single partner link downoad
         Partner _Partner;
         try {
           _Partner = Partner.json(data['response']);

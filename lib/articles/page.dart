@@ -33,7 +33,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   int _selectedViewIndex = 0;
   int _articleTitleBestSize = 30;
   double _safeareaPadding;
-  double _maxHeaderHeight = 126.0, _minHeaderHeight = 66.0;
+  double _maxHeaderHeight = 166.0, _minHeaderHeight = 66.0;
   double _headerDrawY = 71.0, _headerDrawHeight = 35.0;
   double _headerHeight;
   double _articlePadding = 24.0;
@@ -127,62 +127,6 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
               }),
             ),
           ),
-          Positioned(
-            top: _headerDrawY,
-            left: _articlePadding,
-            child: SafeArea(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Styles.articleColorsSecondary,
-                ),
-                width: MediaQuery.of(context).size.width - (_articlePadding*2),
-                height: _headerDrawHeight,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
-                  child: Flex(
-                    direction: Axis.horizontal,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          _adjustedArticleTitle,
-                          style: Styles.smallerArticleHeadline,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: _headerDrawY + _headerDrawHeight - 1,
-            left: _articlePadding,
-            child: SafeArea(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Styles.articleColorsSecondary,
-                ),
-                width: MediaQuery.of(context).size.width - (_articlePadding*2),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: ArrivalData.getArticle(widget.cryptlink).author + '        ',
-                          style: Styles.articleAuthor,
-                        ),
-                        TextSpan(
-                          text: _makeDateReadable(ArrivalData.getArticle(widget.cryptlink).date),
-                          style: Styles.articleDate,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -203,13 +147,73 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   Widget _buildStarterText(var content) {
     return Padding(
       padding: EdgeInsets.all(_articlePadding),
-      child: DropCapText(
-        content,
-        dropCapPadding: EdgeInsets.all(4),
-        forceNoDescent: true,
-        style: Styles.articleContent,
-        textAlign: TextAlign.justify,
-        dropCapChars: 1,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: _articlePadding,
+              vertical: _headerDrawY,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Styles.articleColorsSecondary,
+              ),
+              width: MediaQuery.of(context).size.width - (_articlePadding*2),
+              height: _headerDrawHeight,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
+                child: Flex(
+                  direction: Axis.horizontal,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        _adjustedArticleTitle,
+                        style: Styles.smallerArticleHeadline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: _articlePadding,
+              vertical: _headerDrawY + _headerDrawHeight - 1,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Styles.articleColorsSecondary,
+              ),
+              width: MediaQuery.of(context).size.width - (_articlePadding*2),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: ArrivalData.getArticle(widget.cryptlink).author + '        ',
+                        style: Styles.articleAuthor,
+                      ),
+                      TextSpan(
+                        text: _makeDateReadable(ArrivalData.getArticle(widget.cryptlink).date),
+                        style: Styles.articleDate,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          DropCapText(
+            content,
+            dropCapPadding: EdgeInsets.all(4),
+            forceNoDescent: true,
+            style: Styles.articleContent,
+            textAlign: TextAlign.justify,
+            dropCapChars: 1,
+          ),
+        ],
       ),
     );
   }

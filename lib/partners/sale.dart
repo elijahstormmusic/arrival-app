@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
+
 import 'partner.dart';
+import 'page.dart';
 
 class Sale {
   static final String source =
@@ -45,7 +47,7 @@ class Sale {
     if (pic==null) return Image.asset('assets/loading/Bucket-1s-200px.gif');
     return Image.network(Sale.source + pic);
   }
-  String image_href() {
+  String media_href() {
     if (pic==null) return Sale.default_img;
     return Sale.source + pic;
   }
@@ -58,6 +60,9 @@ class Sale {
       shortDescription: data['info'],
       partner: Partner.link(data['partner']),
     );
+  }
+  static PartnerDisplayPage navigateTo(String link) {
+    return PartnerDisplayPage(Partner.link(link).cryptlink);
   }
   static int index = 0;
 }

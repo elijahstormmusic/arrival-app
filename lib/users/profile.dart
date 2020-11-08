@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../data/arrival.dart';
 import '../data/link.dart';
 import '../data/socket.dart';
+
 import 'page.dart';
 
 class Profile {
@@ -88,7 +89,7 @@ class Profile {
       semanticLabel: 'Profile image for ' + name,
     );
   }
-  String image_href() {
+  String media_href() {
     if (pic=='' || pic==null || pic=='null') {
       return Profile.default_img;
     }
@@ -174,6 +175,9 @@ class Profile {
     });
     ArrivalData.innocentAdd(ArrivalData.profiles, P);
     return P;
+  }
+  static ProfilePage navigateTo(String link) {
+    return ProfilePage.fromLink(link);
   }
 
   static int findPointsToNextLevel(int level) {
