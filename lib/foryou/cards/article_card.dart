@@ -19,21 +19,39 @@ class ArticleCard extends StatelessWidget {
 
   final Article article;
 
-  Widget _buildDetails() {
-    return FrostyBackground(
-      color: Styles.ArrivalPalletteYellowFrosted,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              article.title,
-              style: Styles.cardTitleText,
-            ),
-          ],
+  Widget _buildDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            article.date.substring(2, 10).replaceAll('-', ' / '),
+            style: Styles.articleCardTitleAuthor,
+          ),
         ),
-      ),
+        // SizedBox(height: 6),
+        Expanded(
+          child: Text(
+            article.title,
+            style: Styles.articleCardTitleText,
+          ),
+        ),
+        // SizedBox(height: 6),
+        Expanded(
+          child: Text(
+            'by ' + article.author,
+            style: Styles.articleCardTitleAuthor,
+          ),
+        ),
+        SizedBox(height: 6),
+        Expanded(
+          child: Text(
+            article.short_intro,
+            style: Styles.articleCardTitleShortIntro,
+          ),
+        ),
+      ],
     );
   }
 
@@ -46,29 +64,42 @@ class ArticleCard extends StatelessWidget {
           fullscreenDialog: true,
         ));
       },
-      child: Stack(
-        children: [
-          Semantics(
-            label: 'Logo for ${article.title}',
-            child: Container(
-              height: 300,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: article.headline_image(),
+      color: Styles.ArrivalPalletteWhite,
+      borderRadius: const BorderRadius.all(Radius.circular(0)),
+      upElevation: 5,
+      downElevation: 1,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        padding: EdgeInsets.all(20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width - 140,
+              height: 160,
+              child: _buildDetails(context),
+            ),
+            Semantics(
+              label: 'Logo for ${article.title}',
+              child: Container(
+                height: 100,
+                width: 100,
+                margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  color: Styles.ArrivalPalletteBlue,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: article.headline_image(),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildDetails(),
-          ),
-        ],
+          ],
+        ),
       ),
-      borderRadius: const BorderRadius.all(Radius.circular(5)),
     );
   }
 }
@@ -84,7 +115,7 @@ class RowArticle extends RowCard {
   @override
   Widget generate(Preferences prefs) {
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+      padding: EdgeInsets.only(bottom: 24),
       child: ArticleCard(post),
     );
   }

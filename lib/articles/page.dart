@@ -20,9 +20,7 @@ class ArticleDisplayPage extends StatefulWidget {
   final String cryptlink;
 
   ArticleDisplayPage(this.cryptlink) {
-    if (ArrivalData.getArticle(cryptlink)==null) {
-      Article.link(cryptlink);
-    }
+    Article.link(cryptlink);
   }
 
   @override
@@ -33,38 +31,21 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   int _selectedViewIndex = 0;
   int _articleTitleBestSize = 30;
   double _safeareaPadding;
-  double _maxHeaderHeight = 166.0, _minHeaderHeight = 66.0;
-  double _headerDrawY = 71.0, _headerDrawHeight = 35.0;
+  double _maxHeaderHeight = 186.0, _minHeaderHeight = 66.0;
   double _headerHeight;
   double _articlePadding = 24.0;
   double _articleProgress = 0.0;
   double _lastScrollExtent;
   double _progressBarHeight = 10.0;
   double _lastRatio = 0.0;
-  String _adjustedArticleTitle;
   Duration _animationDuration = Duration(seconds: 1);
   ScrollController _scrollController;
-
-  String _breakLines(String input, int size) {
-    if (input.length<=size) return input;
-    return input.substring(0, size) + '' + _breakLines(
-      input.substring(size, input.length), size);
-  }
 
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     super.initState();
-
-    if (ArrivalData.getArticle(widget.cryptlink).title.length>_articleTitleBestSize) {
-      _maxHeaderHeight += _headerDrawHeight;
-      _headerDrawHeight*=2;
-      _adjustedArticleTitle =
-        _breakLines(ArrivalData.getArticle(widget.cryptlink).title, _articleTitleBestSize);
-    }
-    else _adjustedArticleTitle = ArrivalData.getArticle(widget.cryptlink).title + '                              '
-            .substring(0, _articleTitleBestSize-ArrivalData.getArticle(widget.cryptlink).title.length);
 
     _headerHeight = _maxHeaderHeight;
 
@@ -99,7 +80,7 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   }
 
   String _makeDateReadable(String fullDate) {
-    return fullDate.substring(0, 15);
+    return fullDate.substring(0, 10).replaceAll('-', ' / ');
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -145,66 +126,27 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   }
 
   Widget _buildStarterText(var content) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.all(_articlePadding),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _articlePadding,
-              vertical: _headerDrawY,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Styles.articleColorsSecondary,
-              ),
-              width: MediaQuery.of(context).size.width - (_articlePadding*2),
-              height: _headerDrawHeight,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
-                child: Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        _adjustedArticleTitle,
-                        style: Styles.smallerArticleHeadline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          Text(
+            ArrivalData.getArticle(widget.cryptlink).title,
+            style: Styles.articleHeadline,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _articlePadding,
-              vertical: _headerDrawY + _headerDrawHeight - 1,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Styles.articleColorsSecondary,
-              ),
-              width: MediaQuery.of(context).size.width - (_articlePadding*2),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(_articlePadding/2, 0, _articlePadding/2, 0),
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: ArrivalData.getArticle(widget.cryptlink).author + '        ',
-                        style: Styles.articleAuthor,
-                      ),
-                      TextSpan(
-                        text: _makeDateReadable(ArrivalData.getArticle(widget.cryptlink).date),
-                        style: Styles.articleDate,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          SizedBox(height: 25),
+          Text(
+            'Author: ' + ArrivalData.getArticle(widget.cryptlink).author,
+            style: Styles.articleAuthor,
           ),
+          SizedBox(height: 25),
+          Text(
+            _makeDateReadable(ArrivalData.getArticle(widget.cryptlink).date),
+            style: Styles.articleDate,
+          ),
+          SizedBox(height: 60),
           DropCapText(
             content,
             dropCapPadding: EdgeInsets.all(4),

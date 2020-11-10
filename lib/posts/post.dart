@@ -124,8 +124,8 @@ class Post {
       location: input['location'],
       uploadDate: DateTime.parse(input['date']),
       userlink: input['user'],
-      type: input['type'],
-      height: input['height'],
+      type: input['post_type'],
+      height: input['height'].toDouble(),
       comments: _comment_data,
     );
   }
@@ -146,14 +146,14 @@ class Post {
       userlink: '',
       type: -1,
     );
-    socket.emit('posts get', {
+    socket.emit('posts get data', {
       'link': input,
     });
     ArrivalData.innocentAdd(ArrivalData.posts, P);
     return P;
   }
-  static PostDisplayPage navigateTo(String link) {
-    return PostDisplayPage(link);
+  PostDisplayPage navigateTo() {
+    return PostDisplayPage(cryptlink);
   }
   static int index = 0;
 }

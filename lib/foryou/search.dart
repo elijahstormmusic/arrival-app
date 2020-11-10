@@ -25,7 +25,7 @@ class Search extends StatefulWidget {
   _SearchState currentState;
 
   void toggleSearch() => currentState.toggleSearch();
-  void response(var data) => {};
+  void response(var data) => currentState.response(data);
 
   @override
   _SearchState createState() => _SearchState();
@@ -45,6 +45,7 @@ class _SearchState extends State<Search> {
   void initState() {
     widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
+    _focusNode.requestFocus();
     super.initState();
   }
   @override
@@ -67,6 +68,7 @@ class _SearchState extends State<Search> {
   bool _allowRequest = true, _requestFailed = false;
   bool _reponsedHeard, _forceFailCurrentState = false;
   int _timesFailedToHearResponse = 0;
+  String _lastQuery;
   void _checkForFailure() async {
     _reponsedHeard = false;
     await Future.delayed(const Duration(seconds: 6));
@@ -83,8 +85,9 @@ class _SearchState extends State<Search> {
   void response(var data) async {
     _reponsedHeard = true;
     _timesFailedToHearResponse = 0;
-    if (data.length==0) {
+    if (data==null) {
       _requestFailed = true;
+      _allowRequest = true;
       return;
     }
 
@@ -97,8 +100,9 @@ class _SearchState extends State<Search> {
           try {
             result = Partner.json(data[i]);
             card = SearchResultPartner(result);
-            ArrivalData.innocentAdd(ArrivalData.partners, result);
+            // ArrivalData.innocentAdd(ArrivalData.partners, result);
           } catch (e) {
+            print(e);
             continue;
           }
         }
@@ -106,16 +110,17 @@ class _SearchState extends State<Search> {
           try {
             result = Article.json(data[i]);
             card = SearchResultArticle(result);
-            ArrivalData.innocentAdd(ArrivalData.articles, result);
+            // ArrivalData.innocentAdd(ArrivalData.articles, result);
           } catch (e) {
+            print(e);
             continue;
           }
         }
         else if (data[i]['type']==2) { // post_data
           try {
             result = Post.json(data[i]);
-            ArrivalData.innocentAdd(ArrivalData.posts, result);
             card = SearchResultPost(result.cryptlink);
+            // ArrivalData.innocentAdd(ArrivalData.posts, result);
           } catch (e) {
             continue;
           }
@@ -124,7 +129,7 @@ class _SearchState extends State<Search> {
           try {
             result = Sale.json(data[i]);
             card = SearchResultSale(result);
-            ArrivalData.innocentAdd(ArrivalData.sales, result);
+            // ArrivalData.innocentAdd(ArrivalData.sales, result);
           } catch (e) {
             continue;
           }
@@ -133,7 +138,7 @@ class _SearchState extends State<Search> {
           try {
             result = Profile.json(data[i]);
             card = SearchResultProfile(result);
-            ArrivalData.innocentAdd(ArrivalData.profiles, result);
+            // ArrivalData.innocentAdd(ArrivalData.profiles, result);
           } catch (e) {
             continue;
           }
@@ -146,6 +151,7 @@ class _SearchState extends State<Search> {
     catch (e) {
       _requestFailed = true;
       print(e);
+      _allowRequest = true;
       return;
     }
 
@@ -155,12 +161,15 @@ class _SearchState extends State<Search> {
     _allowRequest = true;
   }
   void _sendRequest(String input) {
+    if (input=='' || input==_lastQuery) return;
+
     if (!_allowRequest) return;
     _allowRequest = false;
     socket.emit('search content', {
       'query': input,
       'limit': 3, // quick search
     });
+    _lastQuery = input;
     _checkForFailure();
   }
 
@@ -182,7 +191,9 @@ class _SearchState extends State<Search> {
       itemBuilder: (context, i) {
         return Padding(
           padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: results[i].generate(context),
+          child: results[i].generate(context,
+            MediaQuery.of(context).size.width - (24*2),
+          ),
         );
       },
     );

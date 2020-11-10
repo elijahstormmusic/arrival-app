@@ -176,8 +176,8 @@ class Profile {
     ArrivalData.innocentAdd(ArrivalData.profiles, P);
     return P;
   }
-  static ProfilePage navigateTo(String link) {
-    return ProfilePage.fromLink(link);
+  ProfilePage navigateTo() {
+    return ProfilePage.fromLink(cryptlink);
   }
 
   static int findPointsToNextLevel(int level) {

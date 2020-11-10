@@ -124,13 +124,18 @@ class _PostDisState extends State<PostDisplay> {
     );
   }
   Widget _buildCaption() {
-    return _buildComment({
-      'username': widget.post.user==null
-                    ? 'no user'
-                    : widget.post.user.name,
-      'user': widget.post.user,
-      'content': widget.post.caption,
-    });
+    if (widget.post.caption=='') return Container();
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, _padding),
+      child: _buildComment({
+        'username': widget.post.user==null
+        ? 'no user'
+        : widget.post.user.name,
+        'user': widget.post.user,
+        'content': widget.post.caption,
+      }),
+    );
   }
   Widget _buildShortCommentList(List<Map<String, dynamic>> commentsList, List<Map<String, dynamic>> client_comments) {
     int maxShortDisplay = 3;
@@ -190,8 +195,8 @@ class _PostDisState extends State<PostDisplay> {
                     ? Styles.heart_full
                     : Styles.heart,
                   color: _clientHasLikedPost
-                    ? Colors.red
-                    : Colors.black,
+                    ? Styles.ArrivalPalletteRed
+                    : Styles.ArrivalPalletteBlack,
                   size: _buttonSize,
                 ),
                 onTap: _likePost,
@@ -203,7 +208,7 @@ class _PostDisState extends State<PostDisplay> {
                 child: Icon(
                   Styles.comment,
                   size: _buttonSize,
-                  color: Colors.black,
+                  color: Styles.ArrivalPalletteBlack,
                 ),
                 onTap: () => setState(() => _commentAdder.requestFocus()),
               ),
@@ -218,7 +223,7 @@ class _PostDisState extends State<PostDisplay> {
                 child: Icon(
                   Styles.share,
                   size: _buttonSize,
-                  color: Colors.black,
+                  color: Styles.ArrivalPalletteRed,
                 ),
                 onTap: () => setState(() => _commentAdder.requestFocus()),
               ),
@@ -230,14 +235,12 @@ class _PostDisState extends State<PostDisplay> {
           && widget.post.comments.length==0)
           ? Container()
           : _buildLikesDisplay(),
-        SizedBox(height: _padding),
         _buildCaption(),
-        SizedBox(height: _padding*2),
         _buildShortCommentList(widget.post.comments, widget.post.client_comments),
         (widget.post.comments.length>0) ? GestureDetector(
           onTap: () => _openCommentsPage(context),
           child: Container(
-            height: 50,
+            height: 26,
             child: Text.rich(
               TextSpan(
                 style: Styles.postText,
@@ -497,7 +500,7 @@ class _PostDisState extends State<PostDisplay> {
       );
     }
     else if (widget.post.type==2) {
-      _postDisplay = ArrivalVideoPlayer('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'); //widget.post.media_href());
+      _postDisplay = ArrivalVideoPlayer(widget.post.media_href(), widget.post.height);
     }
     else _postDisplay = Styles.ArrivalErrorPage('Problem loading post: AP300');
 

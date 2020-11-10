@@ -16,10 +16,12 @@ import '../../data/arrival.dart';
 import '../../data/app_state.dart';
 import '../../data/preferences.dart';
 import '../../partners/partner.dart';
+import '../../partners/sale.dart';
 import '../../data/link.dart';
 import '../../styles.dart';
 import '../favorites/partner.dart';
 import '../cards/partner_card.dart';
+import '../cards/sale_card.dart';
 import '../cards/row_card.dart';
 import '../search.dart';
 
@@ -79,7 +81,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
     _allowRequest = false;
     socket.emit('foryou ask', {
       'amount': amount,
-      'type': 'partners',
+      'type': 'partners sales',
     });
     _checkForFailure();
   }
@@ -121,20 +123,38 @@ class _PartnerFeedState extends State<PartnerFeed> {
 
     List<RowCard> list = List<RowCard>();
     var card, result;
-    
+
     try {
       for (var i=0;i<data.length;i++) {
         try {
-          if (data[i]['type']!=0) continue;
-          result = Partner.json(data[i]);
-          card = RowPartner(result);
-          ArrivalData.innocentAdd(ArrivalData.partners, result);
+          if (data[i]['type']==0) {
+            result = Partner.json(data[i]);
+            card = RowPartner(result);
+            ArrivalData.innocentAdd(ArrivalData.partners, result);
+          }
+          else if (data[i]['type']==3) {
+            try {
+              var _sale_list = data[i]['list'];
+              List<Sale> result_list = List<Sale>();
+              for (int _sale=0;_sale<_sale_list.length;_sale++) {
+                try {
+                  result = Sale.json(_sale_list[_sale]);
+                  ArrivalData.innocentAdd(result_list, result);
+                  ArrivalData.innocentAdd(ArrivalData.sales, result);
+                }
+                catch (e) {
+                  continue;
+                }
+              }
+              card = RowSale(result_list);
+            } catch (e) {
+              continue;
+            }
+          }
         } catch (e) {
           print('''
           ==========================
-            Partner Error ${i}
-          --------------------------
-                ${data[i]}
+            Partner Feed Error ${i}
           --------------------------
                 $e
           ==========================
@@ -229,14 +249,14 @@ class _PartnerFeedState extends State<PartnerFeed> {
         },
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: ArrivalData.partner_feed.length + 3,
+          itemCount: ArrivalData.partner_feed.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
               return PartnerFavorites();
             } else if (index <= ArrivalData.partner_feed.length) {
               return ArrivalData.partner_feed[index-1].generate(prefs);
             } else {
-              if (index-2==ArrivalData.partner_feed.length && _forceFailCurrentState) {
+              if (_forceFailCurrentState) {
                 return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);

@@ -17,7 +17,6 @@ class Sale {
   static final String default_img =
     'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
 
-  final int id;
   final String cryptlink;
   final String name;
   String pic;
@@ -29,7 +28,6 @@ class Sale {
   }
 
   Sale({
-    @required this.id,
     @required this.cryptlink,
     @required this.name,
     @required this.shortDescription,
@@ -54,20 +52,17 @@ class Sale {
 
   static Sale json(var data) {
     return Sale(
-      id: Sale.index++,
       cryptlink: data['link'],
       name: data['name'],
       shortDescription: data['info'],
       partner: Partner.link(data['partner']),
     );
   }
-  static PartnerDisplayPage navigateTo(String link) {
-    return PartnerDisplayPage(Partner.link(link).cryptlink);
+  PartnerDisplayPage navigateTo() {
+    return PartnerDisplayPage(partner.cryptlink);
   }
-  static int index = 0;
 }
 Sale blankSale = Sale(
-  id: -1,
   cryptlink: '',
   name: 'no sale',
   shortDescription: 'we apologize, but no sale could be found',

@@ -221,14 +221,14 @@ class _ArticleFeedState extends State<ArticleFeed> {
         },
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: ArrivalData.article_feed.length + 3,
+          itemCount: ArrivalData.article_feed.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
               return ArticleFavorites();
             } else if (index <= ArrivalData.article_feed.length) {
               return ArrivalData.article_feed[index-1].generate(prefs);
             } else {
-              if (index-2==ArrivalData.article_feed.length && _forceFailCurrentState) {
+              if (_forceFailCurrentState) {
                 return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);

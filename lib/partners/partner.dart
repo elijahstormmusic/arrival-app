@@ -230,6 +230,8 @@ class ContactList {
   });
 
   static ContactList json(var data) {
+    if (data==null) return ContactList();
+
     return ContactList(
       phoneNumber: data['phoneNumber'],
       address: data['address'],
@@ -375,8 +377,8 @@ class Partner {
     ArrivalData.innocentAdd(ArrivalData.partners, P);
     return P;
   }
-  static PartnerDisplayPage navigateTo(String link) {
-    return PartnerDisplayPage(link);
+  PartnerDisplayPage navigateTo() {
+    return PartnerDisplayPage(cryptlink);
   }
   static int index = 0;
 }

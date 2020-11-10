@@ -57,6 +57,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
   var post_loc;
   bool _track_with_ana;
   String caption;
+  bool _already_uploaded = false;
 
   TextEditingController _captionInput;
   CloudinaryClient cloudinary_client =
@@ -345,6 +346,8 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
             child: Center(
               child: GestureDetector(
                 onTap: () async {
+                  if (_already_uploaded) return;
+
                   String post_id = UserData.client.name + Random().nextInt(1000000).toString();
                   var database_info = {
                     'userlink': UserData.client.cryptlink,
@@ -405,10 +408,13 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                   }
                   else return;
 
+                  _already_uploaded = true;
+
                   socket.emit('posts upload', database_info);
 
+                  Arrival.navigator.currentState.pop();
+
                   HomeScreen.gotoForyou();
-                  ForYouPage.scrollToTop();
                 },
                 child: Text(
                   'UPLOAD',

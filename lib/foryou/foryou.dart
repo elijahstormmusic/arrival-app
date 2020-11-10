@@ -76,7 +76,7 @@ class _ListState extends State<ForYouPage> {
       ArrivalData.foryou = List<RowCard>();
     }
     if (ArrivalData.foryou.length==0) {
-      _pullNext(25);
+      _pullNext(REQUEST_AMOUNT);
     }
   }
   @override
@@ -158,6 +158,12 @@ class _ListState extends State<ForYouPage> {
             ArrivalData.innocentAdd(ArrivalData.posts, result);
             card = RowPost(result.cryptlink);
           } catch (e) {
+            print('''
+            =======================
+              post ERRR
+                ${e}
+            =======================
+            ''');
             continue;
           }
         }
@@ -278,8 +284,8 @@ class _ListState extends State<ForYouPage> {
           }
         },
         child: ListView.builder(
-          // controller: _scrollController,
-          itemCount: ArrivalData.foryou.length + 3,
+          controller: _scrollController,
+          itemCount: ArrivalData.foryou.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
               return Stack(
@@ -298,7 +304,7 @@ class _ListState extends State<ForYouPage> {
             } else if (index <= ArrivalData.foryou.length) {
               return ArrivalData.foryou[index-1].generate(prefs);
             } else {
-              if (index-2==ArrivalData.foryou.length && _forceFailCurrentState) {
+              if (_forceFailCurrentState) {
                 return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);

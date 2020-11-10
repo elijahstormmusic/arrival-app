@@ -126,6 +126,7 @@ class _PostFeedState extends State<PostFeed> {
       for (var i=0;i<data.length;i++) {
         try {
           if (data[i]['type']!=2) continue;
+
           result = Post.json(data[i]);
           ArrivalData.innocentAdd(ArrivalData.posts, result);
           card = RowPost(result.cryptlink);
@@ -225,14 +226,14 @@ class _PostFeedState extends State<PostFeed> {
         },
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: ArrivalData.post_feed.length + 3,
+          itemCount: ArrivalData.post_feed.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
               return PostFavorites();
             } else if (index <= ArrivalData.post_feed.length) {
               return ArrivalData.post_feed[index-1].generate(prefs);
             } else {
-              if (index-2==ArrivalData.post_feed.length && _forceFailCurrentState) {
+              if (_forceFailCurrentState) {
                 return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
               }
               return _loadingCard.generate(prefs);

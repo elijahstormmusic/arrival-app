@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../../partners/partner.dart';
@@ -70,18 +71,19 @@ class SearchResult {
   final result;
   const SearchResult(this.result);
 
-  List<Widget> designer(CupertinoThemeData themeData) => [];
+  List<Widget> designer(CupertinoThemeData themeData, double width) => [];
 
-  Widget generate(BuildContext context) {
+  Widget generate(BuildContext context, double width) {
     final themeData = CupertinoTheme.of(context);
+
     return GestureDetector(
       onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
-        builder: (context) => result.navigateTo(result.cryptlink),
+        builder: (context) => result.navigateTo(),
         fullscreenDialog: true,
       )),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: designer(themeData),
+        children: designer(themeData, width),
       ),
     );
   }
@@ -91,16 +93,21 @@ class SearchResultPartner extends SearchResult {
   final result;
   const SearchResultPartner(this.result) : super(result);
 
+  final double _imageWidth = 72;
+  final double _imageHeight = 72;
+
   @override
-  List<Widget> designer(CupertinoThemeData themeData) => [
+  List<Widget> designer(CupertinoThemeData themeData, double width) => [
       Image.network(
         result.images.logo,
         fit: BoxFit.fitHeight,
-        height: 72,
-        width: 72,
+        height: _imageWidth,
+        width: _imageHeight,
       ),
       SizedBox(width: 8),
-      Flexible(
+      Container(
+        width: width - _imageWidth - 8,
+        height: _imageHeight + 8,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,23 +131,28 @@ class SearchResultPartner extends SearchResult {
             ),
           ],
         ),
-      )
+      ),
     ];
 }
 class SearchResultArticle extends SearchResult {
   final result;
   const SearchResultArticle(this.result) : super(result);
 
+  final double _imageWidth = 72;
+  final double _imageHeight = 72;
+
   @override
-  List<Widget> designer(CupertinoThemeData themeData) => [
+  List<Widget> designer(CupertinoThemeData themeData, double width) => [
     Image.network(
       result.image_link(0),
       fit: BoxFit.fitHeight,
-      height: 72,
-      width: 72,
+      height: _imageWidth,
+      width: _imageHeight,
     ),
     SizedBox(width: 8),
-    Flexible(
+    Container(
+      width: width - _imageWidth - 8,
+      height: _imageHeight + 8,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,29 +175,34 @@ class SearchResultArticle extends SearchResult {
           ),
           Expanded(
             child: Text(
-              result.body[1]['content'].substring(0, 50) + ' ...',
+              result.short_intro.substring(0, result.short_intro.length < 50 ? result.short_intro.length : 50) + ' ...',
               style: Styles.headlineDescription(themeData),
             ),
           ),
         ],
       ),
-    )
+    ),
   ];
 }
 class SearchResultPost extends SearchResult {
   final result;
   const SearchResultPost(this.result) : super(result);
 
+  final double _imageWidth = 72;
+  final double _imageHeight = 72;
+
   @override
-  List<Widget> designer(CupertinoThemeData themeData) => [
+  List<Widget> designer(CupertinoThemeData themeData, double width) => [
       Image.network(
         result.media_href(),
         fit: BoxFit.fitHeight,
-        height: 72,
-        width: 72,
+        height: _imageWidth,
+        width: _imageHeight,
       ),
       SizedBox(width: 8),
-      Flexible(
+      Container(
+        width: width - _imageWidth - 8,
+        height: _imageHeight + 8,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,16 +232,21 @@ class SearchResultSale extends SearchResult {
   final result;
   const SearchResultSale(this.result) : super(result);
 
+  final double _imageWidth = 72;
+  final double _imageHeight = 72;
+
   @override
-  List<Widget> designer(CupertinoThemeData themeData) => [
+  List<Widget> designer(CupertinoThemeData themeData, double width) => [
       Image.network(
         result.media_href(),
         fit: BoxFit.fitHeight,
-        height: 72,
-        width: 72,
+        height: _imageWidth,
+        width: _imageHeight,
       ),
       SizedBox(width: 8),
-      Flexible(
+      Container(
+        width: width - _imageWidth - 8,
+        height: _imageHeight + 8,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,16 +276,21 @@ class SearchResultProfile extends SearchResult {
   final result;
   const SearchResultProfile(this.result) : super(result);
 
+  final double _imageWidth = 72;
+  final double _imageHeight = 72;
+
   @override
-  List<Widget> designer(CupertinoThemeData themeData) => [
-      Image.network(
-        result.media_href(),
-        fit: BoxFit.fitHeight,
-        height: 72,
-        width: 72,
+  List<Widget> designer(CupertinoThemeData themeData, double width) => [
+      CircleAvatar(
+        radius: _imageWidth / 2,
+        backgroundImage: NetworkImage(
+          result.media_href(),
+        ),
       ),
       SizedBox(width: 8),
-      Flexible(
+      Container(
+        width: width - _imageWidth - 8,
+        height: _imageHeight + 8,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

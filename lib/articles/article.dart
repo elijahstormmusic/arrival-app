@@ -25,6 +25,7 @@ class Article {
   final String topic;
   final List<dynamic> body;
   final List<dynamic> images;
+  final String short_intro;
   final String extra_info;
 
   dynamic toJson() {
@@ -50,6 +51,7 @@ class Article {
     @required this.body,
     @required this.images,
     @required this.extra_info,
+    this.short_intro,
   }) {
     if (images.length<1) images.add(Article.default_img);
   }
@@ -96,10 +98,11 @@ class Article {
       body: data['body'],
       images: data['images'],
       extra_info: data['extra_info'],
+      short_intro: data['short_intro'],
     );
   }
-  static ArticleDisplayPage navigateTo(String link) {
-    return ArticleDisplayPage(link);
+  ArticleDisplayPage navigateTo() {
+    return ArticleDisplayPage(cryptlink);
   }
 }
 Article blankArticle = Article(

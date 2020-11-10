@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../styles.dart';
+
 class FrostyBackground extends StatelessWidget {
   const FrostyBackground({
     this.color,
@@ -39,7 +41,7 @@ class PressableCard extends StatefulWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(0)),
     this.upElevation = 2,
     this.downElevation = 0,
-    this.shadowColor = CupertinoColors.black,
+    this.shadowColor = Styles.ArrivalPalletteBlack,
     this.duration = const Duration(milliseconds: 100),
     this.onPressed,
     this.color = CupertinoColors.lightBackgroundGray,

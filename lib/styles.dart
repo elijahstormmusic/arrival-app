@@ -218,6 +218,25 @@ abstract class Styles {
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
       );
+  static TextStyle articleCardTitleText = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'UraeNium',
+        fontSize: 28,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
+  static TextStyle articleCardTitleAuthor = TextStyle(
+        color: Styles.ArrivalPalletteBlue,
+        fontFamily: 'Arial',
+        fontSize: 16,
+        fontStyle: FontStyle.normal,
+      );
+  static TextStyle articleCardTitleShortIntro = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'Arial',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+      );
   static TextStyle profileName = TextStyle(
         color: Color.fromRGBO(55, 55, 55, 1),
         fontFamily: 'Helvetica Neue',
@@ -601,18 +620,18 @@ abstract class Styles {
     fontPackage: CupertinoIcons.iconFontPackage,
   );
 
-  static const heart = const IconData(0xf442,
-          fontFamily: CupertinoIcons.iconFont,
-          fontPackage: CupertinoIcons.iconFontPackage);
-  static const heart_full = const IconData(0xf443,
-          fontFamily: CupertinoIcons.iconFont,
-          fontPackage: CupertinoIcons.iconFontPackage);
-  static const comment = const IconData(0xf3fb,
-          fontFamily: CupertinoIcons.iconFont,
-          fontPackage: CupertinoIcons.iconFontPackage);
-  static const share = const IconData(0xf473,
-          fontFamily: CupertinoIcons.iconFont,
-          fontPackage: CupertinoIcons.iconFontPackage);
+  static const heart = CupertinoIcons.heart;// const IconData(0xf442,
+          // fontFamily: CupertinoIcons.iconFont,
+          // fontPackage: CupertinoIcons.iconFontPackage);
+  static const heart_full = CupertinoIcons.heart_fill;// const IconData(0xf443,
+          // fontFamily: CupertinoIcons.iconFont,
+          // fontPackage: CupertinoIcons.iconFontPackage);
+  static const comment = CupertinoIcons.chat_bubble;// const IconData(0xf3fb,
+          // fontFamily: CupertinoIcons.iconFont,
+          // fontPackage: CupertinoIcons.iconFontPackage);
+  static const share = CupertinoIcons.location_fill;// const IconData(0xf473,
+  //         fontFamily: CupertinoIcons.iconFont,
+  //         fontPackage: CupertinoIcons.iconFontPackage);
 
   static const servingInfoBorderColor = Color(0xffb0b0b0);
 

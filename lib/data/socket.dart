@@ -43,7 +43,9 @@ class socket {
       }
 
       else if (data['type']==310) { // search content
-        foryou.search_response(data['response']);
+        if (foryou==null) return;
+
+        await foryou.search_response(data['response']);
       }
 
       else if (data['type']==801) { // post data
@@ -329,8 +331,10 @@ class socket {
         });
       }
       else if (data['type']==530) { // post successfully uploaded
-        ArrivalData.posts.add(Post.link(data['link']));
+        Post.link(data['link']);
         ArrivalData.foryou.insert(0, RowPost(data['link']));
+        foryou.refresh_state();
+        foryou.scrollToTop();
       }
       else if (data['type']==531) { // post failed upload
         HomeScreen.openSnackBar({

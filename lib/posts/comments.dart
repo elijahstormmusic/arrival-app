@@ -356,7 +356,7 @@ class _CommentAdderState extends State<CommentAdder> {
     widget.post.comments.add(comment_data);
     if (widget.post.client_comments.length>=2)
       widget.post.client_comments.removeAt(0);
-    widget.post.client_comments.add(comment_data);
+
     _focusNode.unfocus();
     setState(() => _textInputController.text = '');
     widget.source.redraw();
@@ -374,64 +374,53 @@ class _CommentAdderState extends State<CommentAdder> {
 
 
   Widget _buildCommentAdder() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Styles.ArrivalPalletteWhite,
-        borderRadius: BorderRadius.circular(0),
-        border: Border.all(color: Styles.ArrivalPalletteBlack),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 4,
-        ),
-        child: Row(
-          children: [
-            Expanded(
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+              child: TextField(
+                controller: _textInputController,
+                focusNode: _focusNode,
+                minLines: 1,
+                maxLines: 3,
+                onSubmitted: _onSubmit,
+                maxLength: 500,
+                decoration: InputDecoration(
+                  labelText: 'Comment...',
+                ),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Styles.ArrivalPalletteBlack,
+                ),
+                cursorColor: Styles.searchCursorColor,
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          GestureDetector(
+            onTap: _sendCommentToServer,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Styles.ArrivalPalletteRed,
+                borderRadius: BorderRadius.circular(3),
+              ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
-                child: CupertinoTextField(
-                  controller: _textInputController,
-                  focusNode: _focusNode,
-                  decoration: null,
-                  minLines: 1,
-                  maxLines: 3,
-                  onSubmitted: _onSubmit,
-                  maxLength: 500,
-                  placeholder: 'Comment...',
-                  placeholderStyle: TextStyle(
-                    fontSize: 18,
-                  ),
+                padding: EdgeInsets.all(6),
+                child: Text(
+                  'SEND',
                   style: TextStyle(
-                    fontSize: 18,
-                    color: Styles.ArrivalPalletteBlack,
-                  ),
-                  cursorColor: Styles.searchCursorColor,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: _sendCommentToServer,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Styles.ArrivalPalletteRed,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(6),
-                  child: Text(
-                    'SEND',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.ArrivalPalletteWhite,
-                    ),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Styles.ArrivalPalletteWhite,
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
