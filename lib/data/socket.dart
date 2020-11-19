@@ -17,7 +17,7 @@ import '../screens/home.dart';
 
 class socket {
   static SocketIO _socket;
-  static var home, post, profile, foryou, articles;
+  static var home, post, profile, foryou, maps, articles;
   static int error_report_time = 3;
   static String authenicator;
 
@@ -40,6 +40,10 @@ class socket {
         if (foryou==null) return;
 
         await foryou.responded(data['response']);
+
+        if (maps==null) return;
+        
+        maps.refresh_state();
       }
 
       else if (data['type']==310) { // search content

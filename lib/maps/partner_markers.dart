@@ -8,19 +8,32 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'map_data.dart';
 
 
 class PartnerMarkersMap extends StatefulWidget {
+  PartnerMarkersMap({this.onMapLoaded, this.onMapInteraction});
+  final void Function() onMapLoaded;
+  final void Function(LatLng) onMapInteraction;
   PartnerMarkersMapState _s;
 
   void addMarker(LatLng location, var info) {
     _s.addMarker(location, info);
   }
+  void locateAndTakeMe(LatLng dest, LatLng client) {
+    _s.locateAndTakeMe(dest, client);
+  }
+  void refresh() {
+    _s.refresh();
+  }
+  void relocate(LatLng pos) {
+    _s.relocate(pos);
+  }
 
   @override
   State<StatefulWidget> createState() {
-    _s = PartnerMarkersMapState();
+    _s = PartnerMarkersMapState(onMapLoaded, onMapInteraction);
     return _s;
   }
 }
@@ -28,17 +41,24 @@ class PartnerMarkersMap extends StatefulWidget {
 typedef Marker MarkerUpdateAction(Marker marker);
 
 class PartnerMarkersMapState extends State<PartnerMarkersMap> {
-  PartnerMarkersMapState();
+  PartnerMarkersMapState(this.onMapLoaded, this.onMapInteraction);
+  final void Function() onMapLoaded;
+  final void Function(LatLng) onMapInteraction;
   static LatLng center;
   double _currentZoom;
 
   GoogleMapController controller;
+  Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  PolylinePoints polylinePoints = PolylinePoints();
   MarkerId selectedMarker;
   int _markerIdCounter = 1;
+  BitmapDescriptor myLocationIcon;
+  BitmapDescriptor destLocationIcon;
 
   void _onMapCreated(GoogleMapController controller) {
     this.controller = controller;
+    onMapLoaded();
   }
 
   @override
@@ -49,10 +69,99 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
       ArrivalMapData.initalLng,
     );
     _currentZoom = ArrivalMapData.initalZoom;
+
+    _setMarkerIcons();
   }
   @override
   void dispose() {
     super.dispose();
+  }
+  void _setMarkerIcons() async {
+    myLocationIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(devicePixelRatio: 2.5),
+      'assets/icon/driving_pin.png');
+    destLocationIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(devicePixelRatio: 2.5),
+      'assets/icon/destination_map_marker.png');
+  }
+
+  void refresh() {
+    setState(() {
+      markers = <MarkerId, Marker>{};
+    });
+  }
+
+
+  final MarkerId _myLocationMarkerId = MarkerId('myLocation_marker');
+  final PolylineId polylineId = PolylineId('destination_polyline');
+  LatLng _destination;
+  void relocate(LatLng myLocation) async {
+    if (_destination==null) return;
+
+    final Marker marker = Marker(
+      markerId: _myLocationMarkerId,
+      position: myLocation,
+      icon: myLocationIcon,
+      infoWindow: InfoWindow(title: 'You are on route'),
+    );
+
+    List<LatLng> polylineCoordinates = [];
+    List<PointLatLng> result = await polylinePoints
+        ?.getRouteBetweenCoordinates(
+            'AIzaSyDGiAXusfesRoqC7Nmanca3F1bHY0poyxc',
+            myLocation.latitude,
+            myLocation.longitude,
+            _destination.latitude,
+            _destination.longitude,
+        );
+
+    if (result.isNotEmpty) {
+      result.forEach((PointLatLng point) {
+        polylineCoordinates.add(
+          LatLng(point.latitude, point.longitude)
+        );
+      });
+    }
+
+    polylines[polylineId] = Polyline(
+      polylineId: polylineId,
+      consumeTapEvents: true,
+      width: 5,
+      points: polylineCoordinates,
+    );
+
+    setState(() {
+      markers[_myLocationMarkerId] = marker;
+
+      controller.animateCamera(
+        CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            southwest: myLocation,
+            northeast: _destination,
+          ),
+          50,
+        ),
+      );
+    });
+  }
+  void locateAndTakeMe(LatLng destination, LatLng myLocation) {
+    markers = <MarkerId, Marker>{};
+
+    _destination = destination;
+
+    final String destIdVal = 'destination_marker';
+    final MarkerId destId = MarkerId(destIdVal);
+
+    final Marker dest = Marker(
+      markerId: destId,
+      position: _destination,
+      icon: destLocationIcon,
+      infoWindow: InfoWindow(title: 'Your destination'),
+    );
+
+    markers[destId] = dest;
+
+    relocate(myLocation);
   }
 
   void addMarker(LatLng location, var info) {
@@ -78,7 +187,7 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: location,
-            zoom: 12,
+            zoom: 16,
           ),
         ),
       );
@@ -288,8 +397,9 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
         target: LatLng(ArrivalMapData.initalLat, ArrivalMapData.initalLng),
         zoom: ArrivalMapData.initalZoom,
       ),
+      polylines: Set<Polyline>.of(polylines.values),
       onTap: (LatLng pos) {
-        // print(pos);
+        onMapInteraction(pos);
       },
       markers: Set<Marker>.of(markers.values),
     );

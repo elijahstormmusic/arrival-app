@@ -27,9 +27,9 @@ dependencies:
   cloudinary_client: ^0.0.9
   pull_to_refresh: ^1.6.1
   drop_cap_text: ^1.0.7
+  google_maps_flutter: ^1.0.6
   flutter_polyline_points: ^0.1.0
   cupertino_icons: ^1.0.0
-  google_maps_flutter: ^1.0.6
   geolocator: ^5.1.4+2
   intl: ^0.16.1
   scoped_model: ^1.0.1
@@ -71,6 +71,8 @@ flutter:
     - assets/loading/Bucket-1s-200px.gif
     - assets/loading/Spinner-1s-201px.svg
     - assets/loading/Spinner-1s-201px.gif
+    - assets/icon/driving_pin.png
+    - assets/icon/destination_map_marker.png
 
   fonts:
     - family: NotoSans

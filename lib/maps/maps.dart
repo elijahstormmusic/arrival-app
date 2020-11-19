@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../styles.dart';
 import '../data/arrival.dart';
+import '../data/socket.dart';
 import 'locator.dart';
 import 'partner_markers.dart';
 
@@ -17,14 +18,14 @@ class Maps extends StatefulWidget {
   static _MapState currentState;
 
   static void scrollToTop() =>
-    currentState.restart();
-  static void refresh_state() =>
-    currentState.refresh_state();
+    currentState.refresh();
+  static void refresh() =>
+    currentState.refresh();
 
   static void openSnackBar(Map<String, dynamic> input) =>
     currentState.openSnackBar(input);
 
-  static MyLocation myself = MyLocation();
+  static MyLocation myself;
 
   String partner;
 
@@ -32,20 +33,20 @@ class Maps extends StatefulWidget {
   Maps.directions({this.partner});
 
   @override
-  _MapState createState() => _MapState(MyLocation());
+  _MapState createState() => _MapState();
 }
 
 class _MapState extends State<Maps> {
   MyLocation myself;
   ScrollController _scrollController;
-  double _bottomCardPositionTop = 400;
+  double _bottomCardVerticalPosition = 400;
   final double _bottomCardTopValue = 0;
-  final double _bottomCardBottomValue = 400;
+  double _bottomCardBottomValue = 400;
   double _bottomCardOutValue = 500;
 
   PartnerMarkersMap _localMap;
 
-  _MapState(this.myself);
+  _MapState();
 
   SnackBar _snackBar;
   void openSnackBar(Map<String, dynamic> input) {
@@ -70,41 +71,77 @@ class _MapState extends State<Maps> {
   @override
   void initState() {
     super.initState();
-    _localMap = PartnerMarkersMap();
+    _localMap = PartnerMarkersMap(onMapLoaded: _onMapLoaded, onMapInteraction: _onMapInteraction);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    myself.relocationHandler(this);
+    myself = MyLocation(onRelocation: _onRelocated);
+
+    socket.maps = this;
+    if (ArrivalData.partners.length < 20) {
+      socket.emit('foryou ask', {
+        'type': 'partners',
+        'amount': 20,
+      });
+    }
   }
   @override
   void dispose() {
     _scrollController.dispose();
+    socket.maps = null;
     super.dispose();
   }
 
   void _setMainCardToTop() {
-    if (_bottomCardPositionTop==_bottomCardTopValue) return;
-    setState(() => _bottomCardPositionTop = _bottomCardTopValue);
+    if (_bottomCardVerticalPosition==_bottomCardTopValue) return;
+    setState(() => _bottomCardVerticalPosition = _bottomCardTopValue);
   }
   void _setMainCardToBottom() {
-    if (_bottomCardPositionTop==_bottomCardBottomValue) return;
-    setState(() => _bottomCardPositionTop = _bottomCardBottomValue);
+    if (_bottomCardVerticalPosition==_bottomCardBottomValue) return;
+    setState(() => _bottomCardVerticalPosition = _bottomCardBottomValue);
   }
   void _setMainCardOut() {
-    if (_bottomCardPositionTop==_bottomCardOutValue) return;
-    setState(() => _bottomCardPositionTop = _bottomCardOutValue);
+    if (_bottomCardVerticalPosition==_bottomCardOutValue) return;
+    setState(() => _bottomCardVerticalPosition = _bottomCardOutValue);
+  }
+  void _setMainCardUp() {
+    if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
+      _setMainCardToTop();
+    }
+    else if (_bottomCardVerticalPosition==_bottomCardOutValue) {
+      _setMainCardToBottom();
+    }
+  }
+  void _setMainCardDown() {
+    if (_bottomCardVerticalPosition==_bottomCardTopValue) {
+      _setMainCardToBottom();
+    }
+    else if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
+      _setMainCardOut();
+    }
   }
 
   double _startCardDrag, _cardDragDeadzone = 15;
+  bool _doneDragAction = false;
   void _onVerticalDragStart(var details) {
     _startCardDrag = details.globalPosition.dy;
+    _doneDragAction = false;
   }
   void _onVerticalDragUpdate(var details) {
+    if (_doneDragAction) return;
     if (details.globalPosition.dy > _startCardDrag + _cardDragDeadzone) { // down
-      _setMainCardToBottom();
+      _setMainCardDown();
+      _doneDragAction = true;
     }
     else if (details.globalPosition.dy < _startCardDrag - _cardDragDeadzone) { // up
-      _setMainCardToTop();
+      _setMainCardUp();
+      _doneDragAction = true;
     }
+  }
+  void _onMapInteraction(LatLng pos) {
+    _setMainCardOut();
+  }
+  void _onRelocated(LatLng new_pos) {
+    _localMap.relocate(new_pos);
   }
 
   void _scrollListener() {
@@ -116,18 +153,34 @@ class _MapState extends State<Maps> {
     }
   }
 
-  void restart() {
-
+  void _onMapLoaded() {
+    for (final partner in ArrivalData.partners) {
+      _localMap.addMarker(partner.location, {
+        'title': partner.name,
+        'info': partner.shortDescription,
+        'rating': partner.rating,
+        'ratingAmount': partner.ratingAmount,
+      });
+    }
   }
-  void refresh_state() {
 
+  void refresh() {
+    _localMap.refresh();
+
+    for (final partner in ArrivalData.partners) {
+      _localMap.addMarker(partner.location, {
+        'title': partner.name,
+        'info': partner.shortDescription,
+        'rating': partner.rating,
+        'ratingAmount': partner.ratingAmount,
+      });
+    }
+
+    setState(() => 0);
   }
-  void relocate() {
 
-  }
-
-  void _locateAndTakeMe(LatLng location, var info) {
-    _localMap.addMarker(location, info);
+  void _locateAndTakeMe(var partner) {
+    _localMap.locateAndTakeMe(partner.location, myself.latlng);
   }
 
   void _pushPage(BuildContext context, var page) {
@@ -142,12 +195,7 @@ class _MapState extends State<Maps> {
     return GestureDetector(
       onTap: () {
         _setMainCardOut();
-        _locateAndTakeMe(partner.location, {
-          'title': partner.name,
-          'info': partner.shortDescription,
-          'rating': partner.rating,
-          'ratingAmount': partner.ratingAmount,
-        });
+        _locateAndTakeMe(partner);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -197,10 +245,11 @@ class _MapState extends State<Maps> {
     );
   }
 
-  bool _debuggerToggle = true;
+  bool _debuggerToggle = false;
 
   @override
   Widget build(BuildContext context) {
+    _bottomCardBottomValue = (MediaQuery.of(context).size.height / 200).ceil().toDouble() * 100;
     _bottomCardOutValue = MediaQuery.of(context).size.height
               - MediaQuery.of(context).padding.top - 110;
 
@@ -209,15 +258,20 @@ class _MapState extends State<Maps> {
       child: Stack(
         children: <Widget>[
           Container(
-            height: _debuggerToggle ? _bottomCardOutValue + 10 : _bottomCardPositionTop + 10,
+            height: _debuggerToggle ? _bottomCardOutValue + 10 : _bottomCardVerticalPosition + 10,
             child: _localMap,
           ),
           GestureDetector(
             onDoubleTap: () {
-              if (_bottomCardPositionTop==_bottomCardBottomValue) {
+              if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
                 _setMainCardToTop();
               }
               else {
+                _setMainCardToBottom();
+              }
+            },
+            onTap: () {
+              if (_bottomCardVerticalPosition==_bottomCardOutValue) {
                 _setMainCardToBottom();
               }
             },
@@ -236,20 +290,20 @@ class _MapState extends State<Maps> {
                 color: Styles.ArrivalPalletteWhite,
                 borderRadius: BorderRadius.circular(18),
               ),
-              margin: EdgeInsets.only(top: _bottomCardPositionTop),
+              margin: EdgeInsets.only(top: _bottomCardVerticalPosition),
               padding: EdgeInsets.symmetric(
                 horizontal: 16,
               ),
               child: ListView(
                 controller: _scrollController,
-                physics: _bottomCardPositionTop==_bottomCardTopValue
+                physics: _bottomCardVerticalPosition==_bottomCardTopValue
                   ? ClampingScrollPhysics()
                   : NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        if (_bottomCardPositionTop==_bottomCardBottomValue) {
+                        if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
                           _setMainCardToTop();
                         }
                         else {
@@ -304,15 +358,15 @@ class _MapState extends State<Maps> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => _debuggerToggle = !_debuggerToggle,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 20),
-                      color: Styles.ArrivalPalletteRed,
-                      height: 100,
-                      width: 200,
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () => _debuggerToggle = !_debuggerToggle,
+                  //   child: Container(
+                  //     margin: EdgeInsets.only(top: 20),
+                  //     color: Styles.ArrivalPalletteRed,
+                  //     height: 100,
+                  //     width: 200,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

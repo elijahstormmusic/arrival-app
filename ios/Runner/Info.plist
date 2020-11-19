@@ -51,7 +51,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We would like your location to take you to your destination.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We would like your location to show you relevant posts.</string>
+	<string>We would like your location to show you relevant businesses.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Arrival would like access to your camera make posts.</string>
 	<key>NSMicrophoneUsageDescription</key>
