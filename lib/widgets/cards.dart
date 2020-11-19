@@ -163,7 +163,10 @@ class _PressableCircleState extends State<PressableCircle> {
         color: CupertinoColors.lightBackgroundGray,
         child: Transform.scale(
           scale: cardIsDown ? 0.95 : 1.0,
-          child: widget.child,
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            child: widget.child,
+          ),
         ),
       ),
     );

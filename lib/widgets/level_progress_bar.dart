@@ -115,8 +115,8 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
                 animation: animation,
                 size: widget.maxSize,
                 onCycle: () {
-                  widget.level++;
                   widget.onCycle();
+                  setState(() => widget.level++);
                 },
               ),
             ],

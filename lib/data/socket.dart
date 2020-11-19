@@ -344,10 +344,10 @@ class socket {
       }
       else if (data['type']==532) { // comment made successful
         // goto comment
-        HomeScreen.openSnackBar({
-          'text': 'Successful upload',
-          'duration': error_report_time,
-        });
+        // HomeScreen.openSnackBar({
+        //   'text': 'Successful upload',
+        //   'duration': error_report_time,
+        // });
       }
       else if (data['type']==533) { // comment failed upload
         HomeScreen.openSnackBar({

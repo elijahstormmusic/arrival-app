@@ -284,6 +284,7 @@ class _CommentsPState extends State<CommentsPage> {
             Positioned(
               bottom: 0,
               child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 width: MediaQuery.of(context).size.width,
                 child: _commentAdder,
               ),

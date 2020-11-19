@@ -3,6 +3,8 @@
 // for use only in ARRIVAL Project
 
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,8 +17,11 @@ import '../styles.dart';
 class ArrivalVideoPlayer extends StatefulWidget {
   String href;
   double height;
+  File file;
 
   ArrivalVideoPlayer(@required this.href, @required this.height);
+
+  ArrivalVideoPlayer.local(@required this.file);
 
   @override
   _VideoPState createState() => _VideoPState();
@@ -28,10 +33,18 @@ class _VideoPState extends State<ArrivalVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.href)
-      ..initialize().then((_) {
-        setState(() => _showPaused());
-      });
+    if (widget.file==null) {
+      _controller = VideoPlayerController.network(widget.href)
+        ..initialize().then((_) {
+          setState(() => _showPaused());
+        });
+    }
+    else {
+      _controller = VideoPlayerController.file(widget.file)
+        ..initialize().then((_) {
+          setState(() => _showPaused());
+        });
+    }
 
     _chewieController = ChewieController(
       videoPlayerController: _controller,

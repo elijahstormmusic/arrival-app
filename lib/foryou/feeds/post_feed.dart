@@ -125,7 +125,7 @@ class _PostFeedState extends State<PostFeed> {
     try {
       for (var i=0;i<data.length;i++) {
         try {
-          if (data[i]['type']!=2) continue;
+          if (data[i]['type']!=DataType.post) continue;
 
           result = Post.json(data[i]);
           ArrivalData.innocentAdd(ArrivalData.posts, result);

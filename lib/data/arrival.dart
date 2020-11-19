@@ -120,3 +120,11 @@ class ArrivalData {
     }
   }
 }
+
+class DataType {
+  static final int partner = 0;
+  static final int article = 1;
+  static final int post = 2;
+  static final int sale = 3;
+  static final int profile = 4;
+}

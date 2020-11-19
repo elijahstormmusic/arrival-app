@@ -127,12 +127,12 @@ class _PartnerFeedState extends State<PartnerFeed> {
     try {
       for (var i=0;i<data.length;i++) {
         try {
-          if (data[i]['type']==0) {
+          if (data[i]['type']==DataType.partner) {
             result = Partner.json(data[i]);
             card = RowPartner(result);
             ArrivalData.innocentAdd(ArrivalData.partners, result);
           }
-          else if (data[i]['type']==3) {
+          else if (data[i]['type']==DataType.sale) {
             try {
               var _sale_list = data[i]['list'];
               List<Sale> result_list = List<Sale>();

@@ -127,7 +127,7 @@ class InfoView extends StatelessWidget {
             ),
             onTap: () {
               Arrival.navigator.currentState.push(MaterialPageRoute(
-                builder: (context) => Maps.directions(biz.name),
+                builder: (context) => Maps.directions(partner: biz.cryptlink),
                 fullscreenDialog: true,
               ));
             },

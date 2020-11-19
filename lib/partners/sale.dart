@@ -15,12 +15,12 @@ class Sale {
   static final String source =
     'https://res.cloudinary.com/arrival-kc/image/upload/';
   static final String default_img =
-    'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
+    'https://res.cloudinary.com/arrival-kc/image/upload/v1599325166/sample.jpg';
 
   final String cryptlink;
   final String name;
+  final String info;
   String pic;
-  final String shortDescription;
   final Partner partner;
 
   bool isOpen() {
@@ -30,16 +30,15 @@ class Sale {
   Sale({
     @required this.cryptlink,
     @required this.name,
-    @required this.shortDescription,
+    @required this.info,
     @required this.partner,
   }) {
     ArrivalData.innocentAdd(partner.sales, this);
   }
 
-  AssetImage card_image() {
-    if (pic==null) return AssetImage(Sale.default_img);
-    return AssetImage(Sale.default_img);
-    // return NetworkImage(Sale.source + pic);
+  NetworkImage card_image() {
+    if (pic==null) return NetworkImage(Sale.default_img);
+    return NetworkImage(Sale.default_img);
   }
   Widget image() {
     if (pic==null) return Image.asset('assets/loading/Bucket-1s-200px.gif');
@@ -54,7 +53,7 @@ class Sale {
     return Sale(
       cryptlink: data['link'],
       name: data['name'],
-      shortDescription: data['info'],
+      info: data['info'],
       partner: Partner.link(data['partner']),
     );
   }
@@ -65,6 +64,6 @@ class Sale {
 Sale blankSale = Sale(
   cryptlink: '',
   name: 'no sale',
-  shortDescription: 'we apologize, but no sale could be found',
+  info: 'we apologize, but no sale could be found',
   partner: blankPartner,
 );

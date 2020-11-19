@@ -33,6 +33,7 @@ class _CasingFavState extends State<CasingFavorites> {
   }
   String getNavigationLink(int index) {
     if (index<0 && index>=_rowButtonListData.length) return '';
+    _rowButtonListData[index]['seen'] = true;
     return _rowButtonListData[index]['cryptlink'];
   }
   void _openGenericAction(int index) {

@@ -126,7 +126,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
     try {
       for (var i=0;i<data.length;i++) {
         try {
-          if (data[i]['type']!=1) continue;
+          if (data[i]['type']!=DataType.article) continue;
           result = Article.json(data[i]);
           card = RowArticle(result);
           ArrivalData.innocentAdd(ArrivalData.articles, result);

@@ -6,19 +6,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../data/arrival.dart';
 import '../data/socket.dart';
 
 import 'page.dart';
 import 'sale.dart';
-
-
-class LatLng {
-  final double lat;
-  final double lng;
-
-  LatLng(this.lat, this.lng);
-}
 
 enum SourceIndustry {
   none,
@@ -308,8 +302,8 @@ class Partner {
     return {
       'name': name,
       'cryptlink': cryptlink,
-      'lat': location.lat,
-      'lng': location.lng,
+      'lat': location.latitude,
+      'lng': location.longitude,
       'info': shortDescription,
       'rating': rating,
       'ratingAmount': ratingAmount,

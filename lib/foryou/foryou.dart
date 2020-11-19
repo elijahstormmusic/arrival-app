@@ -134,7 +134,7 @@ class _ListState extends State<ForYouPage> {
 
     try {
       for (var i=0;i<data.length;i++) {
-        if (data[i]['type']==0) {
+        if (data[i]['type']==DataType.partner) {
           try {
             result = Partner.json(data[i]);
             card = RowPartner(result);
@@ -143,7 +143,7 @@ class _ListState extends State<ForYouPage> {
             continue;
           }
         }
-        else if (data[i]['type']==1) {
+        else if (data[i]['type']==DataType.article) {
           try {
             result = Article.json(data[i]);
             card = RowArticle(result);
@@ -152,7 +152,7 @@ class _ListState extends State<ForYouPage> {
             continue;
           }
         }
-        else if (data[i]['type']==2) {
+        else if (data[i]['type']==DataType.post) {
           try {
             result = Post.json(data[i]);
             ArrivalData.innocentAdd(ArrivalData.posts, result);
@@ -167,7 +167,7 @@ class _ListState extends State<ForYouPage> {
             continue;
           }
         }
-        else if (data[i]['type']==3) {
+        else if (data[i]['type']==DataType.sale) {
           try {
             var _sale_list = data[i]['list'];
             List<Sale> result_list = List<Sale>();

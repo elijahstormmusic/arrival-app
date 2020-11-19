@@ -12,70 +12,126 @@ import '../../styles.dart';
 import '../../widgets/cards.dart';
 import '../../data/preferences.dart';
 import '../../data/link.dart';
+import '../../data/arrival.dart';
 import 'row_card.dart';
 
-class SaleCard extends StatelessWidget {
-  SaleCard(this.sale, this.isNear);
+class SaleCard extends StatefulWidget {
+  SaleCard(this.prefs, this.sale);
 
+  final Preferences prefs;
   final Sale sale;
-  final bool isNear;
+
+  @override
+  _SaleCardState createState() => _SaleCardState();
+}
+
+class _SaleCardState extends State<SaleCard> {
 
   Widget _buildDetails() {
-    return FrostyBackground(
-      color: Styles.ArrivalPalletteRedFrosted,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              sale.name,
-              style: Styles.saleTitle,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: 90,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  widget.sale.name,
+                  style: Styles.saleTitle,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  widget.sale.info,
+                  style: Styles.saleInfo,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Row(
+            children: [
+              Container(
+                width: 130,
+                child: Text(
+                  widget.sale.partner.name.length > 12
+                  ? (widget.sale.partner.name.substring(0, 12) + '...')
+                  : widget.sale.partner.name,
+                  style: Styles.saleOwner,
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  await widget.prefs.toggleBookmarked(DataType.sale, widget.sale.cryptlink);
+                  setState(() => 0);
+                },
+                child: FutureBuilder<bool>(
+                  future: widget.prefs.isBookmarked(DataType.sale, widget.sale.cryptlink),
+                  builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+                    snapshot.hasData ?
+                    (snapshot.data ? Styles.bookmark_filled : Styles.bookmark_icon)
+                    : Styles.bookmark_icon,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (sale==null) return Container();
-    return Padding(
+    if (widget.sale==null) return Container();
+    return Container(
       padding: EdgeInsets.only(left: 16, right: 16),
+      width: 220,
+      height: 300,
+      margin: const EdgeInsets.only(bottom: 10),
       child: PressableCard(
         onPressed: () {
           Arrival.navigator.currentState.push(MaterialPageRoute(
-            builder: (context) => PartnerDisplayPage(sale.partner.cryptlink),
+            builder: (context) => PartnerDisplayPage(widget.sale.partner.cryptlink),
             fullscreenDialog: true,
           ));
         },
-        child: Stack(
+        color: Styles.ArrivalPalletteWhite,
+        upElevation: 5,
+        downElevation: 1,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: Column(
           children: [
-            Semantics(
-              label: 'Logo for ${sale.name}',
-              child: Container(
-                width: 150,
-                height: 200,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    colorFilter:
-                    isNear ? null : Styles.desaturatedColorFilter,
-                    image: sale.card_image(),
+            Container(
+              height: 150,
+              child: Stack(
+                children: [
+                  Semantics(
+                    label: 'Logo for ${widget.sale.name}',
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: widget.sale.card_image(),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 10,
+                    left: 10,
+                    child: Text(
+                      'PROMOTION',
+                      style: Styles.saleCardType,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildDetails(),
-            ),
+            _buildDetails(),
           ],
         ),
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
       ),
     );
   }
@@ -84,11 +140,9 @@ class SaleCard extends StatelessWidget {
 class RowSale extends RowCard {
 
   final List<Sale> sales;
-  final bool isNear = true;
 
   RowSale(
     @required this.sales,
-    // this.isNear,
   );
 
   @override
@@ -96,12 +150,12 @@ class RowSale extends RowCard {
 
     List<SaleCard> list_of_sales = List<SaleCard>();
     for (int i=0;i<sales.length;i++) {
-      list_of_sales.add(SaleCard(sales[i], isNear));
+      list_of_sales.add(SaleCard(prefs, sales[i]));
     }
 
-    return Padding(
+    return Container(
       padding: const EdgeInsets.only(bottom: 20),
-        child: SingleChildScrollView(
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: list_of_sales,

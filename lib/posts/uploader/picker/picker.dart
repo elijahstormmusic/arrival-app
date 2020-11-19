@@ -52,7 +52,7 @@ class MediaPicker extends StatefulWidget {
             initialSelection: MediaPickerSelection(
               mediaTypes: [
                 MediaType.image,
-                //MediaType.video,
+                MediaType.video,
               ],
               maxItems: 10,
             ),

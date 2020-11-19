@@ -30,14 +30,10 @@ class ArticleCard extends StatelessWidget {
             style: Styles.articleCardTitleAuthor,
           ),
         ),
-        // SizedBox(height: 6),
-        Expanded(
-          child: Text(
-            article.title,
-            style: Styles.articleCardTitleText,
-          ),
+        Text(
+          article.title,
+          style: Styles.articleCardTitleText,
         ),
-        // SizedBox(height: 6),
         Expanded(
           child: Text(
             'by ' + article.author,

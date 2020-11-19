@@ -188,7 +188,28 @@ abstract class Styles {
   static const saleTitle = TextStyle(
       color: Styles.ArrivalPalletteBlack,
       fontFamily: 'Helvetica',
-      fontSize: 24,
+      fontSize: 20,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.bold,
+  );
+  static const saleInfo = TextStyle(
+      color: Styles.ArrivalPalletteBlack,
+      fontFamily: 'Helvetica',
+      fontSize: 16,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+  );
+  static const saleOwner = TextStyle(
+      color: Styles.ArrivalPalletteGrey,
+      fontFamily: 'Helvetica',
+      fontSize: 16,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+  );
+  static const saleCardType = TextStyle(
+      color: Styles.ArrivalPalletteWhite,
+      fontFamily: 'Helvetica',
+      fontSize: 14,
       fontStyle: FontStyle.normal,
       fontWeight: FontWeight.bold,
   );
@@ -227,13 +248,13 @@ abstract class Styles {
       );
   static TextStyle articleCardTitleAuthor = TextStyle(
         color: Styles.ArrivalPalletteBlue,
-        fontFamily: 'Arial',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
       );
   static TextStyle articleCardTitleShortIntro = TextStyle(
         color: Styles.ArrivalPalletteBlack,
-        fontFamily: 'Arial',
+        fontFamily: 'Helvetica',
         fontSize: 18,
         fontStyle: FontStyle.normal,
       );
@@ -280,10 +301,24 @@ abstract class Styles {
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
       );
-
   static TextStyle headlineDescription(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
+        fontFamily: 'BebasNeue',
+        fontSize: 16,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+      );
+
+  static TextStyle headlineNameTL = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
+        fontFamily: 'Helvetica',
+        fontSize: 24,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
+  static TextStyle headlineDescriptionTL = TextStyle(
+        color: Styles.ArrivalPalletteBlack,
         fontFamily: 'BebasNeue',
         fontSize: 16,
         fontStyle: FontStyle.normal,
@@ -620,6 +655,15 @@ abstract class Styles {
     fontPackage: CupertinoIcons.iconFontPackage,
   );
 
+  static const bookmark = CupertinoIcons.bookmark;
+  static const bookmark_icon = Icon(
+            CupertinoIcons.bookmark,
+            color: Styles.ArrivalPalletteBlack,
+          );
+  static const bookmark_filled = Icon(
+            CupertinoIcons.bookmark_fill,
+            color: Styles.ArrivalPalletteRed,
+          );
   static const heart = CupertinoIcons.heart;// const IconData(0xf442,
           // fontFamily: CupertinoIcons.iconFont,
           // fontPackage: CupertinoIcons.iconFontPackage);

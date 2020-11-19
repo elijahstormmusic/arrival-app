@@ -96,7 +96,7 @@ class _SearchState extends State<Search> {
 
     try {
       for (var i=0;i<data.length;i++) {
-        if (data[i]['type']==0) { // partner_data
+        if (data[i]['type']==DataType.partner) { // partner_data
           try {
             result = Partner.json(data[i]);
             card = SearchResultPartner(result);
@@ -106,7 +106,7 @@ class _SearchState extends State<Search> {
             continue;
           }
         }
-        else if (data[i]['type']==1) { // article_data
+        else if (data[i]['type']==DataType.article) { // article_data
           try {
             result = Article.json(data[i]);
             card = SearchResultArticle(result);
@@ -116,7 +116,7 @@ class _SearchState extends State<Search> {
             continue;
           }
         }
-        else if (data[i]['type']==2) { // post_data
+        else if (data[i]['type']==DataType.post) { // post_data
           try {
             result = Post.json(data[i]);
             card = SearchResultPost(result.cryptlink);
@@ -125,7 +125,7 @@ class _SearchState extends State<Search> {
             continue;
           }
         }
-        else if (data[i]['type']==3) { // sale_data
+        else if (data[i]['type']==DataType.sale) { // sale_data
           try {
             result = Sale.json(data[i]);
             card = SearchResultSale(result);
@@ -134,7 +134,7 @@ class _SearchState extends State<Search> {
             continue;
           }
         }
-        else if (data[i]['type']==4) { // user_data
+        else if (data[i]['type']==DataType.profile) { // user_data
           try {
             result = Profile.json(data[i]);
             card = SearchResultProfile(result);

@@ -28,6 +28,7 @@ import '../foryou/foryou.dart';
 import '../screens/home.dart';
 import '../maps/locator.dart';
 import '../styles.dart';
+import 'video.dart';
 import 'uploader/media.dart';
 import 'uploader/picker/picker.dart';
 import 'uploader/picker/selection.dart';
@@ -118,8 +119,19 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
       'link': '',
     };
   }
+
+  bool _isUnacceptableFile(File _media) {
+    var length = _media.path.length;
+    String extension = _media.path.substring(length-4, length);
+
+    return (extension=='.gif');
+  }
   bool _isVideo(File _media) {
-    return false;
+    var length = _media.path.length;
+    String extension = _media.path.substring(length-4, length);
+
+    return (extension=='.mp4' || extension=='.mov' || extension=='.avi'
+          || extension=='.wmv');
   }
 
 
@@ -348,6 +360,8 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                 onTap: () async {
                   if (_already_uploaded) return;
 
+                  if (_isUnacceptableFile(widget.upload_single)) return;
+
                   String post_id = UserData.client.name + Random().nextInt(1000000).toString();
                   var database_info = {
                     'userlink': UserData.client.cryptlink,
@@ -571,9 +585,16 @@ class _PostUploadState extends State<PostUploadScreen>
     }
   }
 
-  // [inpuut upload camera]
+  // [input upload camera]
 
 
+  bool _isVideo(File _media) {
+    var length = _media.path.length;
+    String extension = _media.path.substring(length-4, length);
+
+    return (extension=='.mp4' || extension=='.mov' || extension=='.avi'
+          || extension=='.wmv');
+  }
   Map<String, double> _imageValues = {
     'body': 300.0,
     'row': 40.0,
@@ -583,7 +604,10 @@ class _PostUploadState extends State<PostUploadScreen>
   Widget _buildImageShowcase() {
     return Center(
       child: _image != null
-        ? Image(image: FileImage(_image))
+        ? ( _isVideo(_image)
+            ? Image(image: FileImage(_image))
+            : ArrivalVideoPlayer.local(_image)
+          )
         : Icon(
             Icons.photo,
             size: _imageValues['circle'] * 5,

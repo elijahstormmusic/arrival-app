@@ -29,10 +29,8 @@ dependencies:
   drop_cap_text: ^1.0.7
   flutter_polyline_points: ^0.1.0
   cupertino_icons: ^1.0.0
-  google_maps_flutter: ^0.5.27+3
-  flutter_google_places: ^0.2.6
+  google_maps_flutter: ^1.0.6
   geolocator: ^5.1.4+2
-  font_awesome_flutter: ^8.8.1
   intl: ^0.16.1
   scoped_model: ^1.0.1
   shared_preferences: ^0.5.7
