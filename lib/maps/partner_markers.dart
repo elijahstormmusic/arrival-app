@@ -18,11 +18,16 @@ class PartnerMarkersMap extends StatefulWidget {
   final void Function(LatLng) onMapInteraction;
   PartnerMarkersMapState _s;
 
+  void set padding(double value) {
+    if (_s==null) return;
+    _s.setPadding(value);
+  }
+
   void addMarker(LatLng location, var info) {
     _s.addMarker(location, info);
   }
-  void locateAndTakeMe(LatLng dest, LatLng client) {
-    _s.locateAndTakeMe(dest, client);
+  void locateAndTakeMe(LatLng dest, LatLng client, var info) {
+    _s.locateAndTakeMe(dest, client, info);
   }
   void refresh() {
     _s.refresh();
@@ -53,6 +58,7 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
   PolylinePoints polylinePoints = PolylinePoints();
   MarkerId selectedMarker;
   int _markerIdCounter = 1;
+  double _padding;
   BitmapDescriptor myLocationIcon;
   BitmapDescriptor destLocationIcon;
 
@@ -69,6 +75,7 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
       ArrivalMapData.initalLng,
     );
     _currentZoom = ArrivalMapData.initalZoom;
+    _padding = 0;
 
     _setMarkerIcons();
   }
@@ -89,6 +96,9 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
     setState(() {
       markers = <MarkerId, Marker>{};
     });
+  }
+  void setPadding(double value) {
+    setState(() => _padding = value);
   }
 
 
@@ -144,7 +154,7 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
       );
     });
   }
-  void locateAndTakeMe(LatLng destination, LatLng myLocation) {
+  void locateAndTakeMe(LatLng destination, LatLng myLocation, var info) {
     markers = <MarkerId, Marker>{};
 
     _destination = destination;
@@ -156,7 +166,7 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
       markerId: destId,
       position: _destination,
       icon: destLocationIcon,
-      infoWindow: InfoWindow(title: 'Your destination'),
+      infoWindow: InfoWindow(title: info['title']),
     );
 
     markers[destId] = dest;
@@ -393,15 +403,16 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
   Widget build(BuildContext context) {
     return GoogleMap(
       onMapCreated: _onMapCreated,
+      padding: EdgeInsets.only(bottom: _padding),
       initialCameraPosition: const CameraPosition(
         target: LatLng(ArrivalMapData.initalLat, ArrivalMapData.initalLng),
         zoom: ArrivalMapData.initalZoom,
       ),
+      markers: Set<Marker>.of(markers.values),
       polylines: Set<Polyline>.of(polylines.values),
       onTap: (LatLng pos) {
         onMapInteraction(pos);
       },
-      markers: Set<Marker>.of(markers.values),
     );
   }
 }

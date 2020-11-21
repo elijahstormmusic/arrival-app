@@ -100,7 +100,7 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
               Container(
                 decoration: BoxDecoration(
                   color: Styles.ArrivalPalletteWhite,
-                  border: Border.all(width: 1.0, color: const Color(0xff707070)),
+                  border: Border.all(width: 1.0, color: Styles.ArrivalPalletteBlack),
                 ),
                 width: widget.maxSize,
                 height: 9.0,
@@ -115,8 +115,10 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
                 animation: animation,
                 size: widget.maxSize,
                 onCycle: () {
-                  widget.onCycle();
-                  setState(() => widget.level++);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    widget.onCycle();
+                    setState(() => widget.level++);
+                  });
                 },
               ),
             ],

@@ -35,6 +35,9 @@ class ForYouPage extends StatefulWidget {
 
   static void scrollToTop() => _s.scrollToTop();
   static void refresh_state() => _s.refresh_state();
+  static void addUploadingMediaProgress(String id) => _s.addUploadingMediaProgress(id);
+  static void finishUploadingMediaProgress(String id) => _s.finishUploadingMediaProgress(id);
+  static void displayUploadingMediaProgress(String id, String display) => _s.displayUploadingMediaProgress(id, display);
 
   static void openSnackBar(Map<String, dynamic> input) => _s.openSnackBar(input);
 
@@ -75,6 +78,7 @@ class _ListState extends State<ForYouPage> {
     if (ArrivalData.foryou==null) {
       ArrivalData.foryou = List<RowCard>();
     }
+
     if (ArrivalData.foryou.length==0) {
       _pullNext(REQUEST_AMOUNT);
     }
@@ -83,6 +87,98 @@ class _ListState extends State<ForYouPage> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  List<Map<String, dynamic> > _uploadingMedia = List<Map<String, dynamic> >();
+  void addUploadingMediaProgress(String id) {
+    setState(() => _uploadingMedia.add({
+      'id': id,
+      'progress': 0,
+    }));
+  }
+  void finishUploadingMediaProgress(String id) {
+    for (int index=0;index<_uploadingMedia.length;index++) {
+      if (_uploadingMedia[index]['id']==id) {
+        setState(() => _uploadingMedia.removeAt(index));
+        // setState(() => _uploadingMedia[index]['progress'] = 1);
+        break;
+      }
+    }
+  }
+  void displayUploadingMediaProgress(String id, String display) {
+    for (int index=0;index<_uploadingMedia.length;index++) {
+      if (_uploadingMedia[index]['id']==id) {
+        _uploadingMedia[index]['post'] = RowPost(display);
+        setState(() => _uploadingMedia[index]['progress'] = 2);
+        break;
+      }
+    }
+  }
+  Widget _generateUploadingMediaProgress(var prefs) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      height: 100.0 * _uploadingMedia.length,
+      child: ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: _uploadingMedia.length,
+        itemBuilder: (context, index) {
+          return _uploadingMedia[index]['progress']==2
+            ? _uploadingMedia[index]['post'].generate(prefs)
+            : FutureBuilder<void>(
+                future: Future.delayed(Duration(milliseconds: 200)),
+                builder: (c, s) => Container(
+                  height: 84,
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Styles.ArrivalPalletteGrey,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Uploading your content...',
+                        style: TextStyle(
+                          color: Styles.ArrivalPalletteBlack,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        // width: MediaQuery.of(context).size.width - 76,
+                        decoration: BoxDecoration(
+                          color: Styles.ArrivalPalletteCream,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(width: 1.0, color: Styles.ArrivalPalletteBlack),
+                        ),
+                        child: AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          curve: Curves.easeOut,
+                          height: 20,
+                          width: s.connectionState == ConnectionState.done
+                              ? MediaQuery.of(context).size.width - 76 : 0,
+                          decoration: BoxDecoration(
+                            color: Styles.ArrivalPalletteRed,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+        },
+      ),
+    );
   }
 
   void _pullNext(int amount) {
@@ -112,6 +208,7 @@ class _ListState extends State<ForYouPage> {
   }
   void _refresh() {
     if (!_allowRequest) return;
+    _uploadingMedia = List<Map<String, dynamic> >();
     ArrivalData.foryou = List<RowCard>();
     _pullNext(REQUEST_AMOUNT);
   }
@@ -285,7 +382,7 @@ class _ListState extends State<ForYouPage> {
         },
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: ArrivalData.foryou.length + 2,
+          itemCount: ArrivalData.foryou.length + 3,
           itemBuilder: (context, index) {
             if (index == 0) {
               return Stack(
@@ -301,8 +398,10 @@ class _ListState extends State<ForYouPage> {
                   ),
                 ],
               );
-            } else if (index <= ArrivalData.foryou.length) {
-              return ArrivalData.foryou[index-1].generate(prefs);
+            } else if (index == 1) {
+              return _generateUploadingMediaProgress(prefs);
+            } else if (index - 2 < ArrivalData.foryou.length) {
+              return ArrivalData.foryou[index - 2].generate(prefs);
             } else {
               if (_forceFailCurrentState) {
                 return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');

@@ -16,7 +16,8 @@ import 'package:camera/camera.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:cloudinary_client/cloudinary_client.dart';
+import 'cloudinary/cloudinary_client.dart';
+// import 'package:cloudinary_client/cloudinary_client.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -84,7 +85,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
   }
 
 
-  Future<Map<String, dynamic> > _uploadMedia(File _media) async {
+  Future<Map<String, dynamic> > _uploadMedia(File _media, bool _is_image) async {
     if (_media == null) return {
       'link': '',
     };
@@ -94,10 +95,20 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
     });
 
     try {
-      var media_data = await cloudinary_client.uploadImage(
-        _media.path,
-        folder: 'posts/' + UserData.client.name,
-      );
+      var media_data;
+
+      if (_is_image) {
+        media_data = await cloudinary_client.uploadVideo(
+          _media.path,
+          folder: 'posts/' + UserData.client.name,
+        );
+      }
+      else {
+        media_data = await cloudinary_client.uploadImage(
+          _media.path,
+          folder: 'posts/' + UserData.client.name,
+        );
+      }
 
       return {
         'link': media_data.secure_url.replaceAll(
@@ -299,7 +310,14 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
     return Container(
       padding: EdgeInsets.all(_captionValues['padding']),
       child: widget.upload_single!=null
-                ? Image(image: FileImage(widget.upload_single))
+                ? ( _isVideo(widget.upload_single)
+                  ? Container(
+                      width: 10,
+                      height: 90,
+                      child: ArrivalVideoPlayer.local(widget.upload_single)
+                    )
+                  : Image(image: FileImage(widget.upload_single))
+                  )
                 : Image(image: FileImage(widget.upload_collection[0])),
     );
   }
@@ -377,16 +395,21 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
 
                   if (widget.upload_single!=null || widget.upload_collection.length==1) {  // single upload
 
+                    _already_uploaded = true;
+                    Arrival.navigator.currentState.pop();
+                    HomeScreen.gotoForyou();
+                    ForYouPage.addUploadingMediaProgress(database_info['id']);
+
                     Map<String, dynamic> media_data;
 
                     if (_isVideo(widget.upload_single)) {
-                      media_data = await _uploadMedia(widget.upload_single);
                       database_info['type'] = 2;
                       database_info['duration'] = media_data['duration'];
+                      media_data = await _uploadMedia(widget.upload_single, true);
                     }
                     else {
-                      media_data = await _uploadMedia(widget.upload_single);
                       database_info['type'] = 0;
+                      media_data = await _uploadMedia(widget.upload_single, false);
                     }
 
                     if (media_data['link']=='') return;
@@ -396,6 +419,11 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                   }
                   else if (widget.upload_collection.length>1) {  // gallery upload
 
+                    _already_uploaded = true;
+                    Arrival.navigator.currentState.pop();
+                    HomeScreen.gotoForyou();
+                    ForYouPage.addUploadingMediaProgress(database_info['id']);
+
                     Map<String, dynamic> media_data = Map<String, dynamic>();
                     List<Map<String, dynamic> > attributes = List<Map<String, dynamic> >();
                     List<String> links = List<String>();
@@ -403,12 +431,12 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                     for (int i=0;i<widget.upload_collection.length;i++) {
 
                       if (_isVideo(widget.upload_collection[i])) {
-                        media_data = await _uploadMedia(widget.upload_collection[i]);
+                        media_data = await _uploadMedia(widget.upload_collection[i], true);
 
                         attributes[i]['duration'] = media_data['duration'];
                       }
                       else {
-                        media_data = await _uploadMedia(widget.upload_collection[i]);
+                        media_data = await _uploadMedia(widget.upload_collection[i], false);
                       }
 
                       if (media_data['link']=='') return;
@@ -422,13 +450,8 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                   }
                   else return;
 
-                  _already_uploaded = true;
-
+                  ForYouPage.finishUploadingMediaProgress(database_info['id']);
                   socket.emit('posts upload', database_info);
-
-                  Arrival.navigator.currentState.pop();
-
-                  HomeScreen.gotoForyou();
                 },
                 child: Text(
                   'UPLOAD',
@@ -605,8 +628,8 @@ class _PostUploadState extends State<PostUploadScreen>
     return Center(
       child: _image != null
         ? ( _isVideo(_image)
-            ? Image(image: FileImage(_image))
-            : ArrivalVideoPlayer.local(_image)
+            ? ArrivalVideoPlayer.local(_image)
+            : Image(image: FileImage(_image))
           )
         : Icon(
             Icons.photo,

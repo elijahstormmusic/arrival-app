@@ -307,7 +307,7 @@ class Partner {
       'info': shortDescription,
       'rating': rating,
       'ratingAmount': ratingAmount,
-      'icon': industry.index,
+      'industry': industry.index,
       'images': images.toJson(),
       'contact': contact.toJson(),
     };

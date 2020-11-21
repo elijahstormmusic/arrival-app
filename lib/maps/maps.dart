@@ -43,6 +43,7 @@ class _MapState extends State<Maps> {
   final double _bottomCardTopValue = 0;
   double _bottomCardBottomValue = 400;
   double _bottomCardOutValue = 500;
+  bool initating;
 
   PartnerMarkersMap _localMap;
 
@@ -83,6 +84,8 @@ class _MapState extends State<Maps> {
         'amount': 20,
       });
     }
+
+    initating = true;
   }
   @override
   void dispose() {
@@ -97,10 +100,12 @@ class _MapState extends State<Maps> {
   }
   void _setMainCardToBottom() {
     if (_bottomCardVerticalPosition==_bottomCardBottomValue) return;
+    _localMap.padding = _bottomCardOutValue - _bottomCardBottomValue;
     setState(() => _bottomCardVerticalPosition = _bottomCardBottomValue);
   }
   void _setMainCardOut() {
     if (_bottomCardVerticalPosition==_bottomCardOutValue) return;
+    _localMap.padding = 0;
     setState(() => _bottomCardVerticalPosition = _bottomCardOutValue);
   }
   void _setMainCardUp() {
@@ -179,8 +184,8 @@ class _MapState extends State<Maps> {
     setState(() => 0);
   }
 
-  void _locateAndTakeMe(var partner) {
-    _localMap.locateAndTakeMe(partner.location, myself.latlng);
+  void _locateAndTakeMe(var partner, var info) {
+    _localMap.locateAndTakeMe(partner.location, myself.latlng, info);
   }
 
   void _pushPage(BuildContext context, var page) {
@@ -195,7 +200,9 @@ class _MapState extends State<Maps> {
     return GestureDetector(
       onTap: () {
         _setMainCardOut();
-        _locateAndTakeMe(partner);
+        _locateAndTakeMe(partner, {
+          'title': partner.name,
+        });
       },
       child: Container(
         decoration: BoxDecoration(
@@ -245,20 +252,24 @@ class _MapState extends State<Maps> {
     );
   }
 
-  bool _debuggerToggle = false;
-
   @override
   Widget build(BuildContext context) {
-    _bottomCardBottomValue = (MediaQuery.of(context).size.height / 200).ceil().toDouble() * 100;
-    _bottomCardOutValue = MediaQuery.of(context).size.height
-              - MediaQuery.of(context).padding.top - 110;
+
+    if (initating) {
+      _bottomCardBottomValue = (MediaQuery.of(context).size.height / 200).ceil().toDouble() * 100;
+      _bottomCardOutValue = MediaQuery.of(context).size.height
+                - MediaQuery.of(context).padding.top - 110;
+      _bottomCardVerticalPosition = _bottomCardBottomValue;
+      _localMap.padding = _bottomCardOutValue - _bottomCardBottomValue;
+      initating = false;
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height,
       child: Stack(
         children: <Widget>[
           Container(
-            height: _debuggerToggle ? _bottomCardOutValue + 10 : _bottomCardVerticalPosition + 10,
+            height: _bottomCardOutValue + 10,
             child: _localMap,
           ),
           GestureDetector(
@@ -358,15 +369,6 @@ class _MapState extends State<Maps> {
                       ),
                     ),
                   ),
-                  // GestureDetector(
-                  //   onTap: () => _debuggerToggle = !_debuggerToggle,
-                  //   child: Container(
-                  //     margin: EdgeInsets.only(top: 20),
-                  //     color: Styles.ArrivalPalletteRed,
-                  //     height: 100,
-                  //     width: 200,
-                  //   ),
-                  // ),
                 ],
               ),
             ),

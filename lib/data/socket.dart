@@ -2,17 +2,18 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'dart:convert';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
-import 'dart:convert';
+
 import '../users/data.dart';
 import '../data/arrival.dart';
 import '../partners/partner.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 import '../posts/post.dart';
-import '../foryou/cards/post_card.dart';
+import '../foryou/foryou.dart';
 import '../screens/home.dart';
 
 class socket {
@@ -20,6 +21,9 @@ class socket {
   static var home, post, profile, foryou, maps, articles;
   static int error_report_time = 3;
   static String authenicator;
+  static bool active = false;
+  static List<Map<String, dynamic> > call_queue = List<Map<String, dynamic> >();
+  static bool attempting_to_execute_queue = false;
 
   static void init() {
     if (_socket!=null) return;
@@ -42,7 +46,7 @@ class socket {
         await foryou.responded(data['response']);
 
         if (maps==null) return;
-        
+
         maps.refresh_state();
       }
 
@@ -336,9 +340,8 @@ class socket {
       }
       else if (data['type']==530) { // post successfully uploaded
         Post.link(data['link']);
-        ArrivalData.foryou.insert(0, RowPost(data['link']));
-        foryou.refresh_state();
         foryou.scrollToTop();
+        ForYouPage.displayUploadingMediaProgress(data['id'], data['link']);
       }
       else if (data['type']==531) { // post failed upload
         HomeScreen.openSnackBar({
@@ -359,13 +362,50 @@ class socket {
           'duration': error_report_time,
         });
       }
+
+      else if (data['type']==1) { // connection test verification
+        active = true;
+      }
     });
 
     _socket.connect();
   }
 
+  static void execute_queue() async {
+    if (call_queue.length==0) return;
+
+    attempting_to_execute_queue = true;
+
+    if (!active) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      execute_queue();
+      return;
+    }
+
+    do {
+      var request = call_queue.removeAt(0);
+
+      emit(request['request'], request['data']);
+
+      await Future.delayed(const Duration(milliseconds: 100));
+    } while (call_queue.length!=0);
+
+    attempting_to_execute_queue = false;
+  }
+
   static void emit(String _req, var _data) {
     if (_socket==null) return;
+
+    if (!active) {
+      call_queue.add({
+        'request': _req,
+        'data': _data,
+      });
+      if (attempting_to_execute_queue) return;
+
+      execute_queue();
+    }
+
     _socket.sendMessage(
       _req, json.encode(_data),
     );
