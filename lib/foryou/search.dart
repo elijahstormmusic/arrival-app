@@ -187,6 +187,7 @@ class _SearchState extends State<Search> {
     }
 
     return ListView.builder(
+      physics: ClampingScrollPhysics(),
       itemCount: results.length,
       itemBuilder: (context, i) {
         return Padding(
@@ -243,7 +244,7 @@ class _SearchState extends State<Search> {
           : Styles.ArrivalPalletteWhite,
       ),
       child: ListView(
-        physics: ClampingScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
           _buildSearchBar(),
           Container(

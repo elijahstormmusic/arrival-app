@@ -46,6 +46,7 @@ class _PostFeedState extends State<PostFeed> {
   RowCard _loadingCard;
   bool showUploadButton = true, _scrolling = false;
   bool _allowRequest = true, _requestFailed = false;
+  bool kill_reflow = false;
   final REQUEST_AMOUNT = 10;
   final _scrollTargetDistanceFromBottom = 400.0;
   Search _search;
@@ -70,6 +71,7 @@ class _PostFeedState extends State<PostFeed> {
   }
   @override
   void dispose() {
+    kill_reflow = true;
     _scrollController.dispose();
     super.dispose();
   }
@@ -91,6 +93,7 @@ class _PostFeedState extends State<PostFeed> {
     if (!_reponsedHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
+        if (kill_reflow) return;
         openSnackBar({
           'text': 'Network error. A-403',
         });
@@ -153,6 +156,7 @@ class _PostFeedState extends State<PostFeed> {
     }
 
     _requestFailed = false;
+    if (kill_reflow) return;
     setState(() => ArrivalData.post_feed += list);
     ArrivalData.save();
     await Future.delayed(const Duration(seconds: 1));
@@ -279,8 +283,7 @@ class _PostFeedState extends State<PostFeed> {
             backgroundColor: Styles.ArrivalPalletteRed,
             actions: <Widget>[
               IconButton(
-                onPressed: () =>
-                  setState(() => _search.toggleSearch()),
+                onPressed: () => setState(() => _search.toggleSearch()),
                 icon: const Icon(Icons.search),
               ),
             ],

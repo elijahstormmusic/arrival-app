@@ -365,19 +365,29 @@ class socket {
 
       else if (data['type']==1) { // connection test verification
         active = true;
+        failed_queue_attempts = 0;
       }
     });
 
     _socket.connect();
   }
 
+  static int failed_queue_attempts = 0;
   static void execute_queue() async {
     if (call_queue.length==0) return;
 
     attempting_to_execute_queue = true;
 
     if (!active) {
-      await Future.delayed(const Duration(milliseconds: 300));
+      if (++failed_queue_attempts % 10 == 0) {
+        _socket.sendMessage(
+          call_queue[0]['request'], json.encode(call_queue[0]['data']),
+        );
+      }
+
+      if (failed_queue_attempts > 100) return;
+
+      await Future.delayed(const Duration(milliseconds: 100));
       execute_queue();
       return;
     }
@@ -388,7 +398,7 @@ class socket {
       emit(request['request'], request['data']);
 
       await Future.delayed(const Duration(milliseconds: 100));
-    } while (call_queue.length!=0);
+    } while (call_queue.length != 0);
 
     attempting_to_execute_queue = false;
   }

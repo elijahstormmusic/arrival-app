@@ -72,6 +72,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
   }
   @override
   void dispose() {
+    kill_reflow = true;
     _scrollController.dispose();
     super.dispose();
   }
@@ -87,12 +88,14 @@ class _PartnerFeedState extends State<PartnerFeed> {
   }
   bool _reponsedHeard, _forceFailCurrentState = false;
   int _timesFailedToHearResponse = 0;
+  bool kill_reflow = false;
   void _checkForFailure() async {
     _reponsedHeard = false;
     await Future.delayed(const Duration(seconds: 6));
     if (!_reponsedHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
+        if (kill_reflow) return;
         openSnackBar({
           'text': 'Network error. A-402',
         });
@@ -176,6 +179,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
     }
 
     _requestFailed = false;
+    if (kill_reflow) return;
     setState(() => ArrivalData.partner_feed += list);
     ArrivalData.save();
     await Future.delayed(const Duration(seconds: 1));
@@ -302,8 +306,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
             backgroundColor: Styles.ArrivalPalletteRed,
             actions: <Widget>[
               IconButton(
-                onPressed: () =>
-                  setState(() => _search.toggleSearch()),
+                onPressed: () => setState(() => _search.toggleSearch()),
                 icon: const Icon(Icons.search),
               ),
             ],

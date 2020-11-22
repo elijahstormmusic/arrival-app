@@ -61,6 +61,7 @@ class _ListState extends State<ForYouPage> {
   bool showUploadButton = true, _scrolling = false;
   bool _allowRequest = true, _requestFailed = false;
   final REQUEST_AMOUNT = 10;
+  bool kill_reflow = false;
   final _scrollTargetDistanceFromBottom = 400.0;
   Search _search;
 
@@ -85,12 +86,14 @@ class _ListState extends State<ForYouPage> {
   }
   @override
   void dispose() {
+    kill_reflow = true;
     _scrollController.dispose();
     super.dispose();
   }
 
   List<Map<String, dynamic> > _uploadingMedia = List<Map<String, dynamic> >();
   void addUploadingMediaProgress(String id) {
+    if (kill_reflow) return;
     setState(() => _uploadingMedia.add({
       'id': id,
       'progress': 0,
@@ -99,6 +102,7 @@ class _ListState extends State<ForYouPage> {
   void finishUploadingMediaProgress(String id) {
     for (int index=0;index<_uploadingMedia.length;index++) {
       if (_uploadingMedia[index]['id']==id) {
+        if (kill_reflow) return;
         setState(() => _uploadingMedia.removeAt(index));
         // setState(() => _uploadingMedia[index]['progress'] = 1);
         break;
@@ -109,6 +113,7 @@ class _ListState extends State<ForYouPage> {
     for (int index=0;index<_uploadingMedia.length;index++) {
       if (_uploadingMedia[index]['id']==id) {
         _uploadingMedia[index]['post'] = RowPost(display);
+        if (kill_reflow) return;
         setState(() => _uploadingMedia[index]['progress'] = 2);
         break;
       }
@@ -137,7 +142,7 @@ class _ListState extends State<ForYouPage> {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: Styles.ArrivalPalletteGrey,
+                    color: Styles.ArrivalPalletteCream,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -197,6 +202,7 @@ class _ListState extends State<ForYouPage> {
     if (!_reponsedHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
+        if (kill_reflow) return;
         openSnackBar({
           'text': 'Network error. A-400',
         });
@@ -299,6 +305,7 @@ class _ListState extends State<ForYouPage> {
     }
 
     _requestFailed = false;
+    if (kill_reflow) return;
     setState(() => ArrivalData.foryou += list);
     ArrivalData.save();
     await Future.delayed(const Duration(seconds: 1));
@@ -449,8 +456,7 @@ class _ListState extends State<ForYouPage> {
             backgroundColor: Styles.ArrivalPalletteRed,
             actions: <Widget>[
               IconButton(
-                onPressed: () =>
-                  setState(() => _search.toggleSearch()),
+                onPressed: () => setState(() => _search.toggleSearch()),
                 icon: const Icon(Icons.search),
               ),
             ],
