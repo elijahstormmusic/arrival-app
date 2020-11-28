@@ -9,23 +9,25 @@ import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
 
-class ArticleFavorites extends CasingFavorites {
+class ArticleFavorites extends CasingFavoritesBox {
 
   @override
   void open(Map<String, dynamic> data) {
-    Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => ArticleDisplayPage(
-        data['link'],
-      ),
-      fullscreenDialog: true,
-    ));
+    print(data['link']);
+    // Arrival.navigator.currentState.push(MaterialPageRoute(
+    //   builder: (context) => ArticleDisplayPage(
+    //     data['link'],
+    //   ),
+    //   fullscreenDialog: true,
+    // ));
   }
 
   @override
   Map<String, dynamic> generateListData(int i) {
     return {
       'link': ArrivalData.articles[i].cryptlink,
-      'icon': ArrivalData.articles[i].image_link(0),
+      'color': Colors.red,
+      'icon': 'https://res.cloudinary.com/arrival-kc/image/upload/v1599325166/sample.jpg',
       'name': ArrivalData.articles[i].author,
     };
   }

@@ -9,29 +9,31 @@ import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
 
-class PartnerFavorites extends CasingFavorites {
+class PartnerFavorites extends CasingFavoritesBox {
 
   @override
   void open(Map<String, dynamic> data) {
-    Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => PartnerDisplayPage(
-        data['link'],
-      ),
-      fullscreenDialog: true,
-    ));
+    print(data['link']);
+    // Arrival.navigator.currentState.push(MaterialPageRoute(
+    //   builder: (context) => PartnerDisplayPage(
+    //     data['link'],
+    //   ),
+    //   fullscreenDialog: true,
+    // ));
   }
 
   @override
   Map<String, dynamic> generateListData(int i) {
     return {
-      'link': ArrivalData.sales[i].partner.cryptlink,
-      'icon': ArrivalData.sales[i].media_href(),
-      'name': ArrivalData.sales[i].name,
+      'link': LocalIndustries.all[i].type,
+      'color': LocalIndustries.all[i].color,
+      'icon': 'https://res.cloudinary.com/arrival-kc/image/upload/v1599325166/sample.jpg',
+      'name': LocalIndustries.all[i].name,
     };
   }
 
   @override
   int listSize() {
-    return ArrivalData.sales.length;
+    return LocalIndustries.all.length;
   }
 }

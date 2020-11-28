@@ -415,6 +415,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                     if (media_data['link']=='') return;
 
                     database_info['height'] = media_data['height'];
+                    database_info['width'] = media_data['width'];
                     database_info['cloudlink'] = media_data['link'];
                   }
                   else if (widget.upload_collection.length>1) {  // gallery upload
@@ -442,6 +443,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                       if (media_data['link']=='') return;
 
                       attributes[i]['height'] = media_data['height'];
+                      database_info['width'] = media_data['width'];
                     }
 
                     database_info['type'] = 1;

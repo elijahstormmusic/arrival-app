@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -34,9 +35,22 @@ abstract class Styles {
   static const ArrivalPalletteLightGrey = Color(0xffEEEEE9);
   static const ArrivalPalletteBlue = Color(0xff5AA6DC);
   static const ArrivalPalletteYellow = Color(0xffFFCF01);
+  static const ArrivalPalletteGreen = Color(0xff09EA11);
+
+  static const ArrivalPalletteRedDarken = Color(0xffF15D5D);
+  static const ArrivalPalletteCreamDarken = Color(0xffF9EDD3);
+  static const ArrivalPalletteWhiteDarken = Color(0xffF8F8F9);
+  static const ArrivalPalletteBlackDarken = Color(0xff231F20);
+  static const ArrivalPalletteGreyDarken = Color(0xffD9D5D3);
+  static const ArrivalPalletteLightGreyDarken = Color(0xffEEEEE9);
+  static const ArrivalPalletteBlueDarken = Color(0xff5AA6DC);
+  static const ArrivalPalletteYellowDarken = Color(0xffFFCF01);
+  static const ArrivalPalletteGreenDarken = Color(0xff09EA11);
+
   static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
   static const _oldArrivalPalletteYellow = Color.fromRGBO(255, 196, 60, 1);
   static const _oldArrivalPalletteCream = Color.fromRGBO(250, 250, 250, 1);
+
   static const ArrivalPalletteRedTransparent = Color(0xccF15D5D);
   static const ArrivalPalletteWhiteTransparent = Color(0xccF8F8F9);
   static const ArrivalPalletteCreamTransparent = Color(0xccF9EDD3);
@@ -45,6 +59,7 @@ abstract class Styles {
   static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
   static const ArrivalPalletteBlueTransparent = Color(0x595AA6DC);
   static const ArrivalPalletteYellowTransparent = Color(0xccFFCF01);
+
   static const ArrivalPalletteRedFrosted = Color(0x50F58E8E);
   static const ArrivalPalletteWhiteFrosted = Color(0x80F9F4E9);
   static const ArrivalPalletteCreamFrosted = Color(0x80F3DAA5);
@@ -94,7 +109,7 @@ abstract class Styles {
                 'error: ' + err,
                 style: TextStyle(
                   color: Styles.ArrivalPalletteWhite,
-                  fontFamily: 'BebasNeue',
+                  fontFamily: 'Helvetica',
                   fontSize: 42,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
@@ -112,6 +127,21 @@ abstract class Styles {
   static Widget ArrivalBlobBlack = SvgPicture.asset('assets/design/blobs/black.svg');
   static Widget ArrivalBlobYellow = SvgPicture.asset('assets/design/blobs/yellow.svg');
   static Widget ArrivalBlobBlue = SvgPicture.asset('assets/design/blobs/blue.svg');
+
+  static Image ArrivalBucketLoading = Image.asset('assets/loading/Bucket-1s-200px.gif');
+
+  static Image ArrivalPaintDropRed = Image.asset('assets/icon/paint/red.png');
+  static Image ArrivalPaintDropBlue = Image.asset('assets/icon/paint/blue.png');
+  static Image ArrivalPaintDropYellow = Image.asset('assets/icon/paint/yellow.png');
+
+  static SvgPicture ArrivalPaintSplashRed(int i) => SvgPicture.asset('assets/icon/paint/splash/red${i}.svg');
+  static SvgPicture ArrivalPaintSplashBlue(int i) => SvgPicture.asset('assets/icon/paint/splash/blue${i}.svg');
+  static SvgPicture ArrivalPaintSplashYellow(int i) => SvgPicture.asset('assets/icon/paint/splash/yellow${i}.svg');
+  static SvgPicture ArrivalPaintSprayRed(int i) => SvgPicture.asset('assets/icon/paint/spray/red${i}.png');
+  static SvgPicture ArrivalPaintSprayBlue(int i) => SvgPicture.asset('assets/icon/paint/spray/blue${i}.png');
+  static SvgPicture ArrivalPaintSprayYellow(int i) => SvgPicture.asset('assets/icon/paint/spray/yellow${i}.png');
+
+  static Image ArrivalPaintSplashLogo = Image.asset('assets/icon/paint/splash/logo.png');
 
 
     /** Article Styling
@@ -234,20 +264,20 @@ abstract class Styles {
       );
   static TextStyle headlineText = TextStyle(
         color: Styles.ArrivalPalletteBlack,
-        fontFamily: 'UraeNium',
+        fontFamily: 'Helvetica',
         fontSize: 32,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
       );
   static TextStyle articleCardTitleText = TextStyle(
         color: Styles.ArrivalPalletteBlack,
-        fontFamily: 'UraeNium',
+        fontFamily: 'Helvetica',
         fontSize: 28,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
       );
   static TextStyle articleCardTitleAuthor = TextStyle(
-        color: Styles.ArrivalPalletteBlue,
+        color: Styles.ArrivalPalletteRed,
         fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
@@ -274,7 +304,7 @@ abstract class Styles {
 
   static const minorText = TextStyle(
     color: Color.fromRGBO(128, 128, 128, 1),
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 32,
   );
 
@@ -304,7 +334,7 @@ abstract class Styles {
   static TextStyle headlineDescription(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
@@ -319,7 +349,7 @@ abstract class Styles {
       );
   static TextStyle headlineDescriptionTL = TextStyle(
         color: Styles.ArrivalPalletteBlack,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
@@ -350,7 +380,7 @@ abstract class Styles {
 
   static const cardDescriptionText = TextStyle(
     color: Styles.ArrivalPalletteBlack,
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 16,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.normal,
@@ -392,7 +422,7 @@ abstract class Styles {
   static TextStyle detailsDescriptionText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
@@ -400,7 +430,7 @@ abstract class Styles {
 
   static const detailsBoldDescriptionText = TextStyle(
     color: Styles.ArrivalPalletteBlack,
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 16,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
@@ -408,14 +438,14 @@ abstract class Styles {
 
   static const detailsAddressText = TextStyle(
     color: Color.fromRGBO(127, 127, 127, 0.9),
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 16,
     fontStyle: FontStyle.italic,
     fontWeight: FontWeight.bold,
   );
   static const detailsLinkText = TextStyle(
     color: Styles.mainColor,
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 16,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
@@ -423,7 +453,7 @@ abstract class Styles {
   );
   static const detailsBigLinkText = TextStyle(
     color: Styles.mainColor,
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 24,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
@@ -432,7 +462,7 @@ abstract class Styles {
 
   static const detailsServingHeaderText = TextStyle(
     color: Color.fromRGBO(176, 176, 176, 1),
-    fontFamily: 'BebasNeue',
+    fontFamily: 'Helvetica',
     fontSize: 16,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
@@ -441,7 +471,7 @@ abstract class Styles {
   static TextStyle detailsServingLabelText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.bold,
@@ -450,7 +480,7 @@ abstract class Styles {
   static TextStyle detailsServingValueText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
@@ -459,7 +489,7 @@ abstract class Styles {
   static TextStyle detailsServingNoteText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.italic,
         fontWeight: FontWeight.normal,
@@ -477,7 +507,7 @@ abstract class Styles {
   static TextStyle triviaFinishedText(CupertinoThemeData themeData) =>
       TextStyle(
         color: themeData.textTheme.textStyle.color,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 16,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
@@ -510,7 +540,7 @@ abstract class Styles {
 
   static TextStyle searchText(CupertinoThemeData themeData) => TextStyle(
         color: Styles.ArrivalPalletteBlue,
-        fontFamily: 'BebasNeue',
+        fontFamily: 'Helvetica',
         fontSize: 24,
         fontStyle: FontStyle.normal,
         fontWeight: FontWeight.normal,
@@ -676,6 +706,7 @@ abstract class Styles {
   static const share = CupertinoIcons.location_fill;// const IconData(0xf473,
   //         fontFamily: CupertinoIcons.iconFont,
   //         fontPackage: CupertinoIcons.iconFontPackage);
+  static const messagesIcon = Icon(CupertinoIcons.bubble_left_bubble_right);
 
   static const servingInfoBorderColor = Color(0xffb0b0b0);
 

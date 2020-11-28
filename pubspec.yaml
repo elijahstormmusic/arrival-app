@@ -60,8 +60,6 @@ flutter:
     - assets/arrival/titleasset.png
     - assets/images/slide_menu/city.jpg
     - assets/images/slide_menu/arts.jpg
-    - assets/images/logo.jpg
-    - assets/images/stft.jpg
     - assets/empty.jpg
     - assets/icon/default-profile-pic.png
     - assets/design/blobs/red.svg
@@ -69,12 +67,47 @@ flutter:
     - assets/design/blobs/black.svg
     - assets/design/blobs/yellow.svg
     - assets/design/blobs/cream.svg
+    - assets/icon/paint/red.png
+    - assets/icon/paint/blue.png
+    - assets/icon/paint/yellow.png
+
+    - assets/icon/paint/splash/red0.svg
+    - assets/icon/paint/splash/blue0.svg
+    - assets/icon/paint/splash/yellow0.svg
+    - assets/icon/paint/splash/red1.svg
+    - assets/icon/paint/splash/blue1.svg
+    - assets/icon/paint/splash/yellow1.svg
+    - assets/icon/paint/splash/red2.svg
+    - assets/icon/paint/splash/blue2.svg
+    - assets/icon/paint/splash/yellow2.svg
+    - assets/icon/paint/splash/red3.svg
+    - assets/icon/paint/splash/blue3.svg
+    - assets/icon/paint/splash/yellow3.svg
+    - assets/icon/paint/splash/red4.svg
+    - assets/icon/paint/splash/blue4.svg
+    - assets/icon/paint/splash/yellow4.svg
+    - assets/icon/paint/splash/logo.svg
+    - assets/icon/paint/splash/logo.png
+    # - assets/icon/paint/splash/logo1.svg
+    # - assets/icon/paint/splash/logo2.svg
+    # - assets/icon/paint/splash/logo3.svg
+    # - assets/icon/paint/splash/logo4.svg
+    - assets/icon/paint/spray/red0.png
+    - assets/icon/paint/spray/blue0.png
+    - assets/icon/paint/spray/yellow0.png
+    - assets/icon/paint/spray/red1.png
+    - assets/icon/paint/spray/blue1.png
+    - assets/icon/paint/spray/yellow1.png
+    - assets/icon/paint/spray/red2.png
+    - assets/icon/paint/spray/blue2.png
+    - assets/icon/paint/spray/yellow2.png
+
+    - assets/icon/driving_pin.png
+    - assets/icon/destination_map_marker.png
     - assets/loading/Bucket-1s-200px.svg
     - assets/loading/Bucket-1s-200px.gif
     - assets/loading/Spinner-1s-201px.svg
     - assets/loading/Spinner-1s-201px.gif
-    - assets/icon/driving_pin.png
-    - assets/icon/destination_map_marker.png
 
   fonts:
     - family: NotoSans

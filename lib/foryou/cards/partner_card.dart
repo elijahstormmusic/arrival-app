@@ -100,9 +100,9 @@ class RowPartner extends RowCard {
         child: FutureBuilder<Set<SourceIndustry>>(
           future: prefs.preferredIndustries,
           builder: (context, snapshot) {
-            final data = snapshot.data ?? <Industry>{};
+            final data = snapshot.data ?? <SourceIndustry>{};
             return PartnerCard(biz, isNear, data.contains(biz.industry));
           }),
-        );
-      }
+      );
+    }
 }

@@ -9,8 +9,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../widgets/profile_stats_card.dart';
+import '../widgets/notifications_card.dart';
 import '../widgets/slide_menu.dart';
-import '../widgets/blobs.dart';
 import '../widgets/cards.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
@@ -58,7 +58,7 @@ class _ListState extends State<ForYouPage> {
   ScrollController _scrollController;
   RefreshController _refreshController;
   RowCard _loadingCard;
-  bool showUploadButton = true, _scrolling = false;
+  bool showUploadButton = true;
   bool _allowRequest = true, _requestFailed = false;
   final REQUEST_AMOUNT = 10;
   bool kill_reflow = false;
@@ -322,18 +322,19 @@ class _ListState extends State<ForYouPage> {
     }
   }
   void _onEndScroll(ScrollMetrics metrics) {
-    // setState(() => _scrolling = false);
-    // _scrollController.saveScrollOffset();
   }
   void _onStartScroll(ScrollMetrics metrics) {
-    // setState(() => _scrolling = true);
   }
   void scrollToTop() {
-    _scrollController.animateTo(
-      0.0,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 300),
-    );
+    try {
+      _scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
+    catch (e) {
+    }
   }
   void refresh_state() => setState(() => 0);
 
@@ -345,77 +346,80 @@ class _ListState extends State<ForYouPage> {
   }
 
   Widget _buildForyouList(BuildContext context, var prefs) {
-    return SmartRefresher(
-      enablePullDown: false,
-      enablePullUp: true,
-      header: WaterDropHeader(),
-      footer: CustomFooter(
-        builder: (BuildContext context, LoadStatus mode){
-          Widget body;
-          if (mode==LoadStatus.idle){
-            body = Container();
-          }
-          else if (mode==LoadStatus.loading){
-            body = CupertinoActivityIndicator();
-          }
-          else if (mode == LoadStatus.failed){
-            openSnackBar({
-              'text': 'Network Error'
-            });
-            body = Container();
-          }
-          else if (mode == LoadStatus.canLoading){
-            body = Container();
-          }
-          else {
-            body = Container();
-          }
-          return Container(
-            height: 55.0,
-            child: Center(child: body),
-          );
-        },
-      ),
-      controller: _refreshController,
-      onRefresh: _refresh,
-      onLoading: _loadMore,
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (scrollNotification) {
-          if (scrollNotification is ScrollStartNotification) {
-            _onStartScroll(scrollNotification.metrics);
-          } else if (scrollNotification is ScrollEndNotification) {
-            _onEndScroll(scrollNotification.metrics);
-          }
-        },
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: ArrivalData.foryou.length + 3,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Stack(
-                children: <Widget>[
-
-                  // Container(height: 400),
-                  // Image.asset('assets/test/shane_intro.gif'),
-
-                  Blob_Background(height: 305.0),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 24, 40, 16),
-                    child: UserProfilePlacecard(),
-                  ),
-                ],
-              );
-            } else if (index == 1) {
-              return _generateUploadingMediaProgress(prefs);
-            } else if (index - 2 < ArrivalData.foryou.length) {
-              return ArrivalData.foryou[index - 2].generate(prefs);
-            } else {
-              if (_forceFailCurrentState) {
-                return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
-              }
-              return _loadingCard.generate(prefs);
+    return Container(
+      color: Styles.transparentColor,
+      child: SmartRefresher(
+        enablePullDown: false,
+        enablePullUp: true,
+        header: WaterDropHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context, LoadStatus mode){
+            Widget body;
+            if (mode==LoadStatus.idle){
+              body = Container();
+            }
+            else if (mode==LoadStatus.loading){
+              body = CupertinoActivityIndicator();
+            }
+            else if (mode == LoadStatus.failed){
+              openSnackBar({
+                'text': 'Network Error'
+              });
+              body = Container();
+            }
+            else if (mode == LoadStatus.canLoading){
+              body = Container();
+            }
+            else {
+              body = Container();
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _refresh,
+        onLoading: _loadMore,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            if (scrollNotification is ScrollStartNotification) {
+              _onStartScroll(scrollNotification.metrics);
+            } else if (scrollNotification is ScrollEndNotification) {
+              _onEndScroll(scrollNotification.metrics);
             }
           },
+          child: ListView.builder(
+            controller: _scrollController,
+            itemCount: ArrivalData.foryou.length + 3,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Container(
+                  height: 195.0,
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      NotificationsCard(prefs),
+
+                      UserProfilePlacecard(),
+                    ],
+                  ),
+                );
+              } else if (index == 1) {
+                return _generateUploadingMediaProgress(prefs);
+              } else if (index - 2 < ArrivalData.foryou.length) {
+                return ArrivalData.foryou[index - 2].generate(prefs);
+              } else {
+                if (_forceFailCurrentState) {
+                  return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
+                }
+                return _loadingCard.generate(prefs);
+              }
+            },
+          ),
         ),
       ),
     );
@@ -464,24 +468,15 @@ class _ListState extends State<ForYouPage> {
           drawer: SlideMenu(),
           floatingActionButton: Visibility(
             visible: showUploadButton,
-            child: AnimatedContainer(
-              duration: Duration(seconds: 1),
-              decoration: BoxDecoration(
-                // color: _scrolling
-                //   ? Styles.ArrivalPalletteBlueTransparent
-                //   : Styles.ArrivalPalletteBlue,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: FloatingActionButton(
-                onPressed: () => _gotoUpload(context),
-                tooltip: 'Upload Content',
-                child: Icon(Icons.cloud_upload),
-                backgroundColor: Styles.ArrivalPalletteBlue,
-              ),
+            child: FloatingActionButton(
+              onPressed: () => _gotoUpload(context),
+              tooltip: 'Upload Content',
+              child: Icon(Icons.cloud_upload),
+              backgroundColor: Styles.ArrivalPalletteBlue,
             ),
           ),
           resizeToAvoidBottomPadding: false,
-          backgroundColor: Styles.ArrivalPalletteWhite,
+          backgroundColor: Styles.transparentColor,
           body: SafeArea(
             bottom: false,
             child: Stack(
@@ -495,4 +490,6 @@ class _ListState extends State<ForYouPage> {
       },
     );
   }
+
+  static double inital_fade = 0;
 }

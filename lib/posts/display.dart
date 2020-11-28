@@ -504,6 +504,7 @@ class _PostDisState extends State<PostDisplay> {
     }
     else _postDisplay = Styles.ArrivalErrorPage('Problem loading post: AP300');
 
+    var resizedHeight = MediaQuery.of(context).size.width / widget.post.width * widget.post.height;
     var postContents = [
       _profileDisplay(
         (widget.post.user==null)
@@ -511,7 +512,8 @@ class _PostDisState extends State<PostDisplay> {
           : widget.post.user
       ),
       Container(
-        height: widget.post.height,
+        height: resizedHeight,
+        width: MediaQuery.of(context).size.width,
         child: GestureDetector(
           onDoubleTap: _likePost,
           child: _postDisplay,
@@ -525,11 +527,23 @@ class _PostDisState extends State<PostDisplay> {
     ];
 
     return widget.scrollable ? Scaffold(
-      body: ListView(
+      body: PhysicalModel(
+        elevation: 5,
+        shape: BoxShape.rectangle,
+        shadowColor: Styles.ArrivalPalletteBlack,
+        color: Styles.ArrivalPalletteWhite,
+        child: ListView(
+          children: postContents,
+        ),
+      ),
+    ) : PhysicalModel(
+      elevation: 5,
+      shape: BoxShape.rectangle,
+      shadowColor: Styles.ArrivalPalletteBlack,
+      color: Styles.ArrivalPalletteWhite,
+      child: Column(
         children: postContents,
       ),
-    ) : Column(
-      children: postContents,
     );
   }
 }

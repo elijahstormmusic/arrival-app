@@ -106,7 +106,6 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
   final PolylineId polylineId = PolylineId('destination_polyline');
   LatLng _destination;
   void relocate(LatLng myLocation) async {
-    if (_destination==null) return;
 
     final Marker marker = Marker(
       markerId: _myLocationMarkerId,
@@ -114,6 +113,11 @@ class PartnerMarkersMapState extends State<PartnerMarkersMap> {
       icon: myLocationIcon,
       infoWindow: InfoWindow(title: 'You are on route'),
     );
+
+    if (_destination==null) {
+      setState(() => markers[_myLocationMarkerId] = marker);
+      return;
+    }
 
     List<LatLng> polylineCoordinates = [];
     List<PointLatLng> result = await polylinePoints

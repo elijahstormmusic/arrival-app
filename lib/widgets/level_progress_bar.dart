@@ -65,7 +65,7 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
   void initState() {
     super.initState();
     controller =
-        AnimationController(duration: Duration(seconds: 2 * widget.iterations), vsync: this);
+        AnimationController(duration: Duration(seconds: widget.iterations), vsync: this);
     curve = CurvedAnimation(parent: controller, curve: Curves.easeOut);
     animation = Tween<double>(begin: 0, end: widget.maxSize * widget.progress).animate(curve);
     controller.forward();
@@ -78,11 +78,13 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 2, 2),
-          child: Text(
+    return Container(
+      width: widget.maxSize,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
             widget.level.toString(),
             style: TextStyle(
               fontFamily: 'Helvetica Neue',
@@ -92,17 +94,15 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
             ),
             textAlign: TextAlign.center,
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-          child: Stack(
+
+          Stack(
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
                   color: Styles.ArrivalPalletteWhite,
                   border: Border.all(width: 1.0, color: Styles.ArrivalPalletteBlack),
                 ),
-                width: widget.maxSize,
+                width: widget.maxSize - 30.0,
                 height: 9.0,
               ),
               _GrowTransition(
@@ -113,7 +113,7 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
                   ),
                 ),
                 animation: animation,
-                size: widget.maxSize,
+                size: widget.maxSize - 30.0,
                 onCycle: () {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     widget.onCycle();
@@ -123,10 +123,8 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
               ),
             ],
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 2, 2),
-          child: Text(
+
+          Text(
             (widget.level+1).toString(),
             style: TextStyle(
               fontFamily: 'Helvetica Neue',
@@ -136,8 +134,8 @@ class _LevelProgressState extends State<LevelProgress> with SingleTickerProvider
             ),
             textAlign: TextAlign.center,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

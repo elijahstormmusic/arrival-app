@@ -31,6 +31,7 @@ class Sale {
     @required this.cryptlink,
     @required this.name,
     @required this.info,
+    @required this.pic,
     @required this.partner,
   }) {
     ArrivalData.innocentAdd(partner.sales, this);
@@ -38,7 +39,7 @@ class Sale {
 
   NetworkImage card_image() {
     if (pic==null) return NetworkImage(Sale.default_img);
-    return NetworkImage(Sale.default_img);
+    return NetworkImage(Sale.source + pic);
   }
   Widget image() {
     if (pic==null) return Image.asset('assets/loading/Bucket-1s-200px.gif');
@@ -54,6 +55,7 @@ class Sale {
       cryptlink: data['link'],
       name: data['name'],
       info: data['info'],
+      pic: data['cloud'],
       partner: Partner.link(data['partner']),
     );
   }

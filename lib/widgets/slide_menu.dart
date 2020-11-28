@@ -5,13 +5,17 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
+
 import '../screens/settings.dart';
+import '../screens/home.dart';
 import '../foryou/foryou.dart';
 import '../styles.dart';
 import '../users/page.dart';
 import '../users/data.dart';
 import '../login/login.dart';
 import '../arrival_team/contact.dart';
+import '../arrival_team/mission.dart';
 import '../data/link.dart';
 
 class SlideMenu extends StatefulWidget {
@@ -79,10 +83,13 @@ class _SlideState extends State<SlideMenu> {
                       ))),
             ),
             ListTile(
-              leading: Icon(Icons.input),
+              leading: Icon(Icons.home),
               title: Text('Welcome'),
               onTap: () {
-                ForYouPage.scrollToTop();
+                HomeScreen.gotoForyou();
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  ForYouPage.scrollToTop();
+                });
                 Navigator.pop(context);
               },
             ),
@@ -121,6 +128,19 @@ class _SlideState extends State<SlideMenu> {
               onTap: () => {
                 Arrival.navigator.currentState.push(MaterialPageRoute(
                   builder: (context) => ContactUs(),
+                  fullscreenDialog: true,
+                ))
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.bolt),
+              title: Text(
+                'Our Mission',
+                style: TextStyle(color: Styles.ArrivalPalletteBlack),
+              ),
+              onTap: () => {
+                Arrival.navigator.currentState.push(MaterialPageRoute(
+                  builder: (context) => OurMission(),
                   fullscreenDialog: true,
                 ))
               },

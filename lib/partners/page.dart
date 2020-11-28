@@ -12,6 +12,7 @@ import '../foryou/cards/sale_card.dart';
 import '../data/preferences.dart';
 import '../partners/partner.dart';
 import '../data/link.dart';
+import '../data/socket.dart';
 import '../data/arrival.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
@@ -21,8 +22,9 @@ import '../maps/maps.dart';
 
 class SellerView extends StatelessWidget {
   final biz;
+  int _alreadyRequested = 0;
 
-  const SellerView(this.biz);
+  SellerView(this.biz);
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +32,21 @@ class SellerView extends StatelessWidget {
     final themeData = CupertinoTheme.of(context);
 
     if (biz.sales.length==0) {
+      socket.emit('partners request sales', {
+        'link': biz.cryptlink,
+        'amount': 10,
+        'skip': _alreadyRequested,
+      });
+
       return Padding(
         padding: EdgeInsets.all(64),
         child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: FrostyBackground(
-            color: Styles.frostedBackground,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'There are no sales for this Partner at the moment.',
-                style: Styles.cardTitleText,
-              ),
-            ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Container(
+            height: 100,
+            child: Image.asset('assets/loading/Bucket-1s-200px.gif'),
           ),
         ),
       );

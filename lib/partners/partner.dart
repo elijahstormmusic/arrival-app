@@ -11,6 +11,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 
+import '../styles.dart';
+
 import 'page.dart';
 import 'sale.dart';
 
@@ -59,6 +61,7 @@ class Industry {
   final String name;
   final bool essential;
   final SourceIndustry type;
+  Color color;
   Map<String, Partner> companyList;  // a list of all the Partner classes
                                       // contained -> all the ones that have
                                       // the industy enum index link
@@ -67,6 +70,7 @@ class Industry {
     @required this.name,
     @required this.type,
     @required this.essential,
+    this.color = Styles.ArrivalPalletteRedDarken,
   });
 }
 Industry blankIndustry = Industry(
@@ -86,11 +90,13 @@ class LocalIndustries {
       name: 'Fast Food',
       type: SourceIndustry.fastfood,
       essential: true,
+      color: Styles.ArrivalPalletteBlueDarken,
     ),
     Industry(
       name: 'Coffee',
       type: SourceIndustry.coffee,
       essential: true,
+      color: Styles.ArrivalPalletteYellowDarken,
     ),
     Industry(
       name: 'Bar',
@@ -101,11 +107,13 @@ class LocalIndustries {
       name: 'Music Studio',
       type: SourceIndustry.musicstu,
       essential: false,
+      color: Styles.ArrivalPalletteBlueDarken,
     ),
     Industry(
       name: 'Music Gear',
       type: SourceIndustry.musicshop,
       essential: false,
+      color: Styles.ArrivalPalletteYellowDarken,
     ),
     Industry(
       name: 'Photo Studio',
@@ -116,11 +124,13 @@ class LocalIndustries {
       name: 'Hair Salon',
       type: SourceIndustry.hair,
       essential: false,
+      color: Styles.ArrivalPalletteBlueDarken,
     ),
     Industry(
       name: 'Clothing',
       type: SourceIndustry.clothing,
       essential: true,
+      color: Styles.ArrivalPalletteYellowDarken,
     ),
     Industry(
       name: 'Shoes',

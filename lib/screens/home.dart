@@ -16,6 +16,7 @@ import '../foryou/feeds/post_feed.dart';
 import '../login/login.dart';
 import '../maps/maps.dart';
 import '../screens/settings.dart';
+import '../widgets/blobs.dart';
 import '../posts/upload.dart';
 import '../styles.dart';
 
@@ -23,10 +24,12 @@ import '../styles.dart';
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
   static _MainAppStates _s;
+  static bool first_load = true;
 
   static void gotoForyou() => _s.gotoForyou();
   static void forceLogin() => _s.forceLogin();
   static void toggleVerion() => _s.toggleVerion();
+  static void reflow() => _s.reflow();
 
   static void openSnackBar(Map<String, dynamic> input) => _s.openSnackBar(input);
 
@@ -123,6 +126,7 @@ class _MainAppStates extends State<HomeScreen> {
     }
     setState(() => _selectedIndex = index);
   }
+  void reflow() => setState(() => 0);
 
   Widget _loadingScreen(BuildContext context) {
     return SafeArea(
@@ -139,6 +143,7 @@ class _MainAppStates extends State<HomeScreen> {
   }
   Widget _decideInteriorBody() {
     var choice;
+
     switch (_selectedIndex) {
       case 0:
         choice = ArticleFeed();
@@ -159,7 +164,17 @@ class _MainAppStates extends State<HomeScreen> {
         choice = ForYouPage();
         break;
     }
-    return choice;
+
+    return Stack(
+      children: [
+        Blob_Loader_Animation(),
+        AnimatedOpacity(
+          duration: Duration(milliseconds: 500),
+          opacity: HomeScreen.first_load ? 0.0 : 1.0,
+          child: choice,
+        ),
+      ],
+    );
   }
 
   Widget _buildBottomNavBarVTwo(BuildContext context) {
@@ -169,11 +184,11 @@ class _MainAppStates extends State<HomeScreen> {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.subject),
-          title: Text('articles'),
+          title: Text('mag'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.supervisor_account),
-          title: Text('market'),
+          title: Text('social'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -181,7 +196,7 @@ class _MainAppStates extends State<HomeScreen> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.business),
-          title: Text('sales'),
+          title: Text('market'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.map),
@@ -262,7 +277,7 @@ class _MainAppStates extends State<HomeScreen> {
     }
     else if (_pulltoforyou) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
+        _selectedTab(2);
       });
       _pulltoforyou = false;
     }

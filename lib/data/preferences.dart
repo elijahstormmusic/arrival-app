@@ -31,38 +31,102 @@ class BookmarkHolder {
   }
 }
 
-/// A model class that mirrors the options in [SettingsScreen] and stores data
-/// in shared preferences.
+class NotificationHolder {
+  final String _label;
+  final int _value;
+  final dynamic _icon;
+
+  String get label {
+    return _label;
+  }
+  int get value {
+    return _value;
+  }
+  dynamic get icon {
+    return _icon;
+  }
+
+  NotificationHolder(this._label, this._value, this._icon);
+
+  String toString() {
+    return '${_label}~${_value}~${_icon}';
+  }
+
+  static NotificationHolder fromString(String input) {
+    var array = input.split(':');
+    String label = array[0];
+    int value = int.parse(array[1]); // 'var(U+${codePoint.toRadixString(16).toUpperCase().padLeft(5, '0')})';
+    var icon = int.parse(array[2].substring(array[2].indexOf('(') + 1, array[2].indexOf(')')));
+
+    print(array[2].substring(array[2].indexOf('(') + 1, array[2].indexOf(')')));
+
+
+    return NotificationHolder(label, value, icon);
+  }
+
+  static NotificationHolder fromJson(var data) {
+    return NotificationHolder(data['label'], data['value'], data['icon']);
+  }
+}
+
 class Preferences extends Model {
-  // Keys to use with shared preferences.
   static const _milesRadiusKey = 'mileRadius';
   static const _preferredIndustriesKey = 'preferredIndustries';
+  static const _notificationHistoryKey = 'notificationHistory';
   static const _bookmarksKey = 'bookmarks';
 
-  // Indicates whether a call to [_loadFromSharedPrefs] is in progress;
+
   Future<void> _loading;
 
   int _nearMeAreaRadius = 30;
 
   final Set<SourceIndustry> _preferredIndustries = <SourceIndustry>{};
-
+  final Set<NotificationHolder> _notificationHistory = <NotificationHolder>{};
   final Set<BookmarkHolder> _bookmarks = <BookmarkHolder>{};
+
 
   Future<int> get nearMeAreaRadius async {
     await _loading;
     return _nearMeAreaRadius;
   }
+  Future<void> setNearMeAreaRadius(int miles) async {
+    _nearMeAreaRadius = miles;
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+
 
   Future<Set<SourceIndustry>> get preferredIndustries async {
     await _loading;
     return Set.from(_preferredIndustries);
   }
+  Future<void> addPreferredIndustry(SourceIndustry industry) async {
+    _preferredIndustries.add(industry);
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+  Future<void> removePreferredIndustry(SourceIndustry industry) async {
+    _preferredIndustries.remove(industry);
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+
+
+  Future<Set<NotificationHolder> > get notificationHistory async {
+    await _loading;
+    return Set.from(_preferredIndustries);
+  }
+  Future<void> addNotificationHistory(var data) async {
+    _notificationHistory.add(NotificationHolder.fromJson(data));
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+
 
   Future<bool> isBookmarked(int type, String link) async {
     await _loading;
     return _bookmarks.where((x) => x.equals(type, link)).length > 0;
   }
-
   void toggleBookmarked(int type, String link) async {
     await _loading;
     if (await isBookmarked(type, link)) {
@@ -72,41 +136,21 @@ class Preferences extends Model {
       addBookmark(type, link);
     }
   }
-
-  Future<void> addPreferredIndustry(SourceIndustry industry) async {
-    _preferredIndustries.add(industry);
-    await _saveToSharedPrefs();
-    notifyListeners();
-  }
-
   Future<void> addBookmark(int type, String link) async {
     _bookmarks.add(BookmarkHolder(type, link));
     await _saveToSharedPrefs();
     notifyListeners();
   }
-
-  Future<void> removePreferredIndustry(SourceIndustry industry) async {
-    _preferredIndustries.remove(industry);
-    await _saveToSharedPrefs();
-    notifyListeners();
-  }
-
   Future<void> removeBookmark(int type, String link) async {
     _bookmarks.removeWhere((x) => x.equals(type, link));
     await _saveToSharedPrefs();
     notifyListeners();
   }
 
-  Future<void> setNearMeAreaRadius(int miles) async {
-    _nearMeAreaRadius = miles;
-    await _saveToSharedPrefs();
-    notifyListeners();
-  }
 
   void load() {
     _loading = _loadFromSharedPrefs();
   }
-
   Future<void> _saveToSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_milesRadiusKey, _nearMeAreaRadius);
@@ -114,10 +158,12 @@ class Preferences extends Model {
     await prefs.setString(_preferredIndustriesKey,
         _preferredIndustries.map((c) => c.index.toString()).join(','));
 
+    await prefs.setString(_notificationHistoryKey,
+        _notificationHistory.map((c) => c.toString()).join(','));
+
     await prefs.setString(_bookmarksKey,
         _bookmarks.map((c) => c.toString()).join(','));
   }
-
   Future<void> _loadFromSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     _nearMeAreaRadius = prefs.getInt(_milesRadiusKey) ?? 30;
@@ -131,6 +177,16 @@ class Preferences extends Model {
         if (SourceIndustry.values[index] != null) {
           _preferredIndustries.add(SourceIndustry.values[index]);
         }
+      }
+    }
+
+    _notificationHistory.clear();
+    final history = prefs.getString(_notificationHistoryKey);
+
+    if (history != null && history.isNotEmpty) {
+      for (final instance in history.split(',')) {
+        if (instance.indexOf(':')==-1) continue;
+        _notificationHistory.add(NotificationHolder.fromString(instance));
       }
     }
 

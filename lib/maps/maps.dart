@@ -270,6 +270,7 @@ class _MapState extends State<Maps> {
         children: <Widget>[
           Container(
             height: _bottomCardOutValue + 10,
+            color: Styles.ArrivalPalletteCream,
             child: _localMap,
           ),
           GestureDetector(
@@ -302,9 +303,6 @@ class _MapState extends State<Maps> {
                 borderRadius: BorderRadius.circular(18),
               ),
               margin: EdgeInsets.only(top: _bottomCardVerticalPosition),
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
               child: ListView(
                 controller: _scrollController,
                 physics: _bottomCardVerticalPosition==_bottomCardTopValue
@@ -337,6 +335,7 @@ class _MapState extends State<Maps> {
                       ),
                     ),
                   ),
+                  // Divider(height: 1.0, thickness: 1.0),
                   Container(
                     margin: EdgeInsets.only(top: 30, left: 16, bottom: 6),
                     child: Text(
@@ -349,16 +348,8 @@ class _MapState extends State<Maps> {
                   ),
                   Container(
                     height: 400,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Styles.ArrivalPalletteGrey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(6),
-                      color: Styles.ArrivalPalletteCream,
-                    ),
                     padding: EdgeInsets.symmetric(
-                      horizontal: 10,
+                      horizontal: 26,
                       vertical: 8,
                     ),
                     child: ListView.builder(
@@ -369,6 +360,24 @@ class _MapState extends State<Maps> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 8),
+                  Divider(height: 1.0, thickness: 2.0),
+                  SizedBox(height: 8),
+
+                  Container(
+                    margin: EdgeInsets.only(top: 30, left: 16, bottom: 6),
+                    child: Text(
+                      'extra stuff can go here...',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  Container(),  // next things
+                  SizedBox(height: 8),
+                  Divider(height: 1.0, thickness: 2.0),
+                  SizedBox(height: 8),
                 ],
               ),
             ),

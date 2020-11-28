@@ -30,6 +30,7 @@ class Post {
   final bool full;
   final int type;
   final double height;
+  final double width;
 
   Profile get user {
     if (userlink=='') {
@@ -53,6 +54,7 @@ class Post {
     @required this.userlink,
     @required this.type,
     this.height = 400,
+    this.width = null,
     this.comments = const <Map<String, dynamic>>[],
     this.full = true,
   });
@@ -62,6 +64,7 @@ class Post {
     @required this.userlink,
     @required this.type,
     this.height = 400,
+    this.width = null,
     this.caption = 'loading...',
     this.likes = 0,
     this.views = 0,
@@ -126,6 +129,7 @@ class Post {
       userlink: input['user'],
       type: input['post_type'],
       height: input['height'].toDouble(),
+      width: input['width'].toDouble(),
       comments: _comment_data,
     );
   }
