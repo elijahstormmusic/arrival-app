@@ -29,44 +29,44 @@ abstract class Styles {
 
   static const ArrivalPalletteRed = Color(0xffF15D5D);
   static const ArrivalPalletteCream = Color(0xffF9EDD3);
-  static const ArrivalPalletteWhite = Color(0xffF8F8F9);
+  static const ArrivalPalletteYellow = Color(0xffFFCF01);
+  static const ArrivalPalletteBlue = Color(0xff5AA6DC);
+  static const ArrivalPalletteGreen = Color(0xff09BC0F);
   static const ArrivalPalletteBlack = Color(0xff231F20);
+  static const ArrivalPalletteWhite = Color(0xffF8F8F9);
   static const ArrivalPalletteGrey = Color(0xffD9D5D3);
   static const ArrivalPalletteLightGrey = Color(0xffEEEEE9);
-  static const ArrivalPalletteBlue = Color(0xff5AA6DC);
-  static const ArrivalPalletteYellow = Color(0xffFFCF01);
-  static const ArrivalPalletteGreen = Color(0xff09EA11);
 
-  static const ArrivalPalletteRedDarken = Color(0xffF15D5D);
-  static const ArrivalPalletteCreamDarken = Color(0xffF9EDD3);
-  static const ArrivalPalletteWhiteDarken = Color(0xffF8F8F9);
-  static const ArrivalPalletteBlackDarken = Color(0xff231F20);
-  static const ArrivalPalletteGreyDarken = Color(0xffD9D5D3);
+  static const ArrivalPalletteRedDarken = Color(0xff860C0C);
+  static const ArrivalPalletteCreamDarken = Color(0xffB28118);
+  static const ArrivalPalletteYellowDarken = Color(0xff705C00);
+  static const ArrivalPalletteBlueDarken = Color(0xff184C71);
+  static const ArrivalPalletteGreenDarken = Color(0xff045407);
+  static const ArrivalPalletteBlackDarken = Color(0xff0F0E0E);
+  static const ArrivalPalletteWhiteDarken = Color(0xff646476);
+  static const ArrivalPalletteGreyDarken = Color(0xff655C58);
   static const ArrivalPalletteLightGreyDarken = Color(0xffEEEEE9);
-  static const ArrivalPalletteBlueDarken = Color(0xff5AA6DC);
-  static const ArrivalPalletteYellowDarken = Color(0xffFFCF01);
-  static const ArrivalPalletteGreenDarken = Color(0xff09EA11);
 
   static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
   static const _oldArrivalPalletteYellow = Color.fromRGBO(255, 196, 60, 1);
   static const _oldArrivalPalletteCream = Color.fromRGBO(250, 250, 250, 1);
 
   static const ArrivalPalletteRedTransparent = Color(0xccF15D5D);
-  static const ArrivalPalletteWhiteTransparent = Color(0xccF8F8F9);
   static const ArrivalPalletteCreamTransparent = Color(0xccF9EDD3);
-  static const ArrivalPalletteGreyTransparent = Color(0xccD9D5D3);
-  static const ArrivalPalletteLightGreyTransparent = Color(0x77EEEEE9);
-  static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
-  static const ArrivalPalletteBlueTransparent = Color(0x595AA6DC);
   static const ArrivalPalletteYellowTransparent = Color(0xccFFCF01);
+  static const ArrivalPalletteBlueTransparent = Color(0x595AA6DC);
+  static const ArrivalPalletteGreyTransparent = Color(0xccD9D5D3);
+  static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
+  static const ArrivalPalletteWhiteTransparent = Color(0xccF8F8F9);
+  static const ArrivalPalletteLightGreyTransparent = Color(0x77EEEEE9);
 
   static const ArrivalPalletteRedFrosted = Color(0x50F58E8E);
-  static const ArrivalPalletteWhiteFrosted = Color(0x80F9F4E9);
   static const ArrivalPalletteCreamFrosted = Color(0x80F3DAA5);
-  static const ArrivalPalletteGreyFrosted = Color(0x80E8E7E6);
-  static const ArrivalPalletteBlackFrosted = Color(0x80837979);
-  static const ArrivalPalletteBlueFrosted = Color(0x8078B6E2);
   static const ArrivalPalletteYellowFrosted = Color(0x99FFE985);
+  static const ArrivalPalletteBlueFrosted = Color(0x8078B6E2);
+  static const ArrivalPalletteBlackFrosted = Color(0x80837979);
+  static const ArrivalPalletteGreyFrosted = Color(0x80E8E7E6);
+  static const ArrivalPalletteWhiteFrosted = Color(0x80F9F4E9);
   static const ArrivalPalletteClearFrosted = Color(0x80F9EDD3);
 
   static Widget ArrivalAppbarTitle() {

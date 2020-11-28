@@ -8,6 +8,7 @@ import '../../articles/article.dart';
 import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
+import '../../styles.dart';
 
 class ArticleFavorites extends CasingFavoritesBox {
 
@@ -26,8 +27,8 @@ class ArticleFavorites extends CasingFavoritesBox {
   Map<String, dynamic> generateListData(int i) {
     return {
       'link': ArrivalData.articles[i].cryptlink,
-      'color': Colors.red,
-      'icon': 'https://res.cloudinary.com/arrival-kc/image/upload/v1599325166/sample.jpg',
+      'color': Styles.ArrivalPalletteRedDarken,
+      'icon': ArrivalData.articles[i].image_link(0),
       'name': ArrivalData.articles[i].author,
     };
   }

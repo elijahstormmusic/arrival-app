@@ -79,7 +79,7 @@ class _CasingBox extends State<CasingFavoritesBox> {
         child: Stack(
           children: [
             Container(
-              width: 80,
+              width: 100,
               height: 120,
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
@@ -95,9 +95,14 @@ class _CasingBox extends State<CasingFavoritesBox> {
             Positioned(
               top: 8,
               left: 8,
-              child: Text(
-                _capSize(_rowButtonListData[index]['name']),
-                style: _bookmarkLabel,
+              child: Container(
+                width: 84,
+                child: Flexible(
+                  child: Text(
+                    _capSize(_rowButtonListData[index]['name']),
+                    style: _bookmarkLabel,
+                  ),
+                ),
               ),
             ),
           ],
