@@ -8,9 +8,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:share/share.dart';
 
 import '../data/app_state.dart';
 import '../data/link.dart';
+import '../data/preferences.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 import '../users/page.dart';
@@ -42,15 +44,23 @@ class _PostDisState extends State<PostDisplay> {
   final ScrollController _scrollController = ScrollController();
   CommentAdder _commentAdder;
 
+  Preferences prefs;
+
   @override
   void initState() {
     super.initState();
+    prefs = ScopedModel.of<Preferences>(context);
     _commentAdder = CommentAdder(widget.post, this);
+    loader();
   }
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+  void loader() async {
+    bool answer = await prefs.isLikedContent(0, widget.post.cryptlink);
+    setState(() => _clientHasLikedPost = answer);
   }
 
   void redraw() {
@@ -130,8 +140,8 @@ class _PostDisState extends State<PostDisplay> {
       padding: EdgeInsets.fromLTRB(0, 0, 0, _padding),
       child: _buildComment({
         'username': widget.post.user==null
-        ? 'no user'
-        : widget.post.user.name,
+          ? 'no user'
+          : widget.post.user.name,
         'user': widget.post.user,
         'content': widget.post.caption,
       }),
@@ -177,9 +187,63 @@ class _PostDisState extends State<PostDisplay> {
     });
   }
 
+  bool _enactingPostInteraction = false;
   void _likePost() {
-    setState(() => _clientHasLikedPost = !_clientHasLikedPost);
+    if (_clientHasLikedPost) return;
+
+    if (this.mounted) setState(() => _clientHasLikedPost = true);
+
+    prefs.addLikedContent(0, widget.post.cryptlink);
+
+    socket.emit('posts liked content', {
+      'link': widget.post.cryptlink,
+      'user': UserData.client.cryptlink,
+    });
+
+    prefs.addNotificationHistory({
+      'icon': Styles.heart_full,
+      'label': 'Gave a heart',
+      'value': 1,
+      'type': 0,
+      'link': widget.post.cryptlink,
+    });
   }
+  void _unlikePost() {
+    if (!_clientHasLikedPost) return;
+
+    if (this.mounted) setState(() => _clientHasLikedPost = false);
+
+    prefs.removeLikedContent(0, widget.post.cryptlink);
+
+    socket.emit('posts liked content', {
+      'link': widget.post.cryptlink,
+      'user': UserData.client.cryptlink,
+      'unliked': true,
+    });
+
+    prefs.removeNotificationHistory(0, widget.post.cryptlink);
+  }
+  void _toggleLikePost() async {
+    setState(() => _clientHasLikedPost = !_clientHasLikedPost);
+
+    if (_enactingPostInteraction) return;
+
+    _enactingPostInteraction = true;
+
+    await Future.delayed(Duration(milliseconds: 1000));
+
+    if (_clientHasLikedPost) {
+      _clientHasLikedPost = false;
+      _likePost();
+    }
+    else {
+      _clientHasLikedPost = true;
+      _unlikePost();
+    }
+
+    _enactingPostInteraction = false;
+  }
+
   Widget _drawSupportingElements(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -199,7 +263,7 @@ class _PostDisState extends State<PostDisplay> {
                     : Styles.ArrivalPalletteBlack,
                   size: _buttonSize,
                 ),
-                onTap: _likePost,
+                onTap: _toggleLikePost,
               ),
             ),
             Expanded(
@@ -225,7 +289,15 @@ class _PostDisState extends State<PostDisplay> {
                   size: _buttonSize,
                   color: Styles.ArrivalPalletteRed,
                 ),
-                onTap: () => setState(() => _commentAdder.requestFocus()),
+                onTap: () {
+                  final RenderBox box = context.findRenderObject();
+                  Share.share(
+                    'https://arrival-app.herokuapp.com/p?${widget.post.cryptlink}',
+                    subject: 'See More on Arrival',
+                    sharePositionOrigin:
+                      box.localToGlobal(Offset.zero) & box.size,
+                  );
+                },
               ),
             ),
           ],

@@ -256,7 +256,13 @@ class _PartnerFeedState extends State<PartnerFeed> {
           itemCount: ArrivalData.partner_feed.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
-              return PartnerFavorites();
+              return Column(
+                children: [
+                  PartnerFavorites(),
+
+                  _filterOptions(),
+                ],
+              );
             } else if (index <= ArrivalData.partner_feed.length) {
               return ArrivalData.partner_feed[index-1].generate(prefs);
             } else {
@@ -266,6 +272,134 @@ class _PartnerFeedState extends State<PartnerFeed> {
               return _loadingCard.generate(prefs);
             }
           },
+        ),
+      ),
+    );
+  }
+
+
+
+  bool _optionsPickup = false, _optionsArrivalDiscounts = false,
+    _optionsAppointments = false;
+  int _optionsPriceRange = 1;
+  String _optionsPriceText = '\$\$';
+
+  Widget _simpleDialogItem({IconData icon, Color color, String text, VoidCallback onPressed}) {
+    return SimpleDialogOption(
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, size: 36.0, color: color),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16.0),
+            child: Text(text),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _filterOptions() {
+    const _padding = const EdgeInsets.symmetric(
+      horizontal: 6,
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 4,
+        vertical: 6,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            Container(
+              padding: _padding,
+              child: FilterChip(
+                label: Text('Pickup'),
+                selected: _optionsPickup,
+                onSelected: (bool value) {
+                  setState(() => _optionsPickup = value);
+                },
+              ),
+            ),
+            Container(
+              padding: _padding,
+              child: ActionChip(
+                label: Text(_optionsPriceText),
+                onPressed: () {
+                  Function(dynamic, int) _action = (context, input) {
+                    Navigator.of(context).pop();
+
+                    setState(() {
+                      _optionsPriceRange = input;
+
+                      const priceText = '\$';
+                      _optionsPriceText = priceText;
+
+                      for (int i=0;i<_optionsPriceRange;i++) {
+                        _optionsPriceText += priceText;
+                      }
+                    });
+                  };
+
+                  showDialog<void>(context: context, builder: (context) => SimpleDialog(
+                    title: Text('Choose Price Range'),
+                    children: [
+                      _simpleDialogItem(
+                        icon: Icons.attach_money,
+                        color: _optionsPriceRange == 0 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
+                        text: '\$',
+                        onPressed: () => _action(context, 0),
+                      ),
+                      _simpleDialogItem(
+                        icon: Icons.attach_money,
+                        color: _optionsPriceRange == 1 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
+                        text: '\$\$',
+                        onPressed: () => _action(context, 1),
+                      ),
+                      _simpleDialogItem(
+                        icon: Icons.attach_money,
+                        color: _optionsPriceRange == 2 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
+                        text: '\$\$\$',
+                        onPressed: () => _action(context, 2),
+                      ),
+                      _simpleDialogItem(
+                        icon: Icons.attach_money,
+                        color: _optionsPriceRange == 3 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
+                        text: '\$\$\$\$',
+                        onPressed: () => _action(context, 3),
+                      ),
+                    ],
+                  ));
+                },
+              ),
+            ),
+            Container(
+              padding: _padding,
+              child: InputChip(
+                avatar: Container(
+                  child: _optionsArrivalDiscounts ? null : Text('A'),
+                ),
+                label: Text('Arrival Discounts', style: TextStyle(fontWeight: FontWeight.bold)),
+                selected: _optionsArrivalDiscounts,
+                onSelected: (bool value) {
+                  setState(() => _optionsArrivalDiscounts = value);
+                },
+              ),
+            ),
+            Container(
+              padding: _padding,
+              child: FilterChip(
+                label: Text('Book Appointments'),
+                selected: _optionsAppointments,
+                onSelected: (bool value) {
+                  setState(() => _optionsAppointments = value);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -81,7 +81,7 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
                 top: 8,
               ),
               child: Text(
-                'Level Progress',
+                'Your Level',
                 style: TextStyle(
                   fontFamily: 'Helvetica Neue',
                   fontSize: 19,

@@ -303,9 +303,11 @@ class PaintDropGroup extends StatelessWidget {
 
     amount = Random().nextInt(3) + 3;
 
+    return; // remove to debug and test spray
+
     for (int i=0;i<amount;i++) {
       _drawables.add(PaintSpray(
-        delay: delay + Random().nextInt(200) + (50 * amount),
+        delay: delay + dropPaintSpeed + Random().nextInt(200) + (50 * amount),
         sprayImage: sprayImage(Random().nextInt(3)),
         xStart: xStart,
         yStart: yEnd,
@@ -370,7 +372,7 @@ class _PaintSpray extends State<PaintSpray> {
   final Widget sprayImage;
 
   double xChange, yChange;
-  final double size_difference = 100;
+  final double size_difference = 60;
   bool _splashed = false;
 
   @override
@@ -390,6 +392,7 @@ class _PaintSpray extends State<PaintSpray> {
   }
 
   void _runPaint() async {
+    if (!this.mounted) return;
     setState(() => _splashed = true);
   }
 
@@ -478,8 +481,10 @@ class _PaintDropState extends State<PaintDrop> {
   }
 
   void _runPaint() async {
+    if (!this.mounted) return;
     setState(() => _dropPaint = true);
     await Future.delayed(Duration(milliseconds: dropPaintSpeed));
+    if (!this.mounted) return;
     setState(() {
       _splashPaint = true;
     });

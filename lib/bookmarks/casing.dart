@@ -15,6 +15,7 @@ class CasingFavorites extends StatefulWidget {
   void open(Map<String, dynamic> data) {}
   Map<String, dynamic> generateListData(int index) => {};
   int listSize() => 0;
+  void explore() => {};
 
   @override
   State<CasingFavorites> createState() => _CasingCircle();
@@ -25,6 +26,7 @@ class CasingFavoritesBox extends StatefulWidget {
   void open(Map<String, dynamic> data) {}
   Map<String, dynamic> generateListData(int index) => {};
   int listSize() => 0;
+  void explore() => {};
 
   @override
   State<CasingFavoritesBox> createState() => _CasingBox();
@@ -67,6 +69,21 @@ class _CasingBox extends State<CasingFavoritesBox> {
                           );
   }
 
+  Widget _buildBookmarkedIcon(BuildContext context, bool hasBeenSeen, Widget display) {
+    return CircleAvatar(
+      radius: hasBeenSeen ? 32 : 35,
+      backgroundColor: hasBeenSeen ? Styles.ArrivalPalletteGrey : Styles.ArrivalPalletteRed,
+      child: CircleAvatar(
+        radius: 31,
+        backgroundColor: Styles.ArrivalPalletteCream,
+        child: CircleAvatar(
+          radius: 28,
+          backgroundColor: Styles.ArrivalPalletteBlack,
+          child: display,
+        ),
+      ),
+    );
+  }
   Widget _buildBookmark(BuildContext context, int index) {
     return Container(
       child: PressableCard(
@@ -97,11 +114,20 @@ class _CasingBox extends State<CasingFavoritesBox> {
               left: 8,
               child: Container(
                 width: 84,
-                child: Flexible(
-                  child: Text(
-                    _capSize(_rowButtonListData[index]['name']),
-                    style: _bookmarkLabel,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.star_border,
+                      color: Styles.ArrivalPalletteWhite,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      _capSize(_rowButtonListData[index]['name']),
+                      style: _bookmarkLabel,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -111,44 +137,47 @@ class _CasingBox extends State<CasingFavoritesBox> {
     );
   }
   Widget _buildSearchForMoreButton(BuildContext context) {
-    return Container();
-    //   padding: EdgeInsets.all(6),
-    //   width: 90,
-    //   child: Center(
-    //     child: Column(
-    //       children: [
-    //         PressableCircle(
-    //           onPressed: () {
-    //             print('add more');
-    //           },
-    //           downElevation: 1,
-    //           upElevation: 5,
-    //           radius: 35,
-    //           shadowColor: Styles.ArrivalPalletteBlack,
-    //           child: _buildBookmarkedIcon(
-    //             context,
-    //             false,
-    //             Icon(
-    //               Icons.add,
-    //               size: 25,
-    //               color: Styles.ArrivalPalletteWhite,
-    //             ),
-    //           ),
-    //         ),
-    //         SizedBox(height: 6),
-    //         GestureDetector(
-    //           onTap: () {
-    //
-    //           },
-    //           child: Text(
-    //             'explore',
-    //             style: _bookmarkLabel,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
+    return Container(
+      child: PressableCard(
+        onPressed: () {
+          widget.explore();
+        },
+        downElevation: 1,
+        upElevation: 5,
+        shadowColor: Styles.ArrivalPalletteBlack,
+        child: Stack(
+          children: [
+            Container(
+              width: 100,
+              height: 120,
+              color: Styles.ArrivalPalletteRed,
+            ),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                width: 84,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.add,
+                      color: Styles.ArrivalPalletteWhite,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'explore',
+                      style: _bookmarkLabel,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
   List<Widget> _generateFavorites(BuildContext context) {
     List<Widget> yourFavs = List<Widget>();
@@ -165,10 +194,7 @@ class _CasingBox extends State<CasingFavoritesBox> {
   Widget build(BuildContext context) {
     return Container(
       height: 120,
-      padding: EdgeInsets.symmetric(
-        horizontal: 0,
-        vertical: 6,
-      ),
+      margin: EdgeInsets.only(top: 6),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -279,7 +305,7 @@ class _CasingCircle extends State<CasingFavorites> {
           children: [
             PressableCircle(
               onPressed: () {
-                print('add more');
+                widget.explore();
               },
               downElevation: 1,
               upElevation: 5,
@@ -298,7 +324,7 @@ class _CasingCircle extends State<CasingFavorites> {
             SizedBox(height: 6),
             GestureDetector(
               onTap: () {
-
+                widget.explore();
               },
               child: Text(
                 'explore',

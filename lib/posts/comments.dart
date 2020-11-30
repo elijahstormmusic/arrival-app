@@ -5,12 +5,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../posts/post.dart';
 import '../users/profile.dart';
 import '../users/page.dart';
 import '../users/data.dart';
 import '../data/link.dart';
+import '../data/preferences.dart';
 import '../data/socket.dart';
 import '../styles.dart';
 import '../posts/post.dart';
@@ -315,6 +317,7 @@ class CommentAdder extends StatefulWidget {
 class _CommentAdderState extends State<CommentAdder> {
   final _textInputController = TextEditingController();
   final _focusNode = FocusNode();
+  BuildContext recentContext;
 
   @override
   void initState() {
@@ -361,6 +364,12 @@ class _CommentAdderState extends State<CommentAdder> {
     _focusNode.unfocus();
     setState(() => _textInputController.text = '');
     widget.source.redraw();
+
+    UserData.client.earnPoints(15);
+    await ScopedModel.of<Preferences>(recentContext)..addNotificationHistory({
+      'label': 'Made a comment',
+      'value': 15,
+    });
 
     await Future.delayed(const Duration(seconds: 5));
     _allowComment = true;
@@ -428,6 +437,8 @@ class _CommentAdderState extends State<CommentAdder> {
 
   @override
   Widget build(BuildContext context) {
+    recentContext = context;
+
     return _buildCommentAdder();
   }
 }

@@ -402,7 +402,7 @@ class _ListState extends State<ForYouPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      NotificationsCard(prefs),
+                      NotificationsCard(),
 
                       UserProfilePlacecard(),
                     ],

@@ -3,12 +3,19 @@
 // for use only in ARRIVAL Project
 
 import 'package:flutter/material.dart';
+import '../explore.dart';
 import '../../users/page.dart';
 import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
 
 class PostFavorites extends CasingFavorites {
+  void explore() {
+    Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => Explore(type: 'posts'),
+      fullscreenDialog: true,
+    ));
+  }
 
   @override
   void open(Map<String, dynamic> data) {

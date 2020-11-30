@@ -167,7 +167,7 @@ class _SearchState extends State<Search> {
     _allowRequest = false;
     socket.emit('search content', {
       'query': input,
-      'limit': 3, // quick search
+      'limit': 10,
     });
     _lastQuery = input;
     _checkForFailure();

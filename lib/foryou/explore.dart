@@ -21,48 +21,43 @@ import '../users/profile.dart';
 import 'search_results/search_results.dart';
 import 'foryou.dart';
 
-class Search extends StatefulWidget {
-  _SearchState currentState;
+class Explore extends StatefulWidget {
+  _ExploreState currentState;
+  final String type;
 
-  void toggleSearch() => currentState.toggleSearch();
+  Explore({this.type = null});
+
   void response(var data) => currentState.response(data);
 
   @override
-  _SearchState createState() => _SearchState();
+  _ExploreState createState() => _ExploreState();
 }
 
-class _SearchState extends State<Search> {
+class _ExploreState extends State<Explore> {
 
   final ScrollController _scrollController = ScrollController();
   final _textInputController = TextEditingController();
-  final _focusNode = FocusNode();
-  bool _searchOpen = false;
   String searchTerms = '';
+  int REQUEST_AMOUNT = 10;
+  final _scrollTargetDistanceFromBottom = 400.0;
 
   List<SearchResult> _searchResults = List<SearchResult>();
+  List<Map<String, dynamic>> _exploreResults = List<Map<String, dynamic>>();
 
   @override
   void initState() {
+    _scrollController.addListener(_scrollListener);
     widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
-    _focusNode.requestFocus();
+
+    // socket.search = this;
+
     super.initState();
   }
   @override
   void dispose() {
     _scrollController.dispose();
-    _focusNode.dispose();
     super.dispose();
-  }
-
-  @override
-  void toggleSearch() {
-    try {
-      if (_searchOpen) ForYouPage.showUploadButton();
-      else ForYouPage.hideUploadButton();
-    } //  typically breaks if not on ForYouPage
-    catch (e) {}
-    setState(() => _searchOpen = !_searchOpen);
   }
 
   bool _allowRequest = true, _requestFailed = false;
@@ -81,7 +76,6 @@ class _SearchState extends State<Search> {
       _checkForFailure();
     }
   }
-  @override
   void response(var data) async {
     _reponsedHeard = true;
     _timesFailedToHearResponse = 0;
@@ -160,21 +154,246 @@ class _SearchState extends State<Search> {
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
   }
-  void _sendRequest(String input) {
+  void _sendSearchRequest(String input) {
     if (input=='' || input==_lastQuery) return;
 
     if (!_allowRequest) return;
     _allowRequest = false;
     socket.emit('search content', {
       'query': input,
-      'limit': 3, // quick search
+      'limit': REQUEST_AMOUNT,
     });
     _lastQuery = input;
     _checkForFailure();
   }
+  void _askExplore(int amount) {
+    if (!_allowRequest) return;
+    _allowRequest = false;
+    print('inside _askExplore');
+    // socket.emit('foryou ask', {
+    //   'amount': amount,
+    //   'type': widget.type,
+    // });
+    _checkForFailure();
+  }
 
-  Widget _buildSearchLines(List<SearchResult> results) {
-    if (results.isEmpty) {
+
+  void _longPressContent(Map<String, dynamic> data) {
+    print('long press ${data['link']}');
+  }
+  void _longPressEndContent(Map<String, dynamic> data) {
+    print('long press end ${data['link']}');
+  }
+  void _openOnTapContent(Map<String, dynamic> data) {
+    print('tap open ${data['link']}');
+  }
+
+  Widget _buildExploreBoxContent(double w, double h, Map<String, dynamic> data) {
+    return GestureDetector(
+      onLongPressStart: (_) => _longPressContent(data),
+      onLongPressEnd: (_) => _longPressEndContent(data),
+      onTap: () => _openOnTapContent(data),
+      child: Container(
+        width: w,
+        height: h,
+        color: data['color'],
+        child: Center(
+          child: Text('content'),
+        ),
+      ),
+    );
+  }
+  Widget _buildExploreWrapRow(double _size, double _spacing, List<Map<String, dynamic>> data) {
+    List<Widget> list = List<Widget>();
+
+    for (int i=0;i<3;i++) {
+      list.add(
+        _buildExploreBoxContent(_size, _size, data[i])
+      );
+    }
+
+    return Container(
+      height: _size + _spacing,
+      child: Wrap(
+        spacing: _spacing,
+        runSpacing: _spacing,
+        direction: Axis.vertical,
+        children: list,
+      ),
+    );
+  }
+  Widget _buildExploreWrapTall(double _size, double _spacing, List<Map<String, dynamic>> data) {
+    List<Widget> list = List<Widget>();
+
+    for (int i=0;i<4;i++) {
+      list.add(
+        _buildExploreBoxContent(_size, _size, data[i])
+      );
+    }
+
+    list.add(
+      _buildExploreBoxContent(_size, 2 * _size + _spacing, data[4])
+    );
+
+    return Container(
+      height: (_size + _spacing) * 2,
+      child: Wrap(
+        spacing: _spacing,
+        runSpacing: _spacing,
+        direction: Axis.vertical,
+        children: list,
+      ),
+    );
+  }
+  Widget _buildExploreWrapLarge(double _size, double _spacing, List<Map<String, dynamic>> data) {
+    List<Widget> list = List<Widget>();
+
+    list.add(
+      _buildExploreBoxContent(2 * _size + _spacing, 2 * _size + _spacing, data[0])
+    );
+
+    for (int i=1;i<3;i++) {
+      list.add(
+        _buildExploreBoxContent(_size, _size, data[i])
+      );
+    }
+
+    return Container(
+      height: (_size + _spacing) * 2,
+      child: Wrap(
+        spacing: _spacing,
+        runSpacing: _spacing,
+        direction: Axis.vertical,
+        children: list,
+      ),
+    );
+  }
+  Widget _buildExploreWrapFromType(double _size, double _spacing, Map<String, dynamic> data) {
+    if (data['type']==1)
+      return _buildExploreWrapTall(_size, _spacing, data['list']);
+    if (data['type']==2)
+      return _buildExploreWrapLarge(_size, _spacing, data['list']);
+    return _buildExploreWrapRow(_size, _spacing, data['list']);
+  }
+
+  Widget _buildExploreBoxes(AppState model) {
+    // if (_exploreResults.isEmpty) {
+    //   return Center(
+    //     child: Padding(
+    //       padding: const EdgeInsets.symmetric(horizontal: 48),
+    //       child: Styles.ArrivalBucketLoading,
+    //     ),
+    //   );
+    // }
+
+    _exploreResults = [
+      {
+        'link': 'Red',
+        'color': Styles.ArrivalPalletteRed,
+      },
+      {
+        'link': 'Blue',
+        'color': Styles.ArrivalPalletteBlue,
+      },
+      {
+        'link': 'Yellow',
+        'color': Styles.ArrivalPalletteYellow,
+      },
+      {
+        'link': 'Green',
+        'color': Styles.ArrivalPalletteGreen,
+      },
+      {
+        'link': 'Black',
+        'color': Styles.ArrivalPalletteBlack,
+      },
+    ];
+
+    _exploreResults += _exploreResults;
+    _exploreResults += _exploreResults;
+    _exploreResults += _exploreResults;
+    _exploreResults += _exploreResults;
+
+    List<Widget> _drawList = List<Widget>();
+    List<Map<String, dynamic>> _dataGroup = List<Map<String, dynamic>>();
+
+    int cycle = 6;
+
+    for (int i=0,counter=0;i+3<_exploreResults.length;counter++) {
+
+      if (counter % cycle == 0) {
+        if (i+5<_exploreResults.length) {
+          _dataGroup.add({
+            'type': 1,
+            'list': [_exploreResults[i], _exploreResults[i + 1], _exploreResults[i + 2], _exploreResults[i + 3], _exploreResults[i + 4]],
+          });
+          i += 5;
+          continue;
+        }
+        break;
+      }
+
+      if (counter % cycle == 3) {
+        _dataGroup.add({
+          'type': 2,
+          'list': [_exploreResults[i], _exploreResults[i + 1], _exploreResults[i + 2]],
+        });
+        i += 3;
+        continue;
+      }
+
+      _dataGroup.add({
+        'type': 0,
+        'list': [_exploreResults[i], _exploreResults[i + 1], _exploreResults[i + 2]],
+      });
+      i += 3;
+    }
+
+    double _spacing = 4.0;
+    double _squareSize = MediaQuery.of(context).size.width / 3 - (_spacing * 2);
+
+    for (int i=0;i<_dataGroup.length;i++) {
+      _drawList.add(
+        _buildExploreWrapFromType(_squareSize, _spacing, _dataGroup[i])
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      controller: _scrollController,
+      child: Wrap(
+        spacing: 0.0,
+        runSpacing: 0.0,
+        children: _drawList,
+      ),
+    );
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset + _scrollTargetDistanceFromBottom
+        >= _scrollController.position.maxScrollExtent) {
+      _askExplore(REQUEST_AMOUNT);
+    }
+  }
+  void _onEndScroll(ScrollMetrics metrics) {
+  }
+  void _onStartScroll(ScrollMetrics metrics) {
+  }
+  void scrollToTop() {
+    try {
+      _scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
+    catch (e) {
+    }
+  }
+  void refresh_state() => setState(() => 0);
+
+  Widget _buildSearchLines(List<SearchResult> _searchResults) {
+    if (_searchResults.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -188,11 +407,11 @@ class _SearchState extends State<Search> {
 
     return ListView.builder(
       physics: ClampingScrollPhysics(),
-      itemCount: results.length,
+      itemCount: _searchResults.length,
       itemBuilder: (context, i) {
         return Padding(
           padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: results[i].generate(context,
+          child: _searchResults[i].generate(context,
             MediaQuery.of(context).size.width - (24*2),
           ),
         );
@@ -207,7 +426,6 @@ class _SearchState extends State<Search> {
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
       child: SearchBar(
         controller: _textInputController,
-        focusNode: _focusNode,
       ),
     );
   }
@@ -227,41 +445,29 @@ class _SearchState extends State<Search> {
       return;
     }
 
-    _sendRequest(searchTerms);
+    _sendSearchRequest(searchTerms);
   }
 
   @override
   Widget build(BuildContext context) {
     var appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
 
-    if (!_searchOpen) return Container();
-
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        color: searchTerms==''
-          ? Styles.transparentColor
-          : Styles.ArrivalPalletteWhite,
-      ),
-      child: ListView(
-        physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          _buildSearchBar(),
-          Container(
-            height: MediaQuery.of(context).size.height - 100.0,
-            child: searchTerms==''
-              ? GestureDetector(
-                onTap: toggleSearch,
-                child: Container(
-                  height: MediaQuery.of(context).size.height - 100.0,
-                  decoration: BoxDecoration(
-                    color: Styles.transparentColor,
-                  ),
-                ),
-              )
-              : _buildSearchResults(appState),
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              _buildSearchBar(),
+              Container(
+                height: MediaQuery.of(context).size.height - 100.0,
+                child: searchTerms==''
+                ? _buildExploreBoxes(appState)
+                : _buildSearchResults(appState),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

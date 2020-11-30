@@ -3,6 +3,7 @@
 // for use only in ARRIVAL Project
 
 import 'package:flutter/material.dart';
+import '../explore.dart';
 import '../../partners/page.dart';
 import '../../partners/partner.dart';
 import '../../data/link.dart';
@@ -10,6 +11,12 @@ import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
 
 class PartnerFavorites extends CasingFavoritesBox {
+  void explore() {
+    Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => Explore(type: 'partners'),
+      fullscreenDialog: true,
+    ));
+  }
 
   @override
   void open(Map<String, dynamic> data) {

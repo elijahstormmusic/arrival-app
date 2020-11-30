@@ -137,9 +137,9 @@ abstract class Styles {
   static SvgPicture ArrivalPaintSplashRed(int i) => SvgPicture.asset('assets/icon/paint/splash/red${i}.svg');
   static SvgPicture ArrivalPaintSplashBlue(int i) => SvgPicture.asset('assets/icon/paint/splash/blue${i}.svg');
   static SvgPicture ArrivalPaintSplashYellow(int i) => SvgPicture.asset('assets/icon/paint/splash/yellow${i}.svg');
-  static SvgPicture ArrivalPaintSprayRed(int i) => SvgPicture.asset('assets/icon/paint/spray/red${i}.png');
-  static SvgPicture ArrivalPaintSprayBlue(int i) => SvgPicture.asset('assets/icon/paint/spray/blue${i}.png');
-  static SvgPicture ArrivalPaintSprayYellow(int i) => SvgPicture.asset('assets/icon/paint/spray/yellow${i}.png');
+  static Image ArrivalPaintSprayRed(int i) => Image.asset('assets/icon/paint/spray/red${i}.png');
+  static Image ArrivalPaintSprayBlue(int i) => Image.asset('assets/icon/paint/spray/blue${i}.png');
+  static Image ArrivalPaintSprayYellow(int i) => Image.asset('assets/icon/paint/spray/yellow${i}.png');
 
   static Image ArrivalPaintSplashLogo = Image.asset('assets/icon/paint/splash/logo.png');
 
@@ -694,12 +694,12 @@ abstract class Styles {
             CupertinoIcons.bookmark_fill,
             color: Styles.ArrivalPalletteRed,
           );
-  static const heart = CupertinoIcons.heart;// const IconData(0xf442,
-          // fontFamily: CupertinoIcons.iconFont,
-          // fontPackage: CupertinoIcons.iconFontPackage);
-  static const heart_full = CupertinoIcons.heart_fill;// const IconData(0xf443,
-          // fontFamily: CupertinoIcons.iconFont,
-          // fontPackage: CupertinoIcons.iconFontPackage);
+  static const heart = const IconData(0xf442,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
+  static const heart_full = const IconData(0xf443,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
   static const comment = CupertinoIcons.chat_bubble;// const IconData(0xf3fb,
           // fontFamily: CupertinoIcons.iconFont,
           // fontPackage: CupertinoIcons.iconFontPackage);

@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../styles.dart';
 import './level_progress_bar.dart';
@@ -15,16 +16,11 @@ import '../data/link.dart';
 import '../data/preferences.dart';
 
 class NotificationsCard extends StatefulWidget {
-  Preferences prefs;
-
-  NotificationsCard(@required this.prefs);
 
   @override
-  _NotoCardState createState() => _NotoCardState(prefs);
+  _NotoCardState createState() => _NotoCardState();
 }
 class _NotoCardState extends State<NotificationsCard> {
-  Preferences prefs;
-  _NotoCardState(@required this.prefs);
 
   Widget _listCasing(BuildContext context, String label, {
     IconData icon,
@@ -55,6 +51,7 @@ class _NotoCardState extends State<NotificationsCard> {
                     label,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -80,7 +77,7 @@ class _NotoCardState extends State<NotificationsCard> {
 
   Widget _displayList(BuildContext context, Set<NotificationHolder> __history) {
 
-    List<NotificationHolder> history = __history.toList();
+    List<NotificationHolder> history = __history.toList().reversed.toList();
     List<Map<String, dynamic> > list = List<Map<String, dynamic> >();
 
     for (int i=0 ; i<history.length ; i++) {
@@ -92,8 +89,11 @@ class _NotoCardState extends State<NotificationsCard> {
     }
 
     if (list.isEmpty) {
-      return Center(
-        child: Text('Do things in the app to get points!'),
+      return Container(
+        padding: EdgeInsets.all(13),
+        child: Center(
+          child: Text('Do things in the app to get points!'),
+        ),
       );
     }
 
@@ -108,12 +108,14 @@ class _NotoCardState extends State<NotificationsCard> {
 
   @override
   Widget build(BuildContext context) {
+    var prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(18)),
         color: Styles.ArrivalPalletteCream,
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(3),
       width: MediaQuery.of(context).size.width / 2.5,
       child: FutureBuilder<Set<NotificationHolder> >(
         future: prefs.notificationHistory,

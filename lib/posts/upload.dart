@@ -20,9 +20,11 @@ import 'cloudinary/cloudinary_client.dart';
 // import 'package:cloudinary_client/cloudinary_client.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../data/socket.dart';
 import '../data/link.dart';
+import '../data/preferences.dart';
 import '../users/data.dart';
 import '../widgets/close_button.dart';
 import '../foryou/foryou.dart';
@@ -454,6 +456,12 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
 
                   ForYouPage.finishUploadingMediaProgress(database_info['id']);
                   socket.emit('posts upload', database_info);
+
+                  UserData.client.earnPoints(35);
+                  await ScopedModel.of<Preferences>(context)..addNotificationHistory({
+                    'label': 'Posted some gold',
+                    'value': 35,
+                  });
                 },
                 child: Text(
                   'UPLOAD',

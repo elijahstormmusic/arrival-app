@@ -4,6 +4,9 @@
 
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:scoped_model/scoped_model.dart';
 import '../partners/partner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +37,7 @@ class BookmarkHolder {
 class NotificationHolder {
   final String _label;
   final int _value;
-  final dynamic _icon;
+  final int _icon;
 
   String get label {
     return _label;
@@ -42,30 +45,30 @@ class NotificationHolder {
   int get value {
     return _value;
   }
-  dynamic get icon {
-    return _icon;
+  IconData get icon {
+    return IconData(_icon,
+          fontFamily: CupertinoIcons.iconFont,
+          fontPackage: CupertinoIcons.iconFontPackage);
   }
 
   NotificationHolder(this._label, this._value, this._icon);
 
   String toString() {
-    return '${_label}~${_value}~${_icon}';
+    return '${_label}:${_value}:${_icon}';
   }
 
   static NotificationHolder fromString(String input) {
     var array = input.split(':');
     String label = array[0];
-    int value = int.parse(array[1]); // 'var(U+${codePoint.toRadixString(16).toUpperCase().padLeft(5, '0')})';
-    var icon = int.parse(array[2].substring(array[2].indexOf('(') + 1, array[2].indexOf(')')));
-
-    print(array[2].substring(array[2].indexOf('(') + 1, array[2].indexOf(')')));
-
-
+    int value = int.parse(array[1]);
+    var icon = int.parse(array[2]);
     return NotificationHolder(label, value, icon);
   }
 
   static NotificationHolder fromJson(var data) {
-    return NotificationHolder(data['label'], data['value'], data['icon']);
+    String icon = data['icon'].toString();
+    return NotificationHolder(data['label'], data['value'],
+          int.parse('0x' + icon.substring(icon.indexOf('(') + 4, icon.indexOf(')'))));
   }
 }
 
@@ -74,6 +77,7 @@ class Preferences extends Model {
   static const _preferredIndustriesKey = 'preferredIndustries';
   static const _notificationHistoryKey = 'notificationHistory';
   static const _bookmarksKey = 'bookmarks';
+  static const _likedContentKey = 'bookmarks';
 
 
   Future<void> _loading;
@@ -83,6 +87,7 @@ class Preferences extends Model {
   final Set<SourceIndustry> _preferredIndustries = <SourceIndustry>{};
   final Set<NotificationHolder> _notificationHistory = <NotificationHolder>{};
   final Set<BookmarkHolder> _bookmarks = <BookmarkHolder>{};
+  final Set<BookmarkHolder> _likedContent = <BookmarkHolder>{};
 
 
   Future<int> get nearMeAreaRadius async {
@@ -114,10 +119,47 @@ class Preferences extends Model {
 
   Future<Set<NotificationHolder> > get notificationHistory async {
     await _loading;
-    return Set.from(_preferredIndustries);
+    return Set.from(_notificationHistory);
   }
   Future<void> addNotificationHistory(var data) async {
     _notificationHistory.add(NotificationHolder.fromJson(data));
+
+    if (_notificationHistory.length > 15) {
+      _notificationHistory.remove(_notificationHistory.elementAt(0));
+    }
+
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+  Future<void> removeNotificationHistory(int type, String link) async {
+    // _notificationHistory.removeWhere((x) => x.equals(type, link));
+    // await _saveToSharedPrefs();
+    // notifyListeners();
+  }
+
+
+  Future<bool> isLikedContent(int type, String link) async {
+    await _loading;
+    return _likedContent.where((x) => x.equals(type, link)).length > 0;
+  }
+  void toggleLikedContent(int type, String link) async {
+    await _loading;
+    if (await isLikedContent(type, link)) {
+      removeLikedContent(type, link);
+    }
+    else {
+      addLikedContent(type, link);
+    }
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+  Future<void> addLikedContent(int type, String link) async {
+    _likedContent.add(BookmarkHolder(type, link));
+    await _saveToSharedPrefs();
+    notifyListeners();
+  }
+  Future<void> removeLikedContent(int type, String link) async {
+    _likedContent.removeWhere((x) => x.equals(type, link));
     await _saveToSharedPrefs();
     notifyListeners();
   }
@@ -135,6 +177,8 @@ class Preferences extends Model {
     else {
       addBookmark(type, link);
     }
+    await _saveToSharedPrefs();
+    notifyListeners();
   }
   Future<void> addBookmark(int type, String link) async {
     _bookmarks.add(BookmarkHolder(type, link));
@@ -163,6 +207,9 @@ class Preferences extends Model {
 
     await prefs.setString(_bookmarksKey,
         _bookmarks.map((c) => c.toString()).join(','));
+
+    await prefs.setString(_likedContentKey,
+        _likedContent.map((c) => c.toString()).join(','));
   }
   Future<void> _loadFromSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -197,6 +244,16 @@ class Preferences extends Model {
       for (final saved in favorites.split(',')) {
         if (saved.indexOf(':')==-1) continue;
         _bookmarks.add(BookmarkHolder.fromString(saved));
+      }
+    }
+
+    _likedContent.clear();
+    final liked = prefs.getString(_likedContentKey);
+
+    if (liked != null && liked.isNotEmpty) {
+      for (final saved in liked.split(',')) {
+        if (saved.indexOf(':')==-1) continue;
+        _likedContent.add(BookmarkHolder.fromString(saved));
       }
     }
 

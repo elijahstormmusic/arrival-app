@@ -26,19 +26,14 @@ class ArticleCard extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            article.date.substring(2, 10).replaceAll('-', ' / '),
+            article.date.substring(2, 10).replaceAll('-', ' / ') + '\n'
+            + 'by ' + article.author,
             style: Styles.articleCardTitleAuthor,
           ),
         ),
         Text(
           article.title,
           style: Styles.articleCardTitleText,
-        ),
-        Expanded(
-          child: Text(
-            'by ' + article.author,
-            style: Styles.articleCardTitleAuthor,
-          ),
         ),
         SizedBox(height: 6),
         Expanded(

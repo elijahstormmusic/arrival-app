@@ -34,6 +34,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   geolocator: ^5.1.4+2
   intl: ^0.16.1
+  share: any
   scoped_model: ^1.0.1
   shared_preferences: ^0.5.7
   uuid: ^2.0.4
