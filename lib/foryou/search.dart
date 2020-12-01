@@ -23,19 +23,38 @@ import 'foryou.dart';
 
 class Search extends StatefulWidget {
   _SearchState currentState;
+  bool _alwaysOpen = false;
 
-  void toggleSearch() => currentState.toggleSearch();
+  Search();
+  Search.alwaysOpen() {
+    _alwaysOpen = true;
+  }
+
+  bool toggleSearch() {
+    return _alwaysOpen ? true : currentState.toggleSearch();
+  }
   void response(var data) => currentState.response(data);
 
   @override
-  _SearchState createState() => _SearchState();
+  _SearchState createState() {
+    if (_alwaysOpen) return _SearchState.startOpen();
+    return _SearchState();
+  }
 }
 
 class _SearchState extends State<Search> {
 
+  _SearchState();
+  _SearchState.startOpen() {
+    _searchOpen = true;
+    _alwaysOpen = true;
+  }
+  bool _alwaysOpen = false;
+
   final ScrollController _scrollController = ScrollController();
   final _textInputController = TextEditingController();
   final _focusNode = FocusNode();
+  final _searchBoxHeight = 70.0;
   bool _searchOpen = false;
   String searchTerms = '';
 
@@ -43,10 +62,11 @@ class _SearchState extends State<Search> {
 
   @override
   void initState() {
+    super.initState();
+    socket.search = this;
     widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
-    _focusNode.requestFocus();
-    super.initState();
+    if (!_searchOpen) _focusNode.requestFocus();
   }
   @override
   void dispose() {
@@ -56,23 +76,22 @@ class _SearchState extends State<Search> {
   }
 
   @override
-  void toggleSearch() {
-    try {
-      if (_searchOpen) ForYouPage.showUploadButton();
-      else ForYouPage.hideUploadButton();
-    } //  typically breaks if not on ForYouPage
-    catch (e) {}
-    setState(() => _searchOpen = !_searchOpen);
+  bool toggleSearch() {
+    if (_alwaysOpen) return true;
+    if (!mounted) return null;
+    bool changeTo = !_searchOpen;
+    setState(() => _searchOpen = changeTo);
+    return changeTo;
   }
 
   bool _allowRequest = true, _requestFailed = false;
-  bool _reponsedHeard, _forceFailCurrentState = false;
+  bool _responseHeard, _forceFailCurrentState = false;
   int _timesFailedToHearResponse = 0;
   String _lastQuery;
   void _checkForFailure() async {
-    _reponsedHeard = false;
+    _responseHeard = false;
     await Future.delayed(const Duration(seconds: 6));
-    if (!_reponsedHeard) {
+    if (!_responseHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
         setState(() => _forceFailCurrentState = true);
@@ -83,7 +102,7 @@ class _SearchState extends State<Search> {
   }
   @override
   void response(var data) async {
-    _reponsedHeard = true;
+    _responseHeard = true;
     _timesFailedToHearResponse = 0;
     if (data==null) {
       _requestFailed = true;
@@ -175,13 +194,14 @@ class _SearchState extends State<Search> {
 
   Widget _buildSearchLines(List<SearchResult> results) {
     if (results.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(
-            'Try simplifiying your search.',
-            style: Styles.headlineDescription(CupertinoTheme.of(context)),
-          ),
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 50,
+        ),
+        child: Text(
+          'Try simplifiying your search.',
+          style: Styles.headlineDescription(CupertinoTheme.of(context)),
         ),
       );
     }
@@ -237,7 +257,7 @@ class _SearchState extends State<Search> {
     if (!_searchOpen) return Container();
 
     return Container(
-      height: MediaQuery.of(context).size.height,
+      height: (_alwaysOpen && searchTerms=='') ? _searchBoxHeight : MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: searchTerms==''
           ? Styles.transparentColor
@@ -247,13 +267,14 @@ class _SearchState extends State<Search> {
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
           _buildSearchBar(),
+
           Container(
-            height: MediaQuery.of(context).size.height - 100.0,
+            height: MediaQuery.of(context).size.height - _searchBoxHeight,
             child: searchTerms==''
               ? GestureDetector(
                 onTap: toggleSearch,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 100.0,
+                  height: MediaQuery.of(context).size.height - _searchBoxHeight,
                   decoration: BoxDecoration(
                     color: Styles.transparentColor,
                   ),

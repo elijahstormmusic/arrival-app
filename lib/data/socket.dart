@@ -18,7 +18,8 @@ import '../screens/home.dart';
 
 class socket {
   static SocketIO _socket;
-  static var home, post, profile, foryou, maps, articles;
+  static var home, post, profile;
+  static var delivery, search;
   static int error_report_time = 3;
   static String authenicator;
   static bool active = false;
@@ -41,19 +42,15 @@ class socket {
          */
 
       if (data['type']==900) { // for you download
-        if (foryou==null) return;
+        if (delivery==null) return;
 
-        await foryou.responded(data['response']);
-
-        if (maps==null) return;
-
-        maps.refresh_state();
+        await delivery.response(data['response']);
       }
 
       else if (data['type']==310) { // search content
-        if (foryou==null) return;
+        if (search==null) return;
 
-        await foryou.search_response(data['response']);
+        await search.response(data['response']);
       }
 
       else if (data['type']==801) { // post data
@@ -147,7 +144,6 @@ class socket {
               break;
             }
           }
-          foryou.refresh_state();
         }
         catch (e) {
           print('''
@@ -340,7 +336,7 @@ class socket {
       }
       else if (data['type']==530) { // post successfully uploaded
         Post.link(data['link']);
-        foryou.scrollToTop();
+        ForYouPage.scrollToTop();
         ForYouPage.displayUploadingMediaProgress(data['id'], data['link']);
       }
       else if (data['type']==531) { // post failed upload

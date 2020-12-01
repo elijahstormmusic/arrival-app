@@ -9,7 +9,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../widgets/search_bar.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
-import '../styles.dart';
+import '../data/link.dart';
 import '../data/app_state.dart';
 import '../data/preferences.dart';
 import '../partners/partner.dart';
@@ -18,8 +18,8 @@ import '../partners/sale.dart';
 import '../posts/post.dart';
 import '../users/profile.dart';
 
-import 'search_results/search_results.dart';
-import 'foryou.dart';
+import '../styles.dart';
+import 'search.dart';
 
 class Explore extends StatefulWidget {
   _ExploreState currentState;
@@ -40,34 +40,38 @@ class _ExploreState extends State<Explore> {
   String searchTerms = '';
   int REQUEST_AMOUNT = 10;
   final _scrollTargetDistanceFromBottom = 400.0;
+  Search _search;
 
-  List<SearchResult> _searchResults = List<SearchResult>();
   List<Map<String, dynamic>> _exploreResults = List<Map<String, dynamic>>();
 
   @override
   void initState() {
+    super.initState();
+    socket.delivery = this;
     _scrollController.addListener(_scrollListener);
     widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
-
-    // socket.search = this;
-
-    super.initState();
+    _search = Search.alwaysOpen();
+    _askExplore(REQUEST_AMOUNT);
   }
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+  @override
+  void setState(fn) {
+    if (mounted) super.setState(fn);
+  }
 
   bool _allowRequest = true, _requestFailed = false;
-  bool _reponsedHeard, _forceFailCurrentState = false;
+  bool _responseHeard, _forceFailCurrentState = false;
   int _timesFailedToHearResponse = 0;
   String _lastQuery;
   void _checkForFailure() async {
-    _reponsedHeard = false;
+    _responseHeard = false;
     await Future.delayed(const Duration(seconds: 6));
-    if (!_reponsedHeard) {
+    if (!_responseHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
         setState(() => _forceFailCurrentState = true);
@@ -77,7 +81,7 @@ class _ExploreState extends State<Explore> {
     }
   }
   void response(var data) async {
-    _reponsedHeard = true;
+    _responseHeard = true;
     _timesFailedToHearResponse = 0;
     if (data==null) {
       _requestFailed = true;
@@ -85,54 +89,72 @@ class _ExploreState extends State<Explore> {
       return;
     }
 
-    List<SearchResult> list = List<SearchResult>();
-    var card, result;
+    List<Map<String, dynamic>> list = List<Map<String, dynamic>>();
+    var result, card;
 
     try {
       for (var i=0;i<data.length;i++) {
-        if (data[i]['type']==DataType.partner) { // partner_data
+        if (data[i]['type']==DataType.partner) {
           try {
             result = Partner.json(data[i]);
-            card = SearchResultPartner(result);
-            // ArrivalData.innocentAdd(ArrivalData.partners, result);
+            ArrivalData.innocentAdd(ArrivalData.partners, result);
+            card = {
+              'type': DataType.partner,
+              'content': result,
+              'link': result.images.logo,
+              'color': Styles.ArrivalPalletteBlue,
+            };
           } catch (e) {
-            print(e);
             continue;
           }
         }
-        else if (data[i]['type']==DataType.article) { // article_data
+        else if (data[i]['type']==DataType.article) {
           try {
             result = Article.json(data[i]);
-            card = SearchResultArticle(result);
-            // ArrivalData.innocentAdd(ArrivalData.articles, result);
+            ArrivalData.innocentAdd(ArrivalData.articles, result);
+            card = {
+              'type': DataType.article,
+              'content': result,
+              'link': result.image_link(0),
+              'color': Styles.ArrivalPalletteBlue,
+            };
           } catch (e) {
-            print(e);
             continue;
           }
         }
-        else if (data[i]['type']==DataType.post) { // post_data
+        else if (data[i]['type']==DataType.post) {
           try {
             result = Post.json(data[i]);
-            card = SearchResultPost(result.cryptlink);
-            // ArrivalData.innocentAdd(ArrivalData.posts, result);
+            ArrivalData.innocentAdd(ArrivalData.posts, result);
+            card = {
+              'type': DataType.post,
+              'content': result,
+              'link': result.media_href(),
+              'color': Styles.ArrivalPalletteBlue,
+            };
           } catch (e) {
             continue;
           }
         }
-        else if (data[i]['type']==DataType.sale) { // sale_data
+        else if (data[i]['type']==DataType.sale) {
+          continue;
           try {
-            result = Sale.json(data[i]);
-            card = SearchResultSale(result);
-            // ArrivalData.innocentAdd(ArrivalData.sales, result);
-          } catch (e) {
-            continue;
-          }
-        }
-        else if (data[i]['type']==DataType.profile) { // user_data
-          try {
-            result = Profile.json(data[i]);
-            card = SearchResultProfile(result);
-            // ArrivalData.innocentAdd(ArrivalData.profiles, result);
+            var _sale_list = data[i]['list'];
+            List<Sale> result_list = List<Sale>();
+            for (int _sale=0;_sale<_sale_list.length;_sale++) {
+              try {
+                result = Sale.json(_sale_list[_sale]);
+                ArrivalData.innocentAdd(result_list, result);
+                ArrivalData.innocentAdd(ArrivalData.sales, result);
+              }
+              catch (e) {
+                continue;
+              }
+            }
+            card = {
+              'type': DataType.sale,
+              'link': 2,
+            };
           } catch (e) {
             continue;
           }
@@ -150,7 +172,7 @@ class _ExploreState extends State<Explore> {
     }
 
     _requestFailed = false;
-    setState(() => _searchResults = list);
+    setState(() => _exploreResults += list);
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
   }
@@ -169,11 +191,10 @@ class _ExploreState extends State<Explore> {
   void _askExplore(int amount) {
     if (!_allowRequest) return;
     _allowRequest = false;
-    print('inside _askExplore');
-    // socket.emit('foryou ask', {
-    //   'amount': amount,
-    //   'type': widget.type,
-    // });
+    socket.emit('foryou ask', {
+      'amount': amount,
+      'type': widget.type,
+    });
     _checkForFailure();
   }
 
@@ -185,7 +206,10 @@ class _ExploreState extends State<Explore> {
     print('long press end ${data['link']}');
   }
   void _openOnTapContent(Map<String, dynamic> data) {
-    print('tap open ${data['link']}');
+    Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => data['content'].navigateTo(),
+      fullscreenDialog: true,
+    ));
   }
 
   Widget _buildExploreBoxContent(double w, double h, Map<String, dynamic> data) {
@@ -198,7 +222,12 @@ class _ExploreState extends State<Explore> {
         height: h,
         color: data['color'],
         child: Center(
-          child: Text('content'),
+          child: Image.network(
+            data['link'],
+            width: w,
+            height: h,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -277,42 +306,14 @@ class _ExploreState extends State<Explore> {
   }
 
   Widget _buildExploreBoxes(AppState model) {
-    // if (_exploreResults.isEmpty) {
-    //   return Center(
-    //     child: Padding(
-    //       padding: const EdgeInsets.symmetric(horizontal: 48),
-    //       child: Styles.ArrivalBucketLoading,
-    //     ),
-    //   );
-    // }
-
-    _exploreResults = [
-      {
-        'link': 'Red',
-        'color': Styles.ArrivalPalletteRed,
-      },
-      {
-        'link': 'Blue',
-        'color': Styles.ArrivalPalletteBlue,
-      },
-      {
-        'link': 'Yellow',
-        'color': Styles.ArrivalPalletteYellow,
-      },
-      {
-        'link': 'Green',
-        'color': Styles.ArrivalPalletteGreen,
-      },
-      {
-        'link': 'Black',
-        'color': Styles.ArrivalPalletteBlack,
-      },
-    ];
-
-    _exploreResults += _exploreResults;
-    _exploreResults += _exploreResults;
-    _exploreResults += _exploreResults;
-    _exploreResults += _exploreResults;
+    if (_exploreResults.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48),
+          child: Styles.ArrivalBucketLoading,
+        ),
+      );
+    }
 
     List<Widget> _drawList = List<Widget>();
     List<Map<String, dynamic>> _dataGroup = List<Map<String, dynamic>>();
@@ -350,7 +351,7 @@ class _ExploreState extends State<Explore> {
     }
 
     double _spacing = 4.0;
-    double _squareSize = MediaQuery.of(context).size.width / 3 - (_spacing * 2);
+    double _squareSize = (MediaQuery.of(context).size.width - _spacing * 2) / 3;
 
     for (int i=0;i<_dataGroup.length;i++) {
       _drawList.add(
@@ -392,35 +393,6 @@ class _ExploreState extends State<Explore> {
   }
   void refresh_state() => setState(() => 0);
 
-  Widget _buildSearchLines(List<SearchResult> _searchResults) {
-    if (_searchResults.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(
-            'Try simplifiying your search.',
-            style: Styles.headlineDescription(CupertinoTheme.of(context)),
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      physics: ClampingScrollPhysics(),
-      itemCount: _searchResults.length,
-      itemBuilder: (context, i) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: _searchResults[i].generate(context,
-            MediaQuery.of(context).size.width - (24*2),
-          ),
-        );
-      },
-    );
-  }
-  Widget _buildSearchResults(AppState model) {
-    return _buildSearchLines(_searchResults);
-  }
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
@@ -456,15 +428,15 @@ class _ExploreState extends State<Explore> {
       body: SafeArea(
         child: Container(
           height: MediaQuery.of(context).size.height,
-          child: Column(
+          child: Stack(
             children: [
-              _buildSearchBar(),
               Container(
-                height: MediaQuery.of(context).size.height - 100.0,
-                child: searchTerms==''
-                ? _buildExploreBoxes(appState)
-                : _buildSearchResults(appState),
+                height: MediaQuery.of(context).size.height - 70.0,
+                margin: EdgeInsets.only(top: 70.0),
+                child: _buildExploreBoxes(appState),
               ),
+
+              _search,
             ],
           ),
         ),

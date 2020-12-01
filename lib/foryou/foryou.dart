@@ -45,6 +45,8 @@ class ForYouPage extends StatefulWidget {
     _s.setState(() => _s.showUploadButton = true);
   static void hideUploadButton() =>
     _s.setState(() => _s.showUploadButton = false);
+  static void forceUploadButton(bool direction) =>
+    _s.setState(() => _s.showUploadButton = direction);
 
   @override
   _ListState createState() {
@@ -75,7 +77,7 @@ class _ListState extends State<ForYouPage> {
     );
     _loadingCard = RowLoading();
     _search = Search();
-    socket.foryou = this;
+    socket.delivery = this;
     if (ArrivalData.foryou==null) {
       ArrivalData.foryou = List<RowCard>();
     }
@@ -194,12 +196,12 @@ class _ListState extends State<ForYouPage> {
     });
     _checkForFailure();
   }
-  bool _reponsedHeard, _forceFailCurrentState = false;
+  bool _responseHeard, _forceFailCurrentState = false;
   int _timesFailedToHearResponse = 0;
   void _checkForFailure() async {
-    _reponsedHeard = false;
+    _responseHeard = false;
     await Future.delayed(const Duration(seconds: 6));
-    if (!_reponsedHeard) {
+    if (!_responseHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
         if (kill_reflow) return;
@@ -222,8 +224,8 @@ class _ListState extends State<ForYouPage> {
     if (!_allowRequest) return;
     _pullNext(REQUEST_AMOUNT);
   }
-  void responded(var data) async {
-    _reponsedHeard = true;
+  void response(var data) async {
+    _responseHeard = true;
     _timesFailedToHearResponse = 0;
     if (data.length==0) {
       _requestFailed = true;
@@ -261,12 +263,6 @@ class _ListState extends State<ForYouPage> {
             ArrivalData.innocentAdd(ArrivalData.posts, result);
             card = RowPost(result.cryptlink);
           } catch (e) {
-            print('''
-            =======================
-              post ERRR
-                ${e}
-            =======================
-            ''');
             continue;
           }
         }
@@ -310,9 +306,6 @@ class _ListState extends State<ForYouPage> {
     ArrivalData.save();
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
-  }
-  void search_response(var data) {
-    _search.response(data);
   }
 
   void _scrollListener() {
@@ -460,7 +453,9 @@ class _ListState extends State<ForYouPage> {
             backgroundColor: Styles.ArrivalPalletteRed,
             actions: <Widget>[
               IconButton(
-                onPressed: () => setState(() => _search.toggleSearch()),
+                onPressed: () {
+                  setState(() => showUploadButton = _search.toggleSearch());
+                },
                 icon: const Icon(Icons.search),
               ),
             ],

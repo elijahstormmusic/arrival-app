@@ -60,7 +60,7 @@ class _PostDisState extends State<PostDisplay> {
   }
   void loader() async {
     bool answer = await prefs.isLikedContent(0, widget.post.cryptlink);
-    setState(() => _clientHasLikedPost = answer);
+    if (this.mounted) setState(() => _clientHasLikedPost = answer);
   }
 
   void redraw() {

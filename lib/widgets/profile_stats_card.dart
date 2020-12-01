@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../styles.dart';
-import './level_progress_bar.dart';
-import './cards.dart';
+import '../users/messager.dart';
 import '../users/data.dart';
 import '../users/page.dart';
 import '../data/link.dart';
+import '../styles.dart';
+import 'level_progress_bar.dart';
+import 'cards.dart';
 
 class UserProfilePlacecard extends StatefulWidget {
   @override
@@ -65,7 +66,10 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      print('open this');
+                      Arrival.navigator.currentState.push(MaterialPageRoute(
+                        builder: (context) => Messager(),
+                        fullscreenDialog: true,
+                      ));
                     },
                     child: CircleAvatar(
                       radius: 24,

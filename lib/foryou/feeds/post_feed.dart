@@ -53,7 +53,7 @@ class _PostFeedState extends State<PostFeed> {
 
   @override
   void initState() {
-    socket.foryou = this;
+    socket.delivery = this;
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _refreshController = RefreshController(
@@ -85,12 +85,12 @@ class _PostFeedState extends State<PostFeed> {
     });
     _checkForFailure();
   }
-  bool _reponsedHeard, _forceFailCurrentState = false;
+  bool _responseHeard, _forceFailCurrentState = false;
   int _timesFailedToHearResponse = 0;
   void _checkForFailure() async {
-    _reponsedHeard = false;
+    _responseHeard = false;
     await Future.delayed(const Duration(seconds: 6));
-    if (!_reponsedHeard) {
+    if (!_responseHeard) {
       _timesFailedToHearResponse++;
       if (_timesFailedToHearResponse>3) {
         if (kill_reflow) return;
@@ -112,8 +112,8 @@ class _PostFeedState extends State<PostFeed> {
     if (!_allowRequest) return;
     _pullNext(REQUEST_AMOUNT);
   }
-  void responded(var data) async {
-    _reponsedHeard = true;
+  void response(var data) async {
+    _responseHeard = true;
     _timesFailedToHearResponse = 0;
     if (data.length==0) {
       _requestFailed = true;

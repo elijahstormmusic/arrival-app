@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^5.7.2
   path_provider: ^1.6.11
   flutter_svg: ^0.19.0
+  dash_chat: ^1.1.15
 
 dev_dependencies:
   flutter_test:

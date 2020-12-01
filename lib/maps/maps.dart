@@ -77,7 +77,6 @@ class _MapState extends State<Maps> {
     _scrollController.addListener(_scrollListener);
     myself = MyLocation(onRelocation: _onRelocated);
 
-    socket.maps = this;
     if (ArrivalData.partners.length < 20) {
       socket.emit('foryou ask', {
         'type': 'partners',
@@ -90,7 +89,6 @@ class _MapState extends State<Maps> {
   @override
   void dispose() {
     _scrollController.dispose();
-    socket.maps = null;
     super.dispose();
   }
 
