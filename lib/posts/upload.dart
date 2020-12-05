@@ -87,7 +87,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
   }
 
 
-  Future<Map<String, dynamic> > _uploadMedia(File _media, bool _is_image) async {
+  Future<Map<String, dynamic>> _uploadMedia(File _media, bool _is_image) async {
     if (_media == null) return {
       'link': '',
     };
@@ -428,7 +428,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
                     ForYouPage.addUploadingMediaProgress(database_info['id']);
 
                     Map<String, dynamic> media_data = Map<String, dynamic>();
-                    List<Map<String, dynamic> > attributes = List<Map<String, dynamic> >();
+                    List<Map<String, dynamic>> attributes = List<Map<String, dynamic>>();
                     List<String> links = List<String>();
 
                     for (int i=0;i<widget.upload_collection.length;i++) {

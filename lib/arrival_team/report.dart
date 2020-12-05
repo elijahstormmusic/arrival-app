@@ -9,12 +9,16 @@ import '../users/data.dart';
 import '../styles.dart';
 
 
-class ContactUs extends StatefulWidget {
+class ReportItemContactSheet extends StatefulWidget {
+  final String cryptlink;
+
+  ReportItemContactSheet(this.cryptlink);
+
   @override
-  _ContactState createState() => _ContactState();
+  _ReportState createState() => _ReportState();
 }
 
-class _ContactState extends State<ContactUs> {
+class _ReportState extends State<ReportItemContactSheet> {
 
   String _messageSubject = '';
   String _messageBody = '';
@@ -35,7 +39,7 @@ class _ContactState extends State<ContactUs> {
     _messageSubject = _subjectInputController.text;
     _messageBody = _bodyInputController.text;
 
-    if (_messageSubject=='') _messageSubject = 'Feedback: No subject';
+    if (_messageSubject=='') _messageSubject = 'Subject';
   }
   int _checkIfSendable() {
     _setMessages();
@@ -64,7 +68,7 @@ class _ContactState extends State<ContactUs> {
 
     if (!_allowMessageSend) return;
     _allowMessageSend = false;
-    socket.emit('contact us', {
+    socket.emit('report item', {
       'sender': {
         'name': UserData.client.name,
         'email': UserData.client.email,
@@ -73,6 +77,9 @@ class _ContactState extends State<ContactUs> {
       'message': {
         'subject': _messageSubject,
         'body': _messageBody,
+      },
+      'item': {
+        'link': widget.cryptlink,
       },
     });
 

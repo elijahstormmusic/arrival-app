@@ -21,6 +21,7 @@ import '../data/arrival.dart';
 import '../data/socket.dart';
 import '../styles.dart';
 import 'comments.dart';
+import 'options.dart';
 import 'video.dart';
 
 
@@ -578,10 +579,29 @@ class _PostDisState extends State<PostDisplay> {
 
     var resizedHeight = MediaQuery.of(context).size.width / widget.post.width * widget.post.height;
     var postContents = [
-      _profileDisplay(
-        (widget.post.user==null)
-          ? Profile.empty
-          : widget.post.user
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _profileDisplay(
+            (widget.post.user==null)
+            ? Profile.empty
+            : widget.post.user
+          ),
+          Container(),
+          GestureDetector(
+            onTap: () {
+              showDialog<void>(context: context, builder: (context) => PostOptions(widget.post));
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 10.0),
+              child: Icon(
+                Icons.more_vert,
+                color: Styles.ArrivalPalletteGrey,
+              ),
+            )
+          ),
+        ],
       ),
       Container(
         height: resizedHeight,

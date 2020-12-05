@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../users/messager.dart';
+import '../styles.dart';
 import '../users/data.dart';
 import '../users/page.dart';
 import '../data/link.dart';
-import '../styles.dart';
+import 'chat/chat_list.dart';
 import 'level_progress_bar.dart';
 import 'cards.dart';
 
@@ -67,7 +67,7 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
                   child: GestureDetector(
                     onTap: () {
                       Arrival.navigator.currentState.push(MaterialPageRoute(
-                        builder: (context) => Messager(),
+                        builder: (context) => ChatList(),
                         fullscreenDialog: true,
                       ));
                     },

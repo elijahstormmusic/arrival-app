@@ -8,10 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import '../styles.dart';
-
-
 import '../screens/home.dart';
+import '../styles.dart';
 
 // tap order for secret message
 // blue blue blue, red, red, blue, yellow, yellow, blue blue, foryou home button

@@ -11,6 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../widgets/slide_menu.dart';
 import '../../widgets/blobs.dart';
 import '../../widgets/cards.dart';
+import '../../widgets/dialog.dart';
 import '../../data/socket.dart';
 import '../../data/arrival.dart';
 import '../../data/app_state.dart';
@@ -284,22 +285,6 @@ class _PartnerFeedState extends State<PartnerFeed> {
   int _optionsPriceRange = 1;
   String _optionsPriceText = '\$\$';
 
-  Widget _simpleDialogItem({IconData icon, Color color, String text, VoidCallback onPressed}) {
-    return SimpleDialogOption(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, size: 36.0, color: color),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16.0),
-            child: Text(text),
-          ),
-        ],
-      ),
-    );
-  }
   Widget _filterOptions() {
     const _padding = const EdgeInsets.symmetric(
       horizontal: 6,
@@ -347,25 +332,25 @@ class _PartnerFeedState extends State<PartnerFeed> {
                   showDialog<void>(context: context, builder: (context) => SimpleDialog(
                     title: Text('Choose Price Range'),
                     children: [
-                      _simpleDialogItem(
+                      SimpleDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 0 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$',
                         onPressed: () => _action(context, 0),
                       ),
-                      _simpleDialogItem(
+                      SimpleDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 1 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$\$',
                         onPressed: () => _action(context, 1),
                       ),
-                      _simpleDialogItem(
+                      SimpleDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 2 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$\$\$',
                         onPressed: () => _action(context, 2),
                       ),
-                      _simpleDialogItem(
+                      SimpleDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 3 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$\$\$\$',

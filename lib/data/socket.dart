@@ -3,9 +3,9 @@
 // for use only in ARRIVAL Project
 
 import 'dart:convert';
+import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:flutter_socket_io/flutter_socket_io.dart';
-import 'package:flutter_socket_io/socket_io_manager.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../users/data.dart';
 import '../data/arrival.dart';
@@ -17,28 +17,26 @@ import '../foryou/foryou.dart';
 import '../screens/home.dart';
 
 class socket {
-  static SocketIO _socket;
-  static var home, post, profile;
+  static IO.Socket _socket;
+  static var home, post, profile, chatlist;
   static var delivery, search;
   static int error_report_time = 3;
   static String authenicator;
   static bool active = false;
-  static List<Map<String, dynamic> > call_queue = List<Map<String, dynamic> >();
+  static List<Map<String, dynamic>> call_queue = List<Map<String, dynamic>>();
   static bool attempting_to_execute_queue = false;
 
   static void init() {
     if (_socket!=null) return;
-    _socket = SocketIOManager().createSocketIO(
-      'https://arrival-app.herokuapp.com', '/');
-    _socket.init();
 
-    _socket.subscribe('message', (jsonData) async {
-      Map<String, dynamic> data = json.decode(jsonData);
+    _socket = IO.io('https://arrival-app.herokuapp.com', <dynamic, dynamic>{
+      'transports': ['websocket'],
+    });
 
-
+    _socket.on('message', (data) async {
 
         /***  Content downloading
-         * this functions allow for seemless use of the app
+         * these functions allow for seemless use of the app
          */
 
       if (data['type']==900) { // for you download
@@ -217,10 +215,18 @@ class socket {
         ArrivalData.innocentAdd(ArrivalData.partners, _Partner);
       }
 
+      else if (data['type']==840) { // chatlist download
+        if (chatlist==null) return;
+
+        if (data['response'].length==0) data['response'] = <Map<String, dynamic>>[];
+
+        chatlist.loadData(data['response']);
+      }
+
 
 
         /***  Userdata and Settings sync with device
-         * this makes sure the server's userstate and the
+         * these make sure the server's userstate and the
          * device's userstate are always the same
          */
 
@@ -231,14 +237,14 @@ class socket {
       else if (data['type']==601) { // updated user password
         HomeScreen.openSnackBar({
           'text': 'Password updated.',
-          'duration': socket.error_report_time,
+          'duration': error_report_time,
         });
       }
 
       else if (data['type']==602) { // updated user email
         HomeScreen.openSnackBar({
           'text': 'A verification email was sent to '+ data['response'] + ' and will expire in 24 hours.',
-          'duration': socket.error_report_time,
+          'duration': error_report_time,
         });
       }
 
@@ -318,14 +324,15 @@ class socket {
 
         HomeScreen.openSnackBar({
           'text': error_msg,
-          'duration': socket.error_report_time,
+          'duration': error_report_time,
         });
       }
 
 
 
         /***  Server feedback
-         * this functions allow for seemless use of the app
+         * these handle background confirmation from the server
+         * of a message's success and the user's actions taken
          */
 
       else if (data['type']==500) { // error reporting
@@ -359,13 +366,24 @@ class socket {
         });
       }
 
+
+
+        /** Socket <-> Server connection confirmation */
+
       else if (data['type']==1) { // connection test verification
         active = true;
         failed_queue_attempts = 0;
       }
     });
+  }
 
-    _socket.connect();
+  static void close() {
+    if (_socket==null) return;
+    _socket.dispose();
+  }
+
+  static _StreamSocket stream(String namespace) {
+    return _StreamSocket(namespace);
   }
 
   static int failed_queue_attempts = 0;
@@ -376,8 +394,8 @@ class socket {
 
     if (!active) {
       if (++failed_queue_attempts % 10 == 0) {
-        _socket.sendMessage(
-          call_queue[0]['request'], json.encode(call_queue[0]['data']),
+        _socket.emit(
+          call_queue[0]['request'], call_queue[0]['data'],
         );
       }
 
@@ -399,7 +417,7 @@ class socket {
     attempting_to_execute_queue = false;
   }
 
-  static void emit(String _req, var _data) {
+  static void emit(String _req, Map<String, dynamic> _data) {
     if (_socket==null) return;
 
     if (!active) {
@@ -412,16 +430,9 @@ class socket {
       execute_queue();
     }
 
-    _socket.sendMessage(
-      _req, json.encode(_data),
+    _socket.emit(
+      _req, _data
     );
-  }
-
-  static void close() {
-    if (_socket==null) return;
-    _socket.unSubscribesAll();
-    _socket.disconnect();
-    SocketIOManager().destroySocket(_socket);
   }
 
   static Future<String> check_vaildation() async {
@@ -433,5 +444,33 @@ class socket {
       await Future.delayed(const Duration(milliseconds: 300));
     }
     return 'Our servers are dealing with high volume, please try again in a few minutes.';
+  }
+}
+
+class _StreamSocket {
+  IO.Socket _socket;
+
+  _StreamSocket(String namespace) {
+    _socket = IO.io('https://arrival-app.herokuapp.com/${namespace}', <dynamic, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    _socket.on('message', (data) => this.add(data));
+  }
+
+  final _socketResponse = StreamController<Map<String, dynamic>>();
+
+  void Function(Map<String, dynamic>) get add => _socketResponse.sink.add;
+
+  Stream<Map<String, dynamic>> get response => _socketResponse.stream;
+
+  void emit(String _req, Map<String, dynamic> _data) {
+    _socket.emit(
+      _req, _data,
+    );
+  }
+
+  void dispose() {
+    _socketResponse.close();
   }
 }

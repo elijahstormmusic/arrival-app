@@ -117,7 +117,7 @@ class Preferences extends Model {
   }
 
 
-  Future<Set<NotificationHolder> > get notificationHistory async {
+  Future<Set<NotificationHolder>> get notificationHistory async {
     await _loading;
     return Set.from(_notificationHistory);
   }

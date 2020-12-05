@@ -93,7 +93,7 @@ class _ListState extends State<ForYouPage> {
     super.dispose();
   }
 
-  List<Map<String, dynamic> > _uploadingMedia = List<Map<String, dynamic> >();
+  List<Map<String, dynamic>> _uploadingMedia = List<Map<String, dynamic>>();
   void addUploadingMediaProgress(String id) {
     if (kill_reflow) return;
     setState(() => _uploadingMedia.add({
@@ -216,7 +216,7 @@ class _ListState extends State<ForYouPage> {
   }
   void _refresh() {
     if (!_allowRequest) return;
-    _uploadingMedia = List<Map<String, dynamic> >();
+    _uploadingMedia = List<Map<String, dynamic>>();
     ArrivalData.foryou = List<RowCard>();
     _pullNext(REQUEST_AMOUNT);
   }

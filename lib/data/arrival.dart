@@ -39,6 +39,7 @@ class ArrivalData {
   static int innocentAdd(List<dynamic> _list, dynamic _input) {
     for (int i=0;i<_list.length;i++) {
       if (_list[i].cryptlink==_input.cryptlink) {
+        _list[i] = _input;  // replaces with newer instance
         return i;
       }
     }

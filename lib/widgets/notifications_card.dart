@@ -78,7 +78,7 @@ class _NotoCardState extends State<NotificationsCard> {
   Widget _displayList(BuildContext context, Set<NotificationHolder> __history) {
 
     List<NotificationHolder> history = __history.toList().reversed.toList();
-    List<Map<String, dynamic> > list = List<Map<String, dynamic> >();
+    List<Map<String, dynamic>> list = List<Map<String, dynamic>>();
 
     for (int i=0 ; i<history.length ; i++) {
       list.add({
@@ -117,7 +117,7 @@ class _NotoCardState extends State<NotificationsCard> {
       ),
       padding: const EdgeInsets.all(3),
       width: MediaQuery.of(context).size.width / 2.5,
-      child: FutureBuilder<Set<NotificationHolder> >(
+      child: FutureBuilder<Set<NotificationHolder>>(
         future: prefs.notificationHistory,
         builder: (context, snapshot) {
           final data = snapshot.data ?? <NotificationHolder>{};

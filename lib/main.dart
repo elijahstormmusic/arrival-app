@@ -22,6 +22,7 @@ import 'users/profile.dart';
 import 'login/login.dart';
 import 'login/transition_route_observer.dart';
 
+import 'styles.dart';
 import 'posts/upload.dart';
 
 
@@ -67,6 +68,9 @@ void main() async {
         child: RefreshConfiguration(
           enableLoadingWhenFailed: true,
           child: MaterialApp(
+            theme: ThemeData(
+              primaryColor: Styles.ArrivalPalletteRed,
+            ),
             debugShowCheckedModeBanner: false,
             localizationsDelegates: <LocalizationsDelegate<dynamic>>[
               DefaultMaterialLocalizations.delegate,

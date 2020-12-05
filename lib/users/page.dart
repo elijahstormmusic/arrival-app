@@ -25,6 +25,7 @@ import '../posts/page.dart';
 import '../users/data.dart';
 import '../users/profile.dart';
 import '../widgets/cards.dart';
+import '../widgets/chat/messager.dart';
 
 
 class UserPosts extends StatefulWidget {
@@ -257,6 +258,30 @@ class _ProfilePageState extends State<ProfilePage> {
     await UserData.save();
   }
 
+  String _followersNumberDisplay(int input) {
+    String addition = '';
+    double dblNumber = input.toDouble();
+    if (dblNumber > 999999999) {
+      dblNumber /= 100000000;
+      dblNumber = dblNumber.floor() / 10.0;
+      if (dblNumber % 1.0 == 0.0) return dblNumber.toInt().toString() + 'b';
+      return dblNumber.toString() + 'b';
+    }
+    if (dblNumber > 999999) {
+      dblNumber /= 100000;
+      dblNumber = dblNumber.floor() / 10.0;
+      if (dblNumber % 1.0 == 0.0) return dblNumber.toInt().toString() + 'm';
+      return dblNumber.toString() + 'm';
+    }
+    if (dblNumber > 9999) {
+      dblNumber /= 1000;
+      dblNumber = dblNumber.floor() / 10.0;
+      if (dblNumber % 1.0 == 0.0) return dblNumber.toInt().toString() + 'k';
+      return dblNumber.toString() + 'k';
+    }
+    return input.toString();
+  }
+
   Widget _buildPersonalDetails(BuildContext context, AppState model) {
     final themeData = CupertinoTheme.of(context);
     return SafeArea(
@@ -266,45 +291,137 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                ArrCloseButton(() {
-                  Navigator.of(context).pop();
-                }),
-                SizedBox(width: 16),
-                Text(
-                  widget.profile.name,
-                  style: Styles.profilePageHeader
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 4,
-                horizontal: 10,
-              ),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: (_editingProfile && _newProfilePic!=null)
-                  ? FileImage(_newProfilePic)
-                  : NetworkImage(widget.profile.media_href()),
-                child: _editingProfile ? GestureDetector(
-                  onTap: () async {
-                    _newProfilePic = await ImagePicker.pickImage(source: ImageSource.gallery);
-                  },
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Styles.ArrivalPalletteLightGrey,
+            Container(
+              width: MediaQuery.of(context).size.width - 32,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width - 74,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ArrCloseButton(() {
+                          Navigator.of(context).pop();
+                        }),
+                        SizedBox(width: 16),
+                        Text(
+                          widget.profile.name,
+                          style: Styles.profilePageHeader
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(),
+                  GestureDetector(
+                    onTap: () {
+                      Arrival.navigator.currentState.push(MaterialPageRoute(
+                        builder: (context) => Messager.create({
+                            'group': [widget.profile.cryptlink],
+                          }),
+                        fullscreenDialog: true,
+                      ));
+                    },
                     child: Icon(
-                      Icons.edit,
-                      size: 16,
+                      Icons.message,
                       color: Styles.ArrivalPalletteRed,
                     ),
                   ),
-                ) : Container(),
+                ],
               ),
             ),
-            SizedBox(height: 12),
+
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 10,
+              ),
+              width: MediaQuery.of(context).size.width - 32,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: (_editingProfile && _newProfilePic!=null)
+                    ? FileImage(_newProfilePic)
+                    : NetworkImage(widget.profile.media_href()),
+                    child: _editingProfile ? GestureDetector(
+                      onTap: () async {
+                        _newProfilePic = await ImagePicker.pickImage(source: ImageSource.gallery);
+                      },
+                      child: CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Styles.ArrivalPalletteLightGrey,
+                        child: Icon(
+                          Icons.edit,
+                          size: 16,
+                          color: Styles.ArrivalPalletteRed,
+                        ),
+                      ),
+                    ) : Container(),
+                  ),
+                  Container(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 100.0,
+                        height: 100.0,
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              _followersNumberDisplay(1900),
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'followers',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Container(
+                        width: 100.0,
+                        height: 100.0,
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              _followersNumberDisplay(20000),
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'following',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(
                 vertical: 2,
@@ -408,21 +525,41 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(height: 20),
                   CupertinoSegmentedControl<int>(
                     children: {
-                      0: Icon(Icons.apps),
-                      1: Icon(Icons.alternate_email),//alternate_email_rounded
-                      2: Icon(Icons.message),
+                      0: Container(
+                        height: 36.0,
+                        child: Icon(
+                          Icons.apps,
+                          size: 30.0,
+                        ),
+                      ),
+                      1: Container(
+                        height: 36.0,
+                        child: Icon(
+                          Icons.play_arrow,
+                          size: 30.0,
+                        ),
+                      ),
+                      2: Container(
+                        height: 36.0,
+                        child: Icon(
+                          Icons.audiotrack,
+                          size: 30.0,
+                        ),
+                      ),
                     },
                     groupValue: _selectedViewIndex,
-                    onValueChanged: (value) {
-                      setState(() => _selectedViewIndex = value);
-                    },
+                    borderColor: Styles.ArrivalPalletteWhite,
+                    unselectedColor: Styles.ArrivalPalletteGrey,
+                    selectedColor: Styles.ArrivalPalletteBlue,
+                    pressedColor: Styles.ArrivalPalletteGrey,
+                    onValueChanged: (value) => setState(() => _selectedViewIndex = value),
                   ),
                   SizedBox(height: 20),
                   _selectedViewIndex == 0
-                  ? UserPosts(userPosts, widget.profile.cryptlink, has_reached_end)
-                  : _selectedViewIndex == 1
-                  ? Second(widget.profile)
-                  : UserContact(widget.profile),
+                    ? UserPosts(userPosts, widget.profile.cryptlink, has_reached_end)
+                    : _selectedViewIndex == 1
+                      ? Second(widget.profile)
+                      : UserContact(widget.profile),
                 ],
               ),
             ),
