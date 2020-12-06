@@ -87,7 +87,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
   }
 
 
-  Future<Map<String, dynamic>> _uploadMedia(File _media, bool _is_image) async {
+  Future<Map<String, dynamic>> _uploadMedia(File _media, bool isVideo) async {
     if (_media == null) return {
       'link': '',
     };
@@ -99,7 +99,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
     try {
       var media_data;
 
-      if (_is_image) {
+      if (isVideo) {
         media_data = await cloudinary_client.uploadVideo(
           _media.path,
           folder: 'posts/' + UserData.client.name,

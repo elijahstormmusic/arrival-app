@@ -1,8 +1,11 @@
+
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/socket.dart';
 import '../../data/link.dart';
 import '../../users/data.dart';
+import '../../users/profile.dart';
 import '../../foryou/explore.dart';
 import '../../styles.dart';
 import 'chat_model.dart';
@@ -21,7 +24,7 @@ class ChatList extends StatefulWidget {
     state = _ChatListState();
   }
 
-  void loadData(List<Map<String, dynamic>> data) => state.loadData(data);
+  void loadData(List<dynamic> data) => state.loadData(data);
 
   @override
   _ChatListState createState() => state;
@@ -45,21 +48,44 @@ class _ChatListState extends State<ChatList> {
     return true;
   }
 
-  void loadData(List<Map<String, dynamic>> addableChatData) {
+  void loadData(List<dynamic> addableChatData) {
     if (!mounted) return;
 
     if (_fluidChatList == null) _fluidChatList = List<ChatModel>();
 
     List<ChatModel> chatList = List<ChatModel>();
-
+    
     for (int i=0;i<addableChatData.length;i++) {
+      if (addableChatData[i]==null) continue;
+
+      if (addableChatData[i]['icon']=='') {
+        int userIndex = 0;
+
+        while (addableChatData[i]['users'][userIndex]==UserData.client.cryptlink) {
+          userIndex++;
+        }
+
+        addableChatData[i]['icon'] = Profile.lite(addableChatData[i]['users'][userIndex]).media_href();
+      }
+
+      if (addableChatData[i]['name']=='') {
+        int userIndex = 0;
+
+        while (addableChatData[i]['users'][userIndex]==UserData.client.cryptlink) {
+          userIndex++;
+        }
+
+        addableChatData[i]['name'] = Profile.lite(addableChatData[i]['users'][userIndex]).name;
+      }
+
       chatList.add(ChatModel(
-        messageIndex: addableChatData[i]['index'],
+        messageThread: addableChatData[i]['thread'],
         userIndexes: addableChatData[i]['users'],
         avatarUrl: addableChatData[i]['icon'],
         name: addableChatData[i]['name'],
-        datetime: addableChatData[i]['lastMsgTime'],
-        message: addableChatData[i]['lastMsg'],
+        datetime: DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.fromMillisecondsSinceEpoch(addableChatData[i]['lastMsgTime'])),
+        message: addableChatData[i]['lastMsg']=='' ? 'Sent an Image' : addableChatData[i]['lastMsg'],
+        lastMsgUser: addableChatData[i]['lastMsgUser'],
       ));
     }
 
@@ -118,7 +144,7 @@ class _ChatListState extends State<ChatList> {
         return GestureDetector(
           onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
             builder: (context) => Messager(
-              _model.messageIndex,
+              _model.messageThread,
               {
                 'group': chatList[index].userIndexes,
               }
@@ -147,7 +173,23 @@ class _ChatListState extends State<ChatList> {
                     ),
                   ],
                 ),
-                subtitle: Text(_model.message),
+                subtitle: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      _model.lastMsgUser == UserData.client.cryptlink ?
+                        Icons.call_made :
+                        Icons.call_received,
+                      color: _model.lastMsgUser == UserData.client.cryptlink ?
+                        Styles.ArrivalPalletteBlue :
+                        Styles.ArrivalPalletteGreen,
+                      size: 16,
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(_model.message),
+                  ],
+                ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
                   size: 14.0,

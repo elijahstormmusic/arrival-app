@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:dash_chat/dash_chat.dart';
 
+import '../../posts/cloudinary/cloudinary_client.dart';
+
 import '../../data/socket.dart';
 import '../../users/data.dart';
 import '../../users/profile.dart';
@@ -13,7 +15,7 @@ import '../../styles.dart';
 
 
 class Messager extends StatefulWidget {
-  final String index;
+  final String thread;
   final ChatUser clientUser = ChatUser(
     name: UserData.client.name,
     uid: UserData.client.cryptlink,
@@ -24,11 +26,11 @@ class Messager extends StatefulWidget {
   bool _allowedToChat = false;
   bool newChat = false;
 
-  Messager(@required this.index, Map<String, dynamic> inputData) {
+  Messager(@required this.thread, Map<String, dynamic> inputData) {
     _initalizeChat(inputData);
   }
   Messager.create(Map<String, dynamic> inputData, {
-    this.index = '',
+    this.thread = '',
   }) {
     newChat = true;
     _initalizeChat(inputData);
@@ -59,7 +61,7 @@ class Messager extends StatefulWidget {
     }
 
     if (chatName==null) {
-      String newName = 'Chat with ';
+      String newName = '';
 
       for (int i=0;i<inputData['group'].length;i++) {
         if (inputData['group'][i]==clientUser.uid) continue;
@@ -85,6 +87,9 @@ class _MessagerState extends State<Messager> {
   var _messagesStream;
   List<ChatMessage> messages = List<ChatMessage>();
   var m = List<ChatMessage>();
+  bool _disabledForRapidSending = false;
+  CloudinaryClient cloudinary_client =
+    new CloudinaryClient('868422847775537', 'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
 
   var i = 0;
 
@@ -93,10 +98,11 @@ class _MessagerState extends State<Messager> {
     super.initState();
     _messagesStream = socket.stream('');
 
+    if (widget.newChat) return;
+
     _messagesStream.emit('set chat state', {
-      'name': 'ya mama',
       'link': UserData.client.cryptlink,
-      'thread': widget.index,
+      'thread': widget.thread,
     });
   }
   @override
@@ -110,7 +116,7 @@ class _MessagerState extends State<Messager> {
 
     Timer(Duration(milliseconds: 300), () {
       if (i < 6) {
-        _messagesStream.add(m[i].toJson());
+        _messagesStream.add([m[i].toJson()]);
         i++;
       }
       Timer(Duration(milliseconds: 300), () {
@@ -125,23 +131,33 @@ class _MessagerState extends State<Messager> {
   }
 
   void _onSend(ChatMessage message) async {
+    if (_disabledForRapidSending) return;
+    _disabledForRapidSending = true;
+
     if (widget.newChat) {
-      widget.newChat = false;
       List<String> usersGroup = <String>[];
 
+      // String msgIcon;
+      int chatUserIndex = 0;
+
       widget.usersMap.forEach((user, _) {
-        if (UserData.client.cryptlink == user) return;
         usersGroup.add(user);
+        // if (chatUserIndex++ == 1) {
+        //   msgIcon = _.avatar;
+        // }
       });
 
       _messagesStream.emit('message new', {
-        'user': UserData.client.cryptlink,
         'users_list': usersGroup,
+  			'icon': '',//msgIcon,
+  			'name': '',//widget.chatName,
       });
+
+      do {
+        await Future.delayed(Duration(milliseconds: 100));
+      } while (widget.newChat);
     }
 
-    await Future.delayed(Duration(milliseconds: 500));
-    
     _messagesStream.emit('chat', {
       'id': message.id,
       'text': message.text,
@@ -156,7 +172,7 @@ class _MessagerState extends State<Messager> {
 
     msg['interior'] = 'crocodile';
 
-    _messagesStream.add(msg);
+    _messagesStream.add([msg]);
 
     if (i == 0) {
       _systemMessage();
@@ -166,8 +182,15 @@ class _MessagerState extends State<Messager> {
     } else {
       _systemMessage();
     }
+
+    await Future.delayed(Duration(milliseconds: 500));
+    _disabledForRapidSending = false;
   }
-  void _insertMessage(var messages, var data) {
+  void _insertMessage(var data) {
+    if (data['image']!=null) {
+      data['image'] = 'https://res.cloudinary.com/arrival-kc/image/upload/' + data['image'];
+    }
+
     try {
       if (data['interior']=='crocodile') {
         messages.add(ChatMessage.fromJson(data));
@@ -182,6 +205,61 @@ class _MessagerState extends State<Messager> {
     } catch (e) {}
   }
 
+  Future<Map<String, dynamic>> _uploadMedia(File _media, bool isVideo) async {
+    if (_media == null) return {
+      'link': '',
+    };
+
+    try {
+      var media_data;
+
+      if (isVideo) {
+        media_data = await cloudinary_client.uploadVideo(
+          _media.path,
+          folder: 'messages/' + UserData.client.name,
+        );
+      }
+      else {
+        media_data = await cloudinary_client.uploadImage(
+          _media.path,
+          folder: 'messages/' + UserData.client.name,
+        );
+      }
+
+      return {
+        'link': media_data.secure_url.replaceAll(
+                  'https://res.cloudinary.com/arrival-kc/image/upload/', ''
+                ),
+        'height': media_data.height,
+        // 'duration': media_data.duration==null ? null : media_data.duration,
+      };
+    } catch (e) {
+      print('''
+      =====================================
+                  Arrival Error
+          $e
+      =====================================
+      ''');
+    }
+
+    return {
+      'link': '',
+    };
+  }
+  bool _isUnacceptableFile(File _media) {
+    var length = _media.path.length;
+    String extension = _media.path.substring(length-4, length);
+
+    return (extension=='.gif');
+  }
+  bool _isVideo(File _media) {
+    var length = _media.path.length;
+    String extension = _media.path.substring(length-4, length);
+
+    return (extension=='.mp4' || extension=='.mov' || extension=='.avi'
+          || extension=='.wmv');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,11 +270,16 @@ class _MessagerState extends State<Messager> {
         stream: _messagesStream.response,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (messages.length == 0) {
-              _insertMessage(messages, snapshot.data);
-            }
-            else if (snapshot.data['id'] != messages.last.id) {
-              _insertMessage(messages, snapshot.data);
+            for (int i=0;i<snapshot.data.length;i++) {
+              if (snapshot.data[i]['type'] == 1001) {
+                widget.newChat = false;
+              }
+              else if (messages.length == 0) {
+                _insertMessage(snapshot.data[i]);
+              }
+              else if (snapshot.data[i]['id'] != messages.last.id) {
+                _insertMessage(snapshot.data[i]);
+              }
             }
           }
 
@@ -234,10 +317,10 @@ class _MessagerState extends State<Messager> {
               print('-> INSIDE QUICK REPLY TEST');
 
 
-              _messagesStream.add(ChatMessage(
+              _messagesStream.add([ChatMessage(
                 text: reply.value,
                 createdAt: DateTime.now(),
-                user: widget.clientUser).toJson());
+                user: widget.clientUser).toJson()]);
 
               Timer(Duration(milliseconds: 300), () {
                 _chatViewKey.currentState.scrollController
@@ -272,7 +355,11 @@ class _MessagerState extends State<Messager> {
                   );
 
                   if (result != null) {
+                    if (_isUnacceptableFile(result)) return;
 
+                    var data = await _uploadMedia(result, _isVideo(result));
+
+                    _onSend(ChatMessage(text: "", user: widget.clientUser, image: data['link']));
                   }
                 },
               )

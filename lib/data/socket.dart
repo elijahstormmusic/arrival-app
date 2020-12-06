@@ -218,8 +218,6 @@ class socket {
       else if (data['type']==840) { // chatlist download
         if (chatlist==null) return;
 
-        if (data['response'].length==0) data['response'] = <Map<String, dynamic>>[];
-
         chatlist.loadData(data['response']);
       }
 
@@ -458,11 +456,11 @@ class _StreamSocket {
     _socket.on('message', (data) => this.add(data));
   }
 
-  final _socketResponse = StreamController<Map<String, dynamic>>();
+  final _socketResponse = StreamController<dynamic>();
 
-  void Function(Map<String, dynamic>) get add => _socketResponse.sink.add;
+  void Function(dynamic) get add => _socketResponse.sink.add;
 
-  Stream<Map<String, dynamic>> get response => _socketResponse.stream;
+  Stream<dynamic> get response => _socketResponse.stream;
 
   void emit(String _req, Map<String, dynamic> _data) {
     _socket.emit(
