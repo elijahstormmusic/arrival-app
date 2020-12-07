@@ -20,6 +20,7 @@ import '../users/data.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 import '../styles.dart';
+import '../const.dart';
 import 'comments.dart';
 import 'options.dart';
 import 'video.dart';
@@ -293,7 +294,7 @@ class _PostDisState extends State<PostDisplay> {
                 onTap: () {
                   final RenderBox box = context.findRenderObject();
                   Share.share(
-                    'https://arrival-app.herokuapp.com/p?${widget.post.cryptlink}',
+                    Constants.site + 'p?${widget.post.cryptlink}',
                     subject: 'See More on Arrival',
                     sharePositionOrigin:
                       box.localToGlobal(Offset.zero) & box.size,
@@ -336,37 +337,66 @@ class _PostDisState extends State<PostDisplay> {
     );
   }
   Widget _profileDisplay(Profile user) {
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 6,
-        ),
-        height: 50,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                radius: 19.0,
-                backgroundImage: NetworkImage(user.media_href()),
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 6,
             ),
-            Text(
-              user.name,
-              style: Styles.profileName
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(4.0),
+                  child: CircleAvatar(
+                    radius: 19.0,
+                    backgroundImage: NetworkImage(user.media_href()),
+                  ),
+                ),
+                Text(
+                  user.name,
+                  style: Styles.profileName
+                ),
+              ],
             ),
-          ],
+          ),
+          onTap: () {
+            Arrival.navigator.currentState.push(MaterialPageRoute(
+              builder: (context) => ProfilePage.user(user),
+              fullscreenDialog: true,
+            ));
+          },
         ),
-      ),
-      onTap: () {
-        Arrival.navigator.currentState.push(MaterialPageRoute(
-          builder: (context) => ProfilePage.user(user),
-          fullscreenDialog: true,
-        ));
-      },
+
+        SizedBox(width: 4),
+
+        GestureDetector(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 6,
+            ),
+            height: 50,
+            child: Text(
+              'Follow',
+              style: Styles.activeTabButton,
+            ),
+          ),
+          onTap: () {
+            socket.emit('userdata follow', {
+              'user': UserData.client.cryptlink,
+              'follow': widget.post.user.cryptlink,
+              'action': true,
+            });
+          },
+        ),
+      ],
     );
   }
 

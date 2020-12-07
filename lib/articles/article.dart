@@ -7,15 +7,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
+import '../const.dart';
 
 import 'page.dart';
 
 class Article {
   static int index = 0;
   static final String source =
-    'https://res.cloudinary.com/arrival-kc/image/upload/';
+    Constants.meda_source;
   static final String default_img =
-    'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
+    Constants.default_profile_pic;
 
   final int id;
   final String cryptlink;

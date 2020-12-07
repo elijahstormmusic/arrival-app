@@ -12,6 +12,7 @@ import '../data/arrival.dart';
 import '../data/socket.dart';
 
 import '../styles.dart';
+import '../const.dart';
 
 import 'page.dart';
 import 'sale.dart';
@@ -30,7 +31,7 @@ enum SourceIndustry {
   shoes,
 }
 class StoreImages {
-  static const String source = 'https://res.cloudinary.com/arrival-kc/image/upload/';
+  static const String source = Constants.meda_source;
 
   String logo;
   String storefront;

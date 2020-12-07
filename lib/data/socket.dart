@@ -29,7 +29,7 @@ class socket {
   static void init() {
     if (_socket!=null) return;
 
-    _socket = IO.io('https://arrival-app.herokuapp.com', <dynamic, dynamic>{
+    _socket = IO.io(Constants.site, <dynamic, dynamic>{
       'transports': ['websocket'],
     });
 
@@ -449,7 +449,7 @@ class _StreamSocket {
   IO.Socket _socket;
 
   _StreamSocket(String namespace) {
-    _socket = IO.io('https://arrival-app.herokuapp.com/${namespace}', <dynamic, dynamic>{
+    _socket = IO.io(Constants.site + namespace}, <dynamic, dynamic>{
       'transports': ['websocket'],
     });
 

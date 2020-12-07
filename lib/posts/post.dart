@@ -8,13 +8,14 @@ import 'package:meta/meta.dart';
 import '../users/profile.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
+import '../const.dart';
 
 import 'page.dart';
 
 
 class Post {
   static final String source =
-    'https://res.cloudinary.com/arrival-kc/image/upload/';
+    Constants.meda_source;
 
   final String caption;
   final String cryptlink;

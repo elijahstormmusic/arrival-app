@@ -12,6 +12,7 @@ import '../../data/socket.dart';
 import '../../users/data.dart';
 import '../../users/profile.dart';
 import '../../styles.dart';
+import '../../const.dart'
 
 
 class Messager extends StatefulWidget {
@@ -188,7 +189,7 @@ class _MessagerState extends State<Messager> {
   }
   void _insertMessage(var data) {
     if (data['image']!=null) {
-      data['image'] = 'https://res.cloudinary.com/arrival-kc/image/upload/' + data['image'];
+      data['image'] = Constants.meda_source + data['image'];
     }
 
     try {
@@ -228,7 +229,7 @@ class _MessagerState extends State<Messager> {
 
       return {
         'link': media_data.secure_url.replaceAll(
-                  'https://res.cloudinary.com/arrival-kc/image/upload/', ''
+                  Constants.meda_source, ''
                 ),
         'height': media_data.height,
         // 'duration': media_data.duration==null ? null : media_data.duration,

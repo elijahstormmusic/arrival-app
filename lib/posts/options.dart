@@ -11,6 +11,7 @@ import '../data/link.dart';
 import '../users/data.dart';
 import '../widgets/dialog.dart';
 import '../styles.dart';
+import '../const.dart';
 import 'post.dart';
 
 
@@ -23,7 +24,7 @@ class PostOptions extends StatelessWidget {
   Widget build(BuildContext context) =>
     post.user.cryptlink == UserData.client.cryptlink ?
       SimpleDialog(
-        title: Text('Actions for your Post'),
+        title: Text('Actions for Your Post (* = dosnt work yet)'),
         children: [
           SimpleDialogItem(
             icon: Icons.person,
@@ -36,17 +37,25 @@ class PostOptions extends StatelessWidget {
           SimpleDialogItem(
             icon: Icons.content_copy,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Copy Link *',
+            text: 'Copy Link',
             onPressed: () {
-              // socket
+              ClipboardManager.copyToClipBoard(Constants.site + 'p?${widget.post.cryptlink}').then((result) {
+                HomeScreen.openSnackBar({
+                  'text': 'Link Copied',
+                  'duration': 3,
+                });
+              });
             },
           ),
           SimpleDialogItem(
             icon: Icons.folder_open,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Archive *',
+            text: 'Archive',
             onPressed: () {
-              // socket
+              socket.emit('posts archive', {
+                'link': widget.post.cryptlink,
+                'archive': true,
+              });
             },
           ),
           SimpleDialogItem(
@@ -60,17 +69,22 @@ class PostOptions extends StatelessWidget {
           SimpleDialogItem(
             icon: Icons.comment,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Stop Comments *',
+            text: 'Stop Comments',
             onPressed: () {
-              // socket
+              socket.emit('posts stop comments', {
+                'link': widget.post.cryptlink,
+                'stop': true,
+              });
             },
           ),
           SimpleDialogItem(
             icon: Icons.delete,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Delete *',
+            text: 'Delete',
             onPressed: () {
-              // socket
+              socket.emit('posts delete', {
+                'link': widget.post.cryptlink,
+              });
             },
           ),
         ],
@@ -94,17 +108,26 @@ class PostOptions extends StatelessWidget {
           SimpleDialogItem(
             icon: Icons.content_copy,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Copy Link *',
+            text: 'Copy Link',
             onPressed: () {
-              // socket
+              ClipboardManager.copyToClipBoard(Constants.site + 'p?${widget.post.cryptlink}').then((result) {
+                HomeScreen.openSnackBar({
+                  'text': 'Link Copied',
+                  'duration': 3,
+                });
+              });
             },
           ),
           SimpleDialogItem(
             icon: Icons.person_remove,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Unfollow User *',
+            text: 'Unfollow User',
             onPressed: () {
-
+              socket.emit('userdata follow', {
+                'user': UserData.client.cryptlink,
+                'follow': widget.post.user.cryptlink,
+                'action': false,
+              });
             },
           ),
         ],

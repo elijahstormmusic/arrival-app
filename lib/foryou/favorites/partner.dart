@@ -9,6 +9,7 @@ import '../../partners/partner.dart';
 import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
+import '../../const.dart'
 
 class PartnerFavorites extends CasingFavoritesBox {
   void explore() {
@@ -34,7 +35,7 @@ class PartnerFavorites extends CasingFavoritesBox {
     return {
       'link': LocalIndustries.all[i].type,
       'color': LocalIndustries.all[i].color,
-      'icon': 'https://res.cloudinary.com/arrival-kc/image/upload/v1599325166/sample.jpg',
+      'icon': Constants.basic_plant_image,
       'name': LocalIndustries.all[i].name,
     };
   }

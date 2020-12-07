@@ -26,6 +26,7 @@ import '../users/data.dart';
 import '../users/profile.dart';
 import '../widgets/cards.dart';
 import '../widgets/chat/messager.dart';
+import '../const.dart';
 
 
 class UserPosts extends StatefulWidget {
@@ -241,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _newProfilePic.path,
         filename: image_name,
         folder: 'profile/' + UserData.client.name,
-      )).secure_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', '');
+      )).secure_url.replaceAll(Constants.meda_source, '');
 
       if (img_url!=null) {
         socket.emit('userdata update', {

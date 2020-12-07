@@ -31,6 +31,7 @@ import '../foryou/foryou.dart';
 import '../screens/home.dart';
 import '../maps/locator.dart';
 import '../styles.dart';
+import '../const.dart';
 import 'video.dart';
 import 'uploader/media.dart';
 import 'uploader/picker/picker.dart';
@@ -114,7 +115,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
 
       return {
         'link': media_data.secure_url.replaceAll(
-                  'https://res.cloudinary.com/arrival-kc/image/upload/', ''
+                  Constants.meda_source, ''
                 ),
         'height': media_data.height,
         // 'duration': media_data.duration==null ? null : media_data.duration,

@@ -9,14 +9,21 @@ import 'package:flutter/material.dart';
 import '../data/arrival.dart';
 import '../data/link.dart';
 import '../data/socket.dart';
+import '../const.dart';
 
 import 'page.dart';
 
+  // socket.emit('userdata follow', {
+  //   'user': UserData.client.cryptlink,
+  //   'follow': widget.post.user.cryptlink,
+  //   'action': false,
+  // });
+
 class Profile {
   static final String default_img =
-    'https://arrival-app.herokuapp.com/includes/img/default-profile-pic.png';
+    Constants.default_profile_pic;
   static final String source =
-    'https://res.cloudinary.com/arrival-kc/image/upload/';
+    Constants.meda_source;
 
   final String cryptlink;
   String name;

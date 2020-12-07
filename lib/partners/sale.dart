@@ -7,15 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
+import '../const.dart';
 
 import 'partner.dart';
 import 'page.dart';
 
 class Sale {
   static final String source =
-    'https://res.cloudinary.com/arrival-kc/image/upload/';
+    Constants.meda_source;
   static final String default_img =
-    'https://res.cloudinary.com/arrival-kc/image/upload/v1599325166/sample.jpg';
+    Constants.basic_plant_image;
 
   final String cryptlink;
   final String name;

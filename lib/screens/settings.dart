@@ -29,6 +29,7 @@ import '../arrival_team/contact.dart';
 import '../styles.dart';
 import '../widgets/settings_group.dart';
 import '../widgets/settings_item.dart';
+import '../const.dart';
 
 
 /***
@@ -290,7 +291,7 @@ class SubSettings extends StatefulWidget {
               variableState.path,
               filename: image_name,
               folder: 'profile/' + UserData.client.name,
-            )).secure_url.replaceAll('https://res.cloudinary.com/arrival-kc/image/upload/', '');
+            )).secure_url.replaceAll(Constants.meda_source, '');
 
             if (img_url!=null) {
               socket.emit('userdata update', {
