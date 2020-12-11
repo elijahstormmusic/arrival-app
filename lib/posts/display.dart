@@ -376,25 +376,37 @@ class _PostDisState extends State<PostDisplay> {
 
         SizedBox(width: 4),
 
+        widget.post.user.cryptlink == UserData.client.cryptlink ? Container() :
         GestureDetector(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 6,
-            ),
-            height: 50,
-            child: Text(
-              'Follow',
-              style: Styles.activeTabButton,
-            ),
-          ),
-          onTap: () {
+          onTap: () async {
+            await prefs.toggleBookmarked(DataType.profile, widget.post.user.cryptlink);
+            setState(() => 0);
+
             socket.emit('userdata follow', {
               'user': UserData.client.cryptlink,
               'follow': widget.post.user.cryptlink,
-              'action': true,
+              'action': await prefs.isBookmarked(DataType.profile, widget.post.user.cryptlink),
             });
           },
+          child: FutureBuilder<bool>(
+            future: prefs.isBookmarked(DataType.profile, widget.post.user.cryptlink),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8,
+                // vertical: 6,
+              ),
+              height: 50,
+              child: Center(
+                child: Text(
+                  snapshot.hasData ?
+                    (snapshot.data ? '' : 'Follow')
+                    : 'Follow',
+                  style: Styles.activeTabButtonRed,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -621,7 +633,7 @@ class _PostDisState extends State<PostDisplay> {
           Container(),
           GestureDetector(
             onTap: () {
-              showDialog<void>(context: context, builder: (context) => PostOptions(widget.post));
+              showDialog<void>(context: context, builder: (context) => PostOptions(prefs, widget.post));
             },
             child: Container(
               margin: EdgeInsets.only(right: 10.0),

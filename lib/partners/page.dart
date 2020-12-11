@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import '../foryou/cards/sale_card.dart';
 import '../data/preferences.dart';
 import '../partners/partner.dart';
+import '../partners/industries.dart';
 import '../data/link.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
@@ -229,6 +230,7 @@ class _PartnerDisplayPageState extends State<PartnerDisplayPage> {
   @override
   Widget build(BuildContext context) {
     final biz = ArrivalData.getPartner(widget.cryptlink);
+    var prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
 
     return Scaffold(
       body: Column(
@@ -240,11 +242,34 @@ class _PartnerDisplayPageState extends State<PartnerDisplayPage> {
               physics: NeverScrollableScrollPhysics(),
               children: [
                 _buildHeader(context),
-                Padding(
+                Container(
                   padding: EdgeInsets.all(12),
-                  child: Text(
-                    biz.name,
-                    style: Styles.PartnerNameText,
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        child: GestureDetector(
+                          onTap: () async {
+                            await prefs.toggleBookmarked(DataType.partner, biz.cryptlink);
+                            setState(() => 0);
+                          },
+                          child: FutureBuilder<bool>(
+                            future: prefs.isBookmarked(DataType.partner, biz.cryptlink),
+                            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+                              snapshot.hasData ?
+                              (snapshot.data ? Styles.bookmark_filled : Styles.bookmark_icon)
+                              : Styles.bookmark_icon,
+                          ),
+                        ),
+                      ),
+
+                      Text(
+                        biz.name,
+                        style: Styles.PartnerNameText,
+                      ),
+                    ],
                   ),
                 ),
                 // Row(

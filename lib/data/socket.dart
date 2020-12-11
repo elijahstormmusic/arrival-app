@@ -15,6 +15,7 @@ import '../users/profile.dart';
 import '../posts/post.dart';
 import '../foryou/foryou.dart';
 import '../screens/home.dart';
+import '../const.dart';
 
 class socket {
   static IO.Socket _socket;
@@ -449,7 +450,7 @@ class _StreamSocket {
   IO.Socket _socket;
 
   _StreamSocket(String namespace) {
-    _socket = IO.io(Constants.site + namespace}, <dynamic, dynamic>{
+    _socket = IO.io(Constants.site + namespace, <dynamic, dynamic>{
       'transports': ['websocket'],
     });
 

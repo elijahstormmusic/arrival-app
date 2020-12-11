@@ -5,11 +5,13 @@
 import 'package:flutter/material.dart';
 import '../explore.dart';
 import '../../partners/page.dart';
+import '../../partners/industries.dart';
+import '../../partners/industry_display.dart';
 import '../../partners/partner.dart';
 import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../bookmarks/casing.dart';
-import '../../const.dart'
+import '../../const.dart';
 
 class PartnerFavorites extends CasingFavoritesBox {
   void explore() {
@@ -21,27 +23,25 @@ class PartnerFavorites extends CasingFavoritesBox {
 
   @override
   void open(Map<String, dynamic> data) {
-    print(data['link']);
-    // Arrival.navigator.currentState.push(MaterialPageRoute(
-    //   builder: (context) => PartnerDisplayPage(
-    //     data['link'],
-    //   ),
-    //   fullscreenDialog: true,
-    // ));
+    Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => PartnerIndustryDisplay(
+        data['link'],
+      ),
+      fullscreenDialog: true,
+    ));
   }
 
   @override
-  Map<String, dynamic> generateListData(int i) {
-    return {
-      'link': LocalIndustries.all[i].type,
-      'color': LocalIndustries.all[i].color,
-      'icon': Constants.basic_plant_image,
-      'name': LocalIndustries.all[i].name,
-    };
-  }
+  Map<String, dynamic> generateListData(int i) => {
+            'link': LocalIndustries.all[i].type.index.toString(),
+            'color': LocalIndustries.all[i].color,
+            'icon': LocalIndustries.all[i].image,
+            'name': LocalIndustries.all[i].name,
+          };
 
   @override
-  int listSize() {
-    return LocalIndustries.all.length;
-  }
+  int listSize() => LocalIndustries.all.length;
+
+  @override
+  int bookmarkableType() => 11;
 }

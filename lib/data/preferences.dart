@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:scoped_model/scoped_model.dart';
-import '../partners/partner.dart';
+import '../partners/industries.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 

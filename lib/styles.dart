@@ -6,11 +6,11 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'partners/partner.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/close_button.dart';
+import 'const.dart';
 
 class ArrivalTitle extends StatelessWidget {
   @override
@@ -31,11 +31,28 @@ abstract class Styles {
   static const ArrivalPalletteCream = Color(0xffF9EDD3);
   static const ArrivalPalletteYellow = Color(0xffFFCF01);
   static const ArrivalPalletteBlue = Color(0xff5AA6DC);
+  static const ArrivalPalletteDarkBlue = Color(0xff4974D9);
+  static const ArrivalPallettePurple = Color(0xffA35ADB);
   static const ArrivalPalletteGreen = Color(0xff09BC0F);
   static const ArrivalPalletteBlack = Color(0xff231F20);
   static const ArrivalPalletteWhite = Color(0xffF8F8F9);
   static const ArrivalPalletteGrey = Color(0xffD9D5D3);
   static const ArrivalPalletteLightGrey = Color(0xffEEEEE9);
+
+  static const ArrivalGradientDecoration = BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+              colors: [
+                const Color(0xffF15D5D),
+                const Color(0xffF25E92),
+                const Color(0xffA35ADB),
+                const Color(0xff7e5ef2),
+                const Color(0xff4974D9),
+              ],
+              tileMode: TileMode.mirror,
+            ),
+          );
 
   static const ArrivalPalletteRedDarken = Color(0xff860C0C);
   static const ArrivalPalletteCreamDarken = Color(0xffB28118);
@@ -310,6 +327,14 @@ abstract class Styles {
 
   static TextStyle activeTabButton = TextStyle(
         color: Styles.ArrivalPalletteBlue,
+        fontFamily: 'Helvetica',
+        fontSize: 18,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+      );
+
+  static TextStyle activeTabButtonRed = TextStyle(
+        color: Styles.ArrivalPalletteRed,
         fontFamily: 'Helvetica',
         fontSize: 18,
         fontStyle: FontStyle.normal,

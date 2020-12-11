@@ -280,8 +280,8 @@ class _PartnerFeedState extends State<PartnerFeed> {
 
 
 
-  bool _optionsPickup = false, _optionsArrivalDiscounts = false,
-    _optionsAppointments = false;
+  bool _optionsPickup = false, _optionsBookmarks = false,
+    _optionsArrivalDiscounts = false, _optionsAppointments = false;
   int _optionsPriceRange = 1;
   String _optionsPriceText = '\$\$';
 
@@ -299,6 +299,16 @@ class _PartnerFeedState extends State<PartnerFeed> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
+            Container(
+              padding: _padding,
+              child: FilterChip(
+                label: Text('Bookmarks'),
+                selected: _optionsBookmarks,
+                onSelected: (bool value) {
+                  setState(() => _optionsBookmarks = value);
+                },
+              ),
+            ),
             Container(
               padding: _padding,
               child: FilterChip(

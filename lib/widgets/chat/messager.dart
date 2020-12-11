@@ -12,7 +12,7 @@ import '../../data/socket.dart';
 import '../../users/data.dart';
 import '../../users/profile.dart';
 import '../../styles.dart';
-import '../../const.dart'
+import '../../const.dart';
 
 
 class Messager extends StatefulWidget {

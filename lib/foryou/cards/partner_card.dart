@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../../partners/partner.dart';
+import '../../partners/industries.dart';
 import '../../data/link.dart';
 import '../../partners/page.dart';
 import '../../styles.dart';

@@ -9,6 +9,7 @@ import '../partners/partner.dart';
 import '../articles/article.dart';
 import '../partners/sale.dart';
 import '../posts/post.dart';
+import '../const.dart';
 
 class AppState extends Model {
 

@@ -3,13 +3,13 @@
 // for use only in ARRIVAL Project
 
 import 'package:flutter/material.dart';
-import '../explore.dart';
-import '../../users/page.dart';
-import '../../data/link.dart';
-import '../../data/arrival.dart';
-import '../../bookmarks/casing.dart';
+import '../bookmarks/casing.dart';
+import '../foryou/explore.dart';
+import '../data/link.dart';
+import '../data/arrival.dart';
+import '../posts/story.dart';
 
-class PostFavorites extends CasingFavorites {
+class StoriesHighlights extends CasingFavorites {
   void explore() {
     Arrival.navigator.currentState.push(MaterialPageRoute(
       builder: (context) => Explore(type: 'posts'),
@@ -20,7 +20,7 @@ class PostFavorites extends CasingFavorites {
   @override
   void open(Map<String, dynamic> data) {
     Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => ProfilePage.fromLink(
+      builder: (context) => StoryDisplay(
         data['link'],
       ),
       fullscreenDialog: true,

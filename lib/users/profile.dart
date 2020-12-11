@@ -13,12 +13,6 @@ import '../const.dart';
 
 import 'page.dart';
 
-  // socket.emit('userdata follow', {
-  //   'user': UserData.client.cryptlink,
-  //   'follow': widget.post.user.cryptlink,
-  //   'action': false,
-  // });
-
 class Profile {
   static final String default_img =
     Constants.default_profile_pic;

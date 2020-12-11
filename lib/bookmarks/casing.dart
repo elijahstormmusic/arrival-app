@@ -5,7 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:scoped_model/scoped_model.dart';
 
+import '../data/preferences.dart';
 import '../widgets/cards.dart';
 import '../styles.dart';
 
@@ -20,190 +22,18 @@ class CasingFavorites extends StatefulWidget {
   @override
   State<CasingFavorites> createState() => _CasingCircle();
 }
-
 class CasingFavoritesBox extends StatefulWidget {
 
   void open(Map<String, dynamic> data) {}
   Map<String, dynamic> generateListData(int index) => {};
   int listSize() => 0;
   void explore() => {};
+  int bookmarkableType() => 99;
 
   @override
   State<CasingFavoritesBox> createState() => _CasingBox();
 }
 
-class _CasingBox extends State<CasingFavoritesBox> {
-
-  List<Map<String, dynamic>> _rowButtonListData;
-  TextStyle _bookmarkLabel = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 16,
-    color: Styles.ArrivalPalletteWhite,
-  );
-
-  Map<String, dynamic> _generateGenericListData(int index) {
-    var result = widget.generateListData(index);
-    result['seen'] = false;
-    return result;
-  }
-  String getNavigationLink(int index) {
-    if (index<0 && index>=_rowButtonListData.length) return '';
-    _rowButtonListData[index]['seen'] = true;
-    return _rowButtonListData[index]['cryptlink'];
-  }
-  void _openGenericAction(int index) {
-    if (index<0 && index>=_rowButtonListData.length) return;
-    widget.open(_rowButtonListData[index]);
-  }
-  String _capSize(String input) {
-    int maxSize = 16;
-    if (input.length>=maxSize) return input.substring(0, maxSize) + '...';
-    return input;
-  }
-
-  @override
-  initState() {
-    super.initState();
-    _rowButtonListData = List<Map<String, dynamic>>.generate(
-                            widget.listSize(), _generateGenericListData
-                          );
-  }
-
-  Widget _buildBookmarkedIcon(BuildContext context, bool hasBeenSeen, Widget display) {
-    return CircleAvatar(
-      radius: hasBeenSeen ? 32 : 35,
-      backgroundColor: hasBeenSeen ? Styles.ArrivalPalletteGrey : Styles.ArrivalPalletteRed,
-      child: CircleAvatar(
-        radius: 31,
-        backgroundColor: Styles.ArrivalPalletteCream,
-        child: CircleAvatar(
-          radius: 28,
-          backgroundColor: Styles.ArrivalPalletteBlack,
-          child: display,
-        ),
-      ),
-    );
-  }
-  Widget _buildBookmark(BuildContext context, int index) {
-    return Container(
-      child: PressableCard(
-        onPressed: () {
-          _openGenericAction(index);
-        },
-        downElevation: 1,
-        upElevation: 5,
-        shadowColor: Styles.ArrivalPalletteBlack,
-        child: Stack(
-          children: [
-            Container(
-              width: 100,
-              height: 120,
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  _rowButtonListData[index]['color'],
-                  BlendMode.hardLight,
-                ),
-                child: Image.network(
-                  _rowButtonListData[index]['icon'],
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                width: 84,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.star_border,
-                      color: Styles.ArrivalPalletteWhite,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      _capSize(_rowButtonListData[index]['name']),
-                      style: _bookmarkLabel,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget _buildSearchForMoreButton(BuildContext context) {
-    return Container(
-      child: PressableCard(
-        onPressed: () {
-          widget.explore();
-        },
-        downElevation: 1,
-        upElevation: 5,
-        shadowColor: Styles.ArrivalPalletteBlack,
-        child: Stack(
-          children: [
-            Container(
-              width: 100,
-              height: 120,
-              color: Styles.ArrivalPalletteRed,
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                width: 84,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      color: Styles.ArrivalPalletteWhite,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'explore',
-                      style: _bookmarkLabel,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  List<Widget> _generateFavorites(BuildContext context) {
-    List<Widget> yourFavs = List<Widget>();
-
-    for (int i=0;i<_rowButtonListData.length;i++) {
-      yourFavs.add(_buildBookmark(context, i));
-    }
-
-    yourFavs.add(_buildSearchForMoreButton(context));
-    return yourFavs;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      margin: EdgeInsets.only(top: 6),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: _generateFavorites(context),
-        ),
-      ),
-    );
-  }
-}
 
 class _CasingCircle extends State<CasingFavorites> {
 
@@ -355,6 +185,200 @@ class _CasingCircle extends State<CasingFavorites> {
         horizontal: 0,
         vertical: 6,
       ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: _generateFavorites(context),
+        ),
+      ),
+    );
+  }
+}
+class _CasingBox extends State<CasingFavoritesBox> {
+
+  List<Map<String, dynamic>> _rowButtonListData;
+  TextStyle _bookmarkLabel = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+    color: Styles.ArrivalPalletteWhite,
+  );
+
+  Map<String, dynamic> _generateGenericListData(int index) {
+    var result = widget.generateListData(index);
+    result['seen'] = false;
+    return result;
+  }
+  String getNavigationLink(int index) {
+    if (index<0 && index>=_rowButtonListData.length) return '';
+    _rowButtonListData[index]['seen'] = true;
+    return _rowButtonListData[index]['cryptlink'];
+  }
+  void _openGenericAction(int index) {
+    if (index<0 && index>=_rowButtonListData.length) return;
+    widget.open(_rowButtonListData[index]);
+  }
+  String _capSize(String input) {
+    int maxSize = 16;
+    if (input.length>=maxSize) return input.substring(0, maxSize) + '...';
+    return input;
+  }
+
+  @override
+  initState() {
+    super.initState();
+    _rowButtonListData = List<Map<String, dynamic>>.generate(
+      widget.listSize(), _generateGenericListData
+    );
+  }
+
+  Widget _buildBookmarkedIcon(BuildContext context, bool hasBeenSeen, Widget display) {
+    return CircleAvatar(
+      radius: hasBeenSeen ? 32 : 35,
+      backgroundColor: hasBeenSeen ? Styles.ArrivalPalletteGrey : Styles.ArrivalPalletteRed,
+      child: CircleAvatar(
+        radius: 31,
+        backgroundColor: Styles.ArrivalPalletteCream,
+        child: CircleAvatar(
+          radius: 28,
+          backgroundColor: Styles.ArrivalPalletteBlack,
+          child: display,
+        ),
+      ),
+    );
+  }
+  Widget _buildBookmark(BuildContext context, int index) {
+    Preferences prefs = ScopedModel.of<Preferences>(context);
+
+    return Container(
+      child: PressableCard(
+        onPressed: () {
+          _openGenericAction(index);
+        },
+        downElevation: 1,
+        upElevation: 5,
+        shadowColor: Styles.ArrivalPalletteBlack,
+        child: Stack(
+          children: [
+            Container(
+              width: 100,
+              height: 120,
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  _rowButtonListData[index]['color'],
+                  BlendMode.hardLight,
+                ),
+                child: Image.network(
+                  _rowButtonListData[index]['icon'],
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                width: 84,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    FutureBuilder<bool>(
+                      future: prefs.isBookmarked(widget.bookmarkableType(), _rowButtonListData[index]['link']),
+                      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+                      GestureDetector(
+                        onTap: () async {
+                          print(widget.bookmarkableType());
+                          print(_rowButtonListData[index]['link']);
+
+
+                          await prefs.toggleBookmarked(widget.bookmarkableType(), _rowButtonListData[index]['link']);
+                          setState(() => 0);
+                        },
+                        child: Icon(
+                          snapshot.hasData ?
+                            (snapshot.data ? Icons.star : Icons.star_border)
+                            : Icons.star_border,
+                          color: snapshot.hasData ?
+                            (snapshot.data ? Styles.ArrivalPalletteYellow : Styles.ArrivalPalletteWhite)
+                            : Styles.ArrivalPalletteWhite,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 12),
+
+                    Text(
+                      _capSize(_rowButtonListData[index]['name']),
+                      style: _bookmarkLabel,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _buildSearchForMoreButton(BuildContext context) {
+    return Container(
+      child: PressableCard(
+        onPressed: () {
+          widget.explore();
+        },
+        downElevation: 1,
+        upElevation: 5,
+        shadowColor: Styles.ArrivalPalletteBlack,
+        child: Stack(
+          children: [
+            Container(
+              width: 100,
+              height: 120,
+              color: Styles.ArrivalPalletteRed,
+            ),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                width: 84,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.add,
+                      color: Styles.ArrivalPalletteWhite,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'explore',
+                      style: _bookmarkLabel,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  List<Widget> _generateFavorites(BuildContext context) {
+    List<Widget> yourFavs = List<Widget>();
+
+    for (int i=1;i<_rowButtonListData.length;i++) {
+      yourFavs.add(_buildBookmark(context, i));
+    }
+
+    yourFavs.add(_buildSearchForMoreButton(context));
+    return yourFavs;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      margin: EdgeInsets.only(top: 6),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(

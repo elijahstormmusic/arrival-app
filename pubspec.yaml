@@ -21,7 +21,7 @@ dependencies:
   media_gallery: ^0.1.4
   exif: ^1.0.3
   transparent_image: ^1.0.0
-  clipboard_manager: ^0.0.4
+  clipboard: ^0.1.2+8
   permission_handler: ^5.0.1+1
   camera: ^0.5.8+8
   image_picker: ^0.6.7+11

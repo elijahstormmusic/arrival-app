@@ -4,11 +4,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:clipboard/clipboard.dart';
 
 import '../arrival_team/report.dart';
 import '../data/socket.dart';
 import '../data/link.dart';
+import '../data/preferences.dart';
 import '../users/data.dart';
+import '../screens/home.dart';
 import '../widgets/dialog.dart';
 import '../styles.dart';
 import '../const.dart';
@@ -17,8 +20,9 @@ import 'post.dart';
 
 class PostOptions extends StatelessWidget {
   Post post;
+  Preferences prefs;
 
-  PostOptions(@required this.post);
+  PostOptions(@required this.prefs, @required this.post);
 
   @override
   Widget build(BuildContext context) =>
@@ -39,12 +43,12 @@ class PostOptions extends StatelessWidget {
             color: Styles.ArrivalPalletteGrey,
             text: 'Copy Link',
             onPressed: () {
-              ClipboardManager.copyToClipBoard(Constants.site + 'p?${widget.post.cryptlink}').then((result) {
-                HomeScreen.openSnackBar({
+              FlutterClipboard.copy(Constants.site + 'p?${post.cryptlink}')
+                .then((_) => HomeScreen.openSnackBar({
                   'text': 'Link Copied',
                   'duration': 3,
-                });
-              });
+                }));
+              Navigator.of(context).pop();
             },
           ),
           SimpleDialogItem(
@@ -53,9 +57,10 @@ class PostOptions extends StatelessWidget {
             text: 'Archive',
             onPressed: () {
               socket.emit('posts archive', {
-                'link': widget.post.cryptlink,
+                'link': post.cryptlink,
                 'archive': true,
               });
+              Navigator.of(context).pop();
             },
           ),
           SimpleDialogItem(
@@ -72,9 +77,10 @@ class PostOptions extends StatelessWidget {
             text: 'Stop Comments',
             onPressed: () {
               socket.emit('posts stop comments', {
-                'link': widget.post.cryptlink,
+                'link': post.cryptlink,
                 'stop': true,
               });
+              Navigator.of(context).pop();
             },
           ),
           SimpleDialogItem(
@@ -82,9 +88,36 @@ class PostOptions extends StatelessWidget {
             color: Styles.ArrivalPalletteGrey,
             text: 'Delete',
             onPressed: () {
-              socket.emit('posts delete', {
-                'link': widget.post.cryptlink,
-              });
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Delete Post'),
+                    content: Text('''This action cannot be undone. Your likes,
+                      shares, and comments for this post will also be deleted.
+                      Consider Archiving the post instead, to hide it from the
+                      public but keep it for the future.'''),
+                    actions: [
+                      FlatButton(
+                        child: Text('Cancel'),
+                        onPressed:  () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Delete'),
+                        onPressed:  () {
+                          Navigator.of(context).pop();
+                          socket.emit('posts delete', {
+                            'link': post.cryptlink,
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
@@ -110,26 +143,27 @@ class PostOptions extends StatelessWidget {
             color: Styles.ArrivalPalletteGrey,
             text: 'Copy Link',
             onPressed: () {
-              ClipboardManager.copyToClipBoard(Constants.site + 'p?${widget.post.cryptlink}').then((result) {
-                HomeScreen.openSnackBar({
+              FlutterClipboard.copy(Constants.site + 'p?${post.cryptlink}')
+                .then((_) => HomeScreen.openSnackBar({
                   'text': 'Link Copied',
                   'duration': 3,
-                });
-              });
+                }));
+              Navigator.of(context).pop();
             },
           ),
-          SimpleDialogItem(
-            icon: Icons.person_remove,
-            color: Styles.ArrivalPalletteGrey,
-            text: 'Unfollow User',
-            onPressed: () {
-              socket.emit('userdata follow', {
-                'user': UserData.client.cryptlink,
-                'follow': widget.post.user.cryptlink,
-                'action': false,
-              });
-            },
-          ),
+          // SimpleDialogItem(
+          //   icon: Icons.person_remove,
+          //   color: Styles.ArrivalPalletteGrey,
+          //   text: 'Unfollow User',
+          //   onPressed: () {
+          //     socket.emit('userdata follow', {
+          //       'user': UserData.client.cryptlink,
+          //       'follow': post.user.cryptlink,
+          //       'action': false,
+          //     });
+          //     Navigator.of(context).pop();
+          //   },
+          // ),
         ],
       );
 }

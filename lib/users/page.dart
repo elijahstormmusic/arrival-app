@@ -5,6 +5,7 @@
 import 'dart:math';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +13,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
+import 'package:share/share.dart';
 
 import '../data/app_state.dart';
 import '../data/preferences.dart';
@@ -19,14 +21,15 @@ import '../data/socket.dart';
 import '../data/arrival.dart';
 import '../data/link.dart';
 import '../styles.dart';
-import '../widgets/close_button.dart';
 import '../posts/post.dart';
 import '../posts/page.dart';
-import '../users/data.dart';
-import '../users/profile.dart';
+import '../widgets/close_button.dart';
 import '../widgets/cards.dart';
 import '../widgets/chat/messager.dart';
 import '../const.dart';
+import 'data.dart';
+import 'profile.dart';
+import 'stories.dart';
 
 
 class UserPosts extends StatefulWidget {
@@ -129,7 +132,15 @@ class Second extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material();
+    return Container(
+      margin: EdgeInsets.all(30),
+      child: Text(
+        'Video Uploads availible next update!',
+        style: TextStyle(
+          fontSize: 30,
+        ),
+      ),
+    );
   }
 }
 class UserContact extends StatelessWidget {
@@ -141,10 +152,12 @@ class UserContact extends StatelessWidget {
     final model = ScopedModel.of<AppState>(context, rebuildOnChange: true);
 
     return Container(
-      height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
-      // physics: ClampingScrollPhysics(),
-      child: Container(
-
+      margin: EdgeInsets.all(30),
+      child: Text(
+        'Audio Uploads availible next update!',
+        style: TextStyle(
+          fontSize: 30,
+        ),
       ),
     );
   }
@@ -166,18 +179,35 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage>
+    with TickerProviderStateMixin {
+
   int _selectedViewIndex = 0;
   bool loaded = false;
   List<Post> userPosts;
   bool has_reached_end = false;
+  final int _pageAnimationTime = 350;
 
   File _newProfilePic;
   bool _editingProfile = false;
   TextEditingController _editableShortBio, _editableName;
 
+  AnimationController _controller;
+  Animation<double> _animation;
+
   @override
   void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: _pageAnimationTime),
+      upperBound: .25,
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+
     _editableShortBio = new TextEditingController(text: widget.profile.shortBio);
     _editableName = new TextEditingController(text: widget.profile.name);
     userPosts = List<Post>();
@@ -187,7 +217,11 @@ class _ProfilePageState extends State<ProfilePage> {
         'link': widget.profile.cryptlink,
       });
     }
-    super.initState();
+  }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void responded(int index) {
@@ -285,6 +319,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildPersonalDetails(BuildContext context, AppState model) {
     final themeData = CupertinoTheme.of(context);
+
     return SafeArea(
       child: Container(
         padding: EdgeInsets.all(16),
@@ -316,6 +351,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   Container(),
+
+                  _isClientAndEditable() ? Container() :
                   GestureDetector(
                     onTap: () {
                       Arrival.navigator.currentState.push(MaterialPageRoute(
@@ -488,7 +525,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 5,
-                maxLength: 500,
+                maxLength: _pageAnimationTime,
                 controller: _editableShortBio,
                 decoration: InputDecoration(
                   labelText: 'short bio',
@@ -507,15 +544,308 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _buildFollowButton(BuildContext context, AppState model) {
+    if (widget.profile == UserData.client) return Container();
+    final prefs = ScopedModel.of<Preferences>(context);
+    double size_segment = MediaQuery.of(context).size.width / 3.0;
+    double margin = 12.0;
+
+    return Stack(
+      children: [
+        Container(
+          margin: EdgeInsets.only(left: 24.0, top: 6.0),
+          height: 44.0,
+          width: MediaQuery.of(context).size.width - 48.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+              colors: [
+                const Color(0xffF15D5D),
+                const Color(0xffF25E92),
+                const Color(0xffA35ADB),
+                const Color(0xff7e5ef2),
+                const Color(0xff4974D9),
+              ],
+              tileMode: TileMode.mirror,
+            ),
+          ),
+        ),
+
+        Container(
+          margin: EdgeInsets.symmetric(
+            vertical: 6,
+          ),
+          child: GestureDetector(
+            onTap: () async {
+              await prefs.toggleBookmarked(DataType.profile, widget.profile.cryptlink);
+
+              var toggle = await prefs.isBookmarked(DataType.profile, widget.profile.cryptlink);
+
+              if (toggle) {
+                _controller.forward(from: 0.0);
+              }
+              else {
+                _controller.reverse(from: .25);
+              }
+
+              socket.emit('userdata follow', {
+                'user': UserData.client.cryptlink,
+                'follow': widget.profile.cryptlink,
+                'action': toggle,
+              });
+
+              setState(() => 0);
+            },
+            child: FutureBuilder<bool>(
+              future: prefs.isBookmarked(DataType.profile, widget.profile.cryptlink),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+              Row(
+                children: [
+                  AnimatedOpacity(
+                    opacity: snapshot.hasData ?
+                      (snapshot.data ? 0.0 : 1.0)
+                      : 1.0,
+                    duration: Duration(milliseconds: _pageAnimationTime),
+                    curve: Curves.easeOut,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: _pageAnimationTime),
+                      curve: Curves.easeOut,
+                      margin: EdgeInsets.only(
+                        left: snapshot.hasData ?
+                          (snapshot.data ? margin : margin * 2.0)
+                          : margin * 2.0,
+                        right: snapshot.hasData ?
+                          (snapshot.data ? margin + 5.0 : margin * 2.0 - 5.0)
+                          : margin * 2.0 - 5.0,
+                      ),
+                      height: 44.0,
+                      width: snapshot.hasData ?
+                        (snapshot.data ? 0 : size_segment * 2 - (margin * 3))
+                        : size_segment * 2 - (margin * 3),
+                      color: Styles.transparentColor,
+                      child: Center(
+                        child: Text(
+                          'Follow',
+                          style: TextStyle(
+                            fontSize: 26.0,
+                            fontWeight: FontWeight.bold,
+                            color: Styles.ArrivalPalletteWhite,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: _pageAnimationTime),
+                    curve: Curves.easeOut,
+                    margin: EdgeInsets.only(
+                      right: margin * 2.0,
+                    ),
+                    // padding: EdgeInsets.all(6.0),
+                    height: 34.0,
+                    width: size_segment - (margin * 3),
+                    decoration: BoxDecoration(
+                      color: Styles.ArrivalPalletteWhite,
+                      borderRadius: BorderRadius.circular(10),
+                      // border: Border.all(
+                      //   color: Styles.transparentColor,
+                      //   width: 3.0,
+                      // ),
+                      // borderColor: Styles.ArrivalPalletteRed,
+                    ),
+                    child: Center(
+                      child: RotationTransition(
+                        turns: _animation,
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: _pageAnimationTime),
+                          child: Icon(
+                            Icons.add,
+                            size: 35,
+                            color: snapshot.hasData ?
+                              (snapshot.data ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteDarkBlue)
+                              : Styles.ArrivalPalletteDarkBlue,
+                            // color: Styles.transparentColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  AnimatedOpacity(
+                    opacity: snapshot.hasData ?
+                      (snapshot.data ? 1.0 : 0.0)
+                      : 0.0,
+                    duration: Duration(milliseconds: _pageAnimationTime),
+                    curve: Curves.easeOut,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: _pageAnimationTime),
+                      curve: Curves.easeOut,
+                      margin: EdgeInsets.only(
+                        // left: snapshot.hasData ?
+                        //   (snapshot.data ? margin : margin * 2.0)
+                        //   : margin * 2.0,
+                        // right: margin * 2.0 - 4.0,
+                      ),
+                      height: 44.0,
+                      width: snapshot.hasData ?
+                        (snapshot.data ? size_segment * 2 - (margin * 3) : 0)
+                        : 0,
+                      color: Styles.transparentColor,
+                      child: Center(
+                        child: Text(
+                          'Unfollow',
+                          style: TextStyle(
+                            fontSize: 26.0,
+                            fontWeight: FontWeight.bold,
+                            color: Styles.ArrivalPalletteWhite,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStoryHighlights(BuildContext context, AppState model) {
+    return StoriesHighlights();
+  }
+
+  Widget _buildContentDisplayOptions(BuildContext context, AppState model) {
+    var size_third = MediaQuery.of(context).size.width / 3.0;
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: 0,
+        vertical: 18,
+      ),
+      child: Stack(
+        children: [
+          Container(
+            height: 40.0,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              // borderRadius: BorderRadius.circular(10),
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [
+                  const Color(0xffF15D5D),
+                  const Color(0xffF25E92),
+                  const Color(0xffA35ADB),
+                  const Color(0xff7e5ef2),
+                  const Color(0xff4974D9),
+                ],
+                tileMode: TileMode.mirror,
+              ),
+            ),
+          ),
+
+          Container(
+            margin: EdgeInsets.symmetric(
+              vertical: 3,
+              horizontal: 0,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () => setState(() => _selectedViewIndex = 0),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    width: size_third - 2.0,
+                    height: 34.0,
+                    color: _selectedViewIndex == 0 ? null : Styles.ArrivalPalletteWhite,
+                    child: Icon(
+                      Icons.apps,
+                      size: 30.0,
+                      color: _selectedViewIndex == 0 ? Styles.ArrivalPalletteWhite : Styles.ArrivalPalletteRed,
+                    ),
+                  ),
+                ),
+
+                Container(
+                  width: 3.0,
+                  height: 34.0,
+                  color: Styles.transparentColor,
+                ),
+
+                GestureDetector(
+                  onTap: () => setState(() => _selectedViewIndex = 1),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    width: size_third - 2.0,
+                    height: 34.0,
+                    color: _selectedViewIndex == 1 ? Styles.transparentColor : Styles.ArrivalPalletteWhite,
+                    child: Icon(
+                      Icons.play_arrow,
+                      size: 30.0,
+                      color: _selectedViewIndex == 1 ? Styles.ArrivalPalletteWhite : Styles.ArrivalPallettePurple,
+                    ),
+                  ),
+                ),
+
+                Container(
+                  width: 3.0,
+                  height: 34.0,
+                  color: Styles.transparentColor,
+                ),
+
+                GestureDetector(
+                  onTap: () => setState(() => _selectedViewIndex = 2),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    width: size_third - 2.0,
+                    height: 34.0,
+                    color: _selectedViewIndex == 2 ? Styles.transparentColor : Styles.ArrivalPalletteWhite,
+                    child: Icon(
+                      Icons.audiotrack,
+                      size: 30.0,
+                      color: _selectedViewIndex == 2 ? Styles.ArrivalPalletteWhite : Styles.ArrivalPalletteDarkBlue,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, AppState model) {
+    if (_selectedViewIndex == 0) return UserPosts(
+      userPosts,
+      widget.profile.cryptlink,
+      has_reached_end,
+    );
+
+    if (_selectedViewIndex == 1) return Second(widget.profile);
+
+    return UserContact(widget.profile);
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = ScopedModel.of<AppState>(context, rebuildOnChange: true);
 
     return Scaffold(
       body: Container(
-        color: Styles.ArrivalPalletteLightGreyTransparent,
+        color: Styles.ArrivalPalletteLightGrey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
@@ -523,44 +853,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 physics: ClampingScrollPhysics(),
                 children: [
                   _buildPersonalDetails(context, appState),
-                  SizedBox(height: 20),
-                  CupertinoSegmentedControl<int>(
-                    children: {
-                      0: Container(
-                        height: 36.0,
-                        child: Icon(
-                          Icons.apps,
-                          size: 30.0,
-                        ),
-                      ),
-                      1: Container(
-                        height: 36.0,
-                        child: Icon(
-                          Icons.play_arrow,
-                          size: 30.0,
-                        ),
-                      ),
-                      2: Container(
-                        height: 36.0,
-                        child: Icon(
-                          Icons.audiotrack,
-                          size: 30.0,
-                        ),
-                      ),
-                    },
-                    groupValue: _selectedViewIndex,
-                    borderColor: Styles.ArrivalPalletteWhite,
-                    unselectedColor: Styles.ArrivalPalletteGrey,
-                    selectedColor: Styles.ArrivalPalletteBlue,
-                    pressedColor: Styles.ArrivalPalletteGrey,
-                    onValueChanged: (value) => setState(() => _selectedViewIndex = value),
-                  ),
-                  SizedBox(height: 20),
-                  _selectedViewIndex == 0
-                    ? UserPosts(userPosts, widget.profile.cryptlink, has_reached_end)
-                    : _selectedViewIndex == 1
-                      ? Second(widget.profile)
-                      : UserContact(widget.profile),
+
+                  _buildFollowButton(context, appState),
+
+                  _buildStoryHighlights(context, appState),
+
+                  _buildContentDisplayOptions(context, appState),
+
+                  _buildContent(context, appState),
                 ],
               ),
             ),

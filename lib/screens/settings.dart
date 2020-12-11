@@ -18,7 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
 
 import '../data/preferences.dart';
-import '../partners/partner.dart';
+import '../partners/industries.dart';
 import '../data/socket.dart';
 import '../data/link.dart';
 import '../login/login.dart';

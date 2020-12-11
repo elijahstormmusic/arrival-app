@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import '../explore.dart';
 import '../../articles/page.dart';
+import '../../articles/categories.dart';
+import '../../articles/category_display.dart';
 import '../../articles/article.dart';
 import '../../data/link.dart';
 import '../../data/arrival.dart';
@@ -21,27 +23,25 @@ class ArticleFavorites extends CasingFavoritesBox {
 
   @override
   void open(Map<String, dynamic> data) {
-    print(data['link']);
-    // Arrival.navigator.currentState.push(MaterialPageRoute(
-    //   builder: (context) => ArticleDisplayPage(
-    //     data['link'],
-    //   ),
-    //   fullscreenDialog: true,
-    // ));
+    Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => ArticleCategoryDisplay(
+        data['link'],
+      ),
+      fullscreenDialog: true,
+    ));
   }
 
   @override
-  Map<String, dynamic> generateListData(int i) {
-    return {
-      'link': ArrivalData.articles[i].cryptlink,
-      'color': Styles.ArrivalPalletteRedDarken,
-      'icon': ArrivalData.articles[i].image_link(0),
-      'name': ArrivalData.articles[i].author,
-    };
-  }
+  Map<String, dynamic> generateListData(int i) => {
+          'link': ArticleData.all[i].type.index.toString(),
+          'color': ArticleData.all[i].color,
+          'icon': ArticleData.all[i].image,
+          'name': ArticleData.all[i].name,
+        };
 
   @override
-  int listSize() {
-    return ArrivalData.articles.length;
-  }
+  int listSize() => ArticleData.all.length;
+
+  @override
+  int bookmarkableType() => 10;
 }

@@ -68,5 +68,5 @@ Sale blankSale = Sale(
   cryptlink: '',
   name: 'no sale',
   info: 'we apologize, but no sale could be found',
-  partner: blankPartner,
+  partner: Partner.blankPartner,
 );
