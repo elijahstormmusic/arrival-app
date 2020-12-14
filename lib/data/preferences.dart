@@ -22,15 +22,33 @@ class BookmarkHolder {
     return '${_type}:${_link}';
   }
 
-  bool equals(int type, String link) {
-    return _type==type && _link==link;
-  }
+  bool equals(int type, String link) => _type==type && _link==link;
 
   static BookmarkHolder fromString(String input) {
     var array = input.split(':');
     int type = int.parse(array[0]);
     String link = array[1];
     return BookmarkHolder(type, link);
+  }
+}
+
+class RatingHolder {
+  final String link;
+  int rating;
+
+  RatingHolder(this.link, this.rating);
+
+  String toString() {
+    return '${link}:${rating}';
+  }
+
+  bool equals(String _link) => _link==link;
+
+  static RatingHolder fromString(String input) {
+    var array = input.split(':');
+    String link = array[0];
+    int rating = int.parse(array[1]);
+    return RatingHolder(link, rating);
   }
 }
 
@@ -77,7 +95,8 @@ class Preferences extends Model {
   static const _preferredIndustriesKey = 'preferredIndustries';
   static const _notificationHistoryKey = 'notificationHistory';
   static const _bookmarksKey = 'bookmarks';
-  static const _likedContentKey = 'bookmarks';
+  static const _ratingsKey = 'ratings';
+  static const _likedContentKey = 'likedContent';
 
 
   Future<void> _loading;
@@ -87,6 +106,7 @@ class Preferences extends Model {
   final Set<SourceIndustry> _preferredIndustries = <SourceIndustry>{};
   final Set<NotificationHolder> _notificationHistory = <NotificationHolder>{};
   final Set<BookmarkHolder> _bookmarks = <BookmarkHolder>{};
+  final Set<RatingHolder> _ratingChoices = <RatingHolder>{};
   final Set<BookmarkHolder> _likedContent = <BookmarkHolder>{};
 
 
@@ -135,6 +155,30 @@ class Preferences extends Model {
     // _notificationHistory.removeWhere((x) => x.equals(type, link));
     // await _saveToSharedPrefs();
     // notifyListeners();
+  }
+
+
+  Future<int> hasBeenRated(String link) async {
+    await _loading;
+    var list = _ratingChoices.where((x) => x.equals(link)).toList();
+    if (list.length >= 1) {
+      return list[0].rating;
+    }
+    else {
+      return -1;
+    }
+  }
+  Future<void> ratePartner(String link, int rating) async {
+    await _loading;
+    var list = _ratingChoices.where((x) => x.equals(link)).toList();
+    if (list.length >= 1) {
+      list[0].rating = rating;
+    }
+    else {
+      _ratingChoices.add(RatingHolder(link, rating));
+    }
+    await _saveToSharedPrefs();
+    notifyListeners();
   }
 
 
@@ -208,6 +252,9 @@ class Preferences extends Model {
     await prefs.setString(_bookmarksKey,
         _bookmarks.map((c) => c.toString()).join(','));
 
+    await prefs.setString(_ratingsKey,
+        _ratingChoices.map((c) => c.toString()).join(','));
+
     await prefs.setString(_likedContentKey,
         _likedContent.map((c) => c.toString()).join(','));
   }
@@ -217,7 +264,6 @@ class Preferences extends Model {
 
     _preferredIndustries.clear();
     final names = prefs.getString(_preferredIndustriesKey);
-
     if (names != null && names.isNotEmpty) {
       for (final name in names.split(',')) {
         final index = int.tryParse(name) ?? -1;
@@ -229,7 +275,6 @@ class Preferences extends Model {
 
     _notificationHistory.clear();
     final history = prefs.getString(_notificationHistoryKey);
-
     if (history != null && history.isNotEmpty) {
       for (final instance in history.split(',')) {
         if (instance.indexOf(':')==-1) continue;
@@ -239,7 +284,6 @@ class Preferences extends Model {
 
     _bookmarks.clear();
     final favorites = prefs.getString(_bookmarksKey);
-
     if (favorites != null && favorites.isNotEmpty) {
       for (final saved in favorites.split(',')) {
         if (saved.indexOf(':')==-1) continue;
@@ -247,9 +291,17 @@ class Preferences extends Model {
       }
     }
 
+    _ratingChoices.clear();
+    final ratings = prefs.getString(_ratingsKey);
+    if (ratings != null && ratings.isNotEmpty) {
+      for (final saved in ratings.split(',')) {
+        if (saved.indexOf(':')==-1) continue;
+        _ratingChoices.add(RatingHolder.fromString(saved));
+      }
+    }
+
     _likedContent.clear();
     final liked = prefs.getString(_likedContentKey);
-
     if (liked != null && liked.isNotEmpty) {
       for (final saved in liked.split(',')) {
         if (saved.indexOf(':')==-1) continue;

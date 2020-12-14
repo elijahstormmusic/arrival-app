@@ -10,6 +10,7 @@ import '../styles.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
 import 'locator.dart';
+import '../partners/partner.dart';
 import 'partner_markers.dart';
 
 
@@ -27,11 +28,11 @@ class Maps extends StatefulWidget {
 
   static MyLocation myself;
 
-  String partner;
+  Partner partner;
 
   Maps();
-  Maps.directions({this.partner});
-
+  Maps.directions(this.partner);
+  
   @override
   _MapState createState() => _MapState();
 }
@@ -165,6 +166,11 @@ class _MapState extends State<Maps> {
         'ratingAmount': partner.ratingAmount,
       });
     }
+    if (widget.partner != null) {
+      _locateAndTakeMe(widget.partner, {
+        'title': widget.partner.name,
+      });
+    }
   }
 
   void refresh() {
@@ -262,125 +268,127 @@ class _MapState extends State<Maps> {
       initating = false;
     }
 
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            height: _bottomCardOutValue + 10,
-            color: Styles.ArrivalPalletteCream,
-            child: _localMap,
-          ),
-          GestureDetector(
-            onDoubleTap: () {
-              if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
-                _setMainCardToTop();
-              }
-              else {
-                _setMainCardToBottom();
-              }
-            },
-            onTap: () {
-              if (_bottomCardVerticalPosition==_bottomCardOutValue) {
-                _setMainCardToBottom();
-              }
-            },
-            onVerticalDragStart: (details) {
-              _onVerticalDragStart(details);
-            },
-            onVerticalDragUpdate: (details) {
-              _onVerticalDragUpdate(details);
-            },
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 350),
-              curve: Curves.easeOut,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: Styles.ArrivalPalletteWhite,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              margin: EdgeInsets.only(top: _bottomCardVerticalPosition),
-              child: ListView(
-                controller: _scrollController,
-                physics: _bottomCardVerticalPosition==_bottomCardTopValue
+    return Scaffold(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              height: _bottomCardOutValue + 10,
+              color: Styles.ArrivalPalletteCream,
+              child: _localMap,
+            ),
+            GestureDetector(
+              onDoubleTap: () {
+                if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
+                  _setMainCardToTop();
+                }
+                else {
+                  _setMainCardToBottom();
+                }
+              },
+              onTap: () {
+                if (_bottomCardVerticalPosition==_bottomCardOutValue) {
+                  _setMainCardToBottom();
+                }
+              },
+              onVerticalDragStart: (details) {
+                _onVerticalDragStart(details);
+              },
+              onVerticalDragUpdate: (details) {
+                _onVerticalDragUpdate(details);
+              },
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 350),
+                curve: Curves.easeOut,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Styles.ArrivalPalletteWhite,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                margin: EdgeInsets.only(top: _bottomCardVerticalPosition),
+                child: ListView(
+                  controller: _scrollController,
+                  physics: _bottomCardVerticalPosition==_bottomCardTopValue
                   ? ClampingScrollPhysics()
                   : NeverScrollableScrollPhysics(),
-                children: <Widget>[
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
-                          _setMainCardToTop();
-                        }
-                        else {
-                          _setMainCardToBottom();
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 10,
-                        ),
+                  children: <Widget>[
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
+                            _setMainCardToTop();
+                          }
+                          else {
+                            _setMainCardToBottom();
+                          }
+                        },
                         child: Container(
-                          height: 3,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Styles.ArrivalPalletteRed,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 10,
+                          ),
+                          child: Container(
+                            height: 3,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Styles.ArrivalPalletteRed,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  // Divider(height: 1.0, thickness: 1.0),
-                  Container(
-                    margin: EdgeInsets.only(top: 30, left: 16, bottom: 6),
-                    child: Text(
-                      'Our Partners',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                    // Divider(height: 1.0, thickness: 1.0),
+                    Container(
+                      margin: EdgeInsets.only(top: 30, left: 16, bottom: 6),
+                      child: Text(
+                        'Our Partners',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    height: 400,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 26,
-                      vertical: 8,
-                    ),
-                    child: ListView.builder(
-                      itemCount: ArrivalData.partners.length,
-                      itemBuilder: (context, index) => _generatePartnersRow(
-                        context,
-                        ArrivalData.partners[index],
+                    Container(
+                      height: 400,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 26,
+                        vertical: 8,
+                      ),
+                      child: ListView.builder(
+                        itemCount: ArrivalData.partners.length,
+                        itemBuilder: (context, index) => _generatePartnersRow(
+                          context,
+                          ArrivalData.partners[index],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Divider(height: 1.0, thickness: 2.0),
-                  SizedBox(height: 8),
+                    SizedBox(height: 8),
+                    Divider(height: 1.0, thickness: 2.0),
+                    SizedBox(height: 8),
 
-                  Container(
-                    margin: EdgeInsets.only(top: 30, left: 16, bottom: 6),
-                    child: Text(
-                      'extra stuff can go here...',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                    Container(
+                      margin: EdgeInsets.only(top: 30, left: 16, bottom: 6),
+                      child: Text(
+                        'extra stuff can go here...',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(),  // next things
-                  SizedBox(height: 8),
-                  Divider(height: 1.0, thickness: 2.0),
-                  SizedBox(height: 8),
-                ],
+                    Container(),  // next things
+                    SizedBox(height: 8),
+                    Divider(height: 1.0, thickness: 2.0),
+                    SizedBox(height: 8),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

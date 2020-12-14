@@ -172,7 +172,7 @@ class ContactList {
   String facebook;
   String twitter;
   String instagram;
-  String pintrest;
+  String pinterest;
   String address;
   String city;
   String state;
@@ -211,8 +211,8 @@ class ContactList {
     if (instagram!=null) {
       str += 'instagram:' + instagram + ',';
     }
-    if (pintrest!=null) {
-      str += 'pintrest:' + pintrest + ',';
+    if (pinterest!=null) {
+      str += 'pinterest:' + pinterest + ',';
     }
     if (str.substring(str.length-1, str.length)==',') {
       str = str.substring(0, str.length-1);
@@ -231,7 +231,7 @@ class ContactList {
       'facebook': facebook,
       'twitter': twitter,
       'instagram': instagram,
-      'pintrest': pintrest,
+      'pinterest': pinterest,
     };
   }
   ContactList({
@@ -240,7 +240,7 @@ class ContactList {
     this.facebook,
     this.twitter,
     this.instagram,
-    this.pintrest,
+    this.pinterest,
     this.address,
     this.city,
     this.state,
@@ -262,7 +262,7 @@ class ContactList {
       facebook: data['facebook'],
       twitter: data['twitter'],
       instagram: data['instagram'],
-      pintrest: data['pintrest'],
+      pinterest: data['pinterest'],
     );
   }
   static ContactList parse(String input) {
@@ -301,8 +301,8 @@ class ContactList {
       else if (curData[0]=='instagram') {
         contactData.instagram = curData[1];
       }
-      else if (curData[0]=='pintrest') {
-        contactData.pintrest = curData[1];
+      else if (curData[0]=='pinterest') {
+        contactData.pinterest = curData[1];
       }
     }
     return contactData;

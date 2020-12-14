@@ -26,7 +26,7 @@ class Partner {
   final String cryptlink;
   int yourRating;
   final double rating;
-  final int ratingAmount;
+  int ratingAmount;
   final LatLng location;
   final StoreImages images;
   final SourceIndustry industry; // an enum link to the Industy index

@@ -556,21 +556,7 @@ class _ProfilePageState extends State<ProfilePage>
           margin: EdgeInsets.only(left: 24.0, top: 6.0),
           height: 44.0,
           width: MediaQuery.of(context).size.width - 48.0,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [
-                const Color(0xffF15D5D),
-                const Color(0xffF25E92),
-                const Color(0xffA35ADB),
-                const Color(0xff7e5ef2),
-                const Color(0xff4974D9),
-              ],
-              tileMode: TileMode.mirror,
-            ),
-          ),
+          decoration: Styles.backgroundRadiusGradient(10),
         ),
 
         Container(

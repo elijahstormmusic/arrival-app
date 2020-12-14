@@ -39,6 +39,21 @@ abstract class Styles {
   static const ArrivalPalletteGrey = Color(0xffD9D5D3);
   static const ArrivalPalletteLightGrey = Color(0xffEEEEE9);
 
+  static BoxDecoration backgroundRadiusGradient(double amount) => BoxDecoration(
+            borderRadius: BorderRadius.circular(amount),
+            gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+              colors: [
+                const Color(0xffF15D5D),
+                const Color(0xffF25E92),
+                const Color(0xffA35ADB),
+                const Color(0xff7e5ef2),
+                const Color(0xff4974D9),
+              ],
+              tileMode: TileMode.mirror,
+            ),
+          );
   static const ArrivalGradientDecoration = BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.bottomLeft,
@@ -462,7 +477,7 @@ abstract class Styles {
   );
 
   static const detailsAddressText = TextStyle(
-    color: Color.fromRGBO(127, 127, 127, 0.9),
+    color: Styles.ArrivalPalletteBlackTransparent,
     fontFamily: 'Helvetica',
     fontSize: 16,
     fontStyle: FontStyle.italic,
@@ -628,11 +643,16 @@ abstract class Styles {
     bottom: BorderSide(color: Color(0xff606060)),
     right: BorderSide(color: Color(0xff606060)),
   );
-  static const ratingColors = <int, Color>{
-    0: Color(0xcccccccc),
-    1: Color(0xf8F18604),
-    2: Color(0xddA15A02),
-  };
+  static const ratingColors = <Color>[
+    Color(0xcccccccc),
+    Color(0xf8F18604),
+    Color(0xddA15A02),
+  ];
+  static const unratedRatingColors = <Color>[
+    Color(0xcccccccc),
+    Color(0xcccccccc),
+    Color(0xcccccccc),
+  ];
 
   static const sandwich = IconData(
     0xf394,
@@ -732,6 +752,10 @@ abstract class Styles {
   //         fontFamily: CupertinoIcons.iconFont,
   //         fontPackage: CupertinoIcons.iconFontPackage);
   static const messagesIcon = Icon(CupertinoIcons.bubble_left_bubble_right);
+  static final facebookIcon = SvgPicture.asset('assets/icon/social/icons8-facebook.svg');
+  static final twitterIcon = SvgPicture.asset('assets/icon/social/icons8-twitter.svg');
+  static final instagramIcon = SvgPicture.asset('assets/icon/social/icons8-instagram.svg');
+  static final pinterestIcon = SvgPicture.asset('assets/icon/social/icons8-pinterest.svg');
 
   static const servingInfoBorderColor = Color(0xffb0b0b0);
 

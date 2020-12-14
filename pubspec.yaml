@@ -105,6 +105,11 @@ flutter:
     - assets/loading/Spinner-1s-201px.svg
     - assets/loading/Spinner-1s-201px.gif
 
+    - assets/icon/social/icons8-facebook.svg
+    - assets/icon/social/icons8-twitter.svg
+    - assets/icon/social/icons8-instagram.svg
+    - assets/icon/social/icons8-pinterest.svg
+
   fonts:
     - family: NotoSans
       fonts:
