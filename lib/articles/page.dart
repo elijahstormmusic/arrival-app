@@ -8,8 +8,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_cap_text/drop_cap_text.dart';
 
+import '../data/link.dart';
 import '../data/arrival.dart';
 import '../data/preferences.dart';
+import '../users/profile.dart';
 import '../articles/article.dart';
 import '../styles.dart';
 import '../widgets/close_button.dart';
@@ -40,6 +42,8 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
   double _lastRatio = 0.0;
   Duration _animationDuration = Duration(seconds: 1);
   ScrollController _scrollController;
+  String _authorName;
+  Profile _profileAuthor;
 
   @override
   void initState() {
@@ -48,6 +52,16 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
     super.initState();
 
     _headerHeight = _maxHeaderHeight;
+
+    String author = ArrivalData.getArticle(widget.cryptlink).author;
+
+    if (ArrivalData.getArticle(widget.cryptlink).profileAuthor != null) {
+      _profileAuthor = ArrivalData.getArticle(widget.cryptlink).profileAuthor;
+      _authorName = ArrivalData.getArticle(widget.cryptlink).profileAuthor.name;
+    }
+    else {
+      _authorName = ArrivalData.getArticle(widget.cryptlink).author;
+    }
 
     SchedulerBinding.instance.addPostFrameCallback((_) =>
       _lastScrollExtent = _scrollController.position.maxScrollExtent
@@ -137,10 +151,42 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
             style: Styles.articleHeadline,
           ),
           SizedBox(height: 25),
-          Text(
-            'Author: ' + ArrivalData.getArticle(widget.cryptlink).author,
-            style: Styles.articleAuthor,
+
+          GestureDetector(
+            onTap: () {
+              if (_profileAuthor==null) return;
+
+              Arrival.navigator.currentState.push(MaterialPageRoute(
+                builder: (context) => _profileAuthor.navigateTo(),
+                fullscreenDialog: true,
+              ));
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Author: ' + _authorName,
+                  style: Styles.articleAuthor,
+                ),
+
+                _profileAuthor==null ? Container(width: 0) :
+                Container(
+                  margin: EdgeInsets.only(left: 12.0),
+                  padding: EdgeInsets.all(8.0),
+                  decoration: Styles.backgroundRadiusGradient(6.0),
+                  child: Text(
+                    'A',
+                    style: TextStyle(
+                      color: Styles.ArrivalPalletteWhite,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+
           SizedBox(height: 25),
           Text(
             _makeDateReadable(ArrivalData.getArticle(widget.cryptlink).date),
@@ -250,10 +296,42 @@ class _ArticleDisplayPageState extends State<ArticleDisplayPage> {
                   )
                   : Container(),
                 SizedBox(height: _articlePadding*2),
-                Text(
-                  ArrivalData.getArticle(widget.cryptlink).author,
-                  style: Styles.articleAuthor,
+
+                GestureDetector(
+                  onTap: () {
+                    if (_profileAuthor==null) return;
+
+                    Arrival.navigator.currentState.push(MaterialPageRoute(
+                      builder: (context) => _profileAuthor.navigateTo(),
+                      fullscreenDialog: true,
+                    ));
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _authorName,
+                        style: Styles.articleAuthor,
+                      ),
+
+                      _profileAuthor==null ? Container(width: 0) :
+                      Container(
+                        margin: EdgeInsets.only(left: 12.0),
+                        padding: EdgeInsets.all(8.0),
+                        decoration: Styles.backgroundRadiusGradient(6.0),
+                        child: Text(
+                          'A',
+                          style: TextStyle(
+                            color: Styles.ArrivalPalletteWhite,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+
                 Text(
                   _makeDateReadable(ArrivalData.getArticle(widget.cryptlink).date),
                   style: Styles.articleDate,

@@ -291,7 +291,7 @@ class SubSettings extends StatefulWidget {
               variableState.path,
               filename: image_name,
               folder: 'profile/' + UserData.client.name,
-            )).secure_url.replaceAll(Constants.meda_source, '');
+            )).secure_url.replaceAll(Constants.media_source, '');
 
             if (img_url!=null) {
               socket.emit('userdata update', {
@@ -1211,7 +1211,7 @@ class DistanceSettingsScreen extends StatelessWidget {
                   SettingsItem(
                     label: miles.toString() + ' miles',
                     icon: SettingsIcon(
-                      icon: Styles.checkIcon,
+                      icon: Styles.selected,
                       foregroundColor:
                       snapshot.hasData && snapshot.data == miles
                           ? CupertinoColors.activeBlue
@@ -1475,7 +1475,7 @@ class SettingsScreen extends StatelessWidget {
       label: 'Near Me Range',
       icon: SettingsIcon(
         backgroundColor: Styles.iconBlue,
-        icon: Styles.calorieIcon,
+        icon: Styles.mapRangeIcon,
       ),
       content: FutureBuilder<int>(
         future: prefs.nearMeAreaRadius,
@@ -1548,7 +1548,7 @@ class SettingsScreen extends StatelessWidget {
       label: 'Contact Us',
       icon: SettingsIcon(
         backgroundColor: Styles.iconGold,
-        icon: Styles.uncheckedIcon,
+        icon: Styles.share,
       ),
       content: SettingsNavigationIndicator(),
       onPress: () {

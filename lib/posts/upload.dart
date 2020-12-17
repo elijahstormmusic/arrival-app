@@ -115,7 +115,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
 
       return {
         'link': media_data.secure_url.replaceAll(
-                  Constants.meda_source, ''
+                  Constants.media_source, ''
                 ),
         'height': media_data.height,
         // 'duration': media_data.duration==null ? null : media_data.duration,

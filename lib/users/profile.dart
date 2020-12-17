@@ -10,6 +10,8 @@ import '../data/arrival.dart';
 import '../data/link.dart';
 import '../data/socket.dart';
 import '../const.dart';
+import '../styles.dart';
+import '../posts/story.dart';
 
 import 'page.dart';
 
@@ -17,9 +19,10 @@ class Profile {
   static final String default_img =
     Constants.default_profile_pic;
   static final String source =
-    Constants.meda_source;
+    Constants.media_source;
 
   final String cryptlink;
+  final bool verified;
   String name;
   String pic;
   String shortBio;
@@ -27,10 +30,13 @@ class Profile {
   int level;
   int points;
 
+  List<Story> storyHighlights = <Story>[];
+
   dynamic toJson() {
     return {
       'name': name,
       'pic': pic,
+      'verified': verified,
       'cryptlink': cryptlink,
       'email': email,
       'shortBio': shortBio,
@@ -41,6 +47,7 @@ class Profile {
 
   Profile({
     @required this.name,
+    this.verified = false,
     @required this.pic,
     @required this.email,
     @required this.shortBio,
@@ -58,23 +65,35 @@ class Profile {
     points: 0
   );
 
-  Widget iconBySize(double height) {
-    if (pic=='' || pic==null || pic=='null') {
-      return Image.network(
-        Profile.default_img,
-        fit: BoxFit.cover,
-        semanticLabel: 'Profile image for ' + name,
-        height: height,
-      );
-    }
-
-    return Image.network(
-      Profile.source + pic,
-      fit: BoxFit.cover,
-      semanticLabel: 'Profile image for ' + name,
-      height: height,
-    );
-  }
+  Widget clickable_name({
+            Color color = Styles.ArrivalPalletteBlack,
+            double size = 22.0,
+        }) => GestureDetector(
+    onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
+      builder: (context) => navigateTo(),
+      fullscreenDialog: true,
+    )),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          name,
+          style: TextStyle(
+            color: color,
+            fontSize: size,
+            fontFamily: 'Helvetica',
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.bold,
+            decoration: TextDecoration.none,
+          ),
+        ),
+        SizedBox(width: 18.0),
+        verified ? Container(width: 0) :
+        Styles.VerifiedUserIcon,
+      ],
+    ),
+  );
   Widget icon() {
     if (pic=='' || pic==null || pic=='null') {
       return Image.network(
@@ -97,6 +116,9 @@ class Profile {
 
     return Profile.source + pic;
   }
+  ProfilePage navigateTo() {
+    return ProfilePage.fromLink(cryptlink);
+  }
 
   void navigateToProfile() {
     Arrival.navigator.currentState.push(MaterialPageRoute(
@@ -116,6 +138,7 @@ class Profile {
   static Profile json(var input) {
     return Profile(
       name: input['name'],
+      verified: input['verified'],
       pic: input['pic'],
       cryptlink: input['cryptlink'],
       email: input['email'],
@@ -127,6 +150,7 @@ class Profile {
   static Profile litejson(var input) {
     return Profile(
       name: input['name'],
+      verified: input['verified'],
       pic: input['pic'],
       cryptlink: input['cryptlink'],
       email: '',
@@ -176,9 +200,6 @@ class Profile {
     });
     ArrivalData.innocentAdd(ArrivalData.profiles, P);
     return P;
-  }
-  ProfilePage navigateTo() {
-    return ProfilePage.fromLink(cryptlink);
   }
 
   static int findPointsToNextLevel(int level) {

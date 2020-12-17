@@ -14,7 +14,7 @@ import 'page.dart';
 
 class Sale {
   static final String source =
-    Constants.meda_source;
+    Constants.media_source;
   static final String default_img =
     Constants.basic_plant_image;
 

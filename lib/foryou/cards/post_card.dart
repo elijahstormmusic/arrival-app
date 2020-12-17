@@ -23,37 +23,6 @@ class PostCard extends StatelessWidget {
 
   final Post post;
 
-  Widget _buildDetails() {
-    return FrostyBackground(
-      color: Styles.ArrivalPalletteBlueFrosted,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text.rich(
-              TextSpan(
-                style: Styles.postCardText,
-                children: [
-                  TextSpan(
-                    text: post.user.name
-                    + '  ',
-                    style: TextStyle(
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(text: '  ' + post.caption),
-                ],
-              ),
-              textAlign: TextAlign.left,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return PostDisplay(post);

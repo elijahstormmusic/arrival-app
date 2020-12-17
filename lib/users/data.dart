@@ -13,6 +13,9 @@ class UserData {
   static Profile client;
   static String username;
   static String password;
+
+  static List<Profile> followers = <Profile>[];
+
   static double DefaultTip = 0.2;
   static int MembershipTier = 0;
   static bool LocationOn = true;

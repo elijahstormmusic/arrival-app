@@ -22,64 +22,113 @@ class PartnerCard extends StatelessWidget {
   final bool isNear;
   final bool isFavIndustry;
 
-  Widget _buildDetails() {
-    return FrostyBackground(
-      color: Styles.ArrivalPalletteWhiteFrosted,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              biz.name,
-              style: Styles.cardTitleText,
-            ),
-            Text(
-              biz.shortDescription,
-              style: Styles.cardDescriptionText,
-            ),
-          ],
+  Widget _buildDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+
+        SizedBox(height: 8.0),
+
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 6.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * .8,
+                height: 26.0,
+                child: Text(
+                  biz.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: Styles.partnerCardTitle,
+                ),
+              ),
+
+              Container(
+                decoration: BoxDecoration(
+                  color: biz.rating > 4
+                    ? Styles.ArrivalPalletteGreenLighten
+                    : Styles.ArrivalPalletteCream,
+                  borderRadius: BorderRadius.circular(99.0),
+                ),
+                width: 28,
+                height: 28,
+                child: Center(
+                  child: Text(
+                    ((biz.rating * 10.0).floor() / 10.0).toString(),
+                    style: TextStyle(
+                      color: biz.rating > 4
+                        ? Styles.ArrivalPalletteGreenDarken
+                        : Styles.ArrivalPalletteBlack,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+
+        SizedBox(height: 4.0),
+
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 6.0),
+          // height: 12,
+          child: Text(
+            '\$\$ • ' + biz.shortDescription,
+            overflow: TextOverflow.ellipsis,
+            style: Styles.partnerCardSub,
+          ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return PressableCard(
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         Arrival.navigator.currentState.push(MaterialPageRoute(
           builder: (context) => PartnerDisplayPage(biz.cryptlink),
           fullscreenDialog: true,
         ));
       },
-      child: Stack(
-        children: [
-          Semantics(
-            label: 'Logo for ${biz.name}',
-            child: Container(
-              height: isNear ? 300 : 150,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  colorFilter:
+      child: PhysicalModel(
+        elevation: 7,
+        shape: BoxShape.rectangle,
+        shadowColor: Styles.ArrivalPalletteGrey,
+        color: Styles.ArrivalPalletteWhite,
+        child: Container(
+          height: 320.0,
+          color: Styles.ArrivalPalletteWhite,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Semantics(
+                label: 'Logo for ${biz.name}',
+                child: Container(
+                  height: isNear ? 250 : 100,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      colorFilter:
                       isNear ? null : Styles.desaturatedColorFilter,
-                  image: NetworkImage(
-                    biz.images.storefront,
+                      image: NetworkImage(
+                        biz.images.storefront,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+
+              _buildDetails(context),
+            ],
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildDetails(),
-          ),
-        ],
+        ),
       ),
-      borderRadius: const BorderRadius.all(Radius.circular(5)),
     );
   }
 }
@@ -97,7 +146,7 @@ class RowPartner extends RowCard {
   @override
   Widget generate(Preferences prefs) {
       return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 32),
         child: FutureBuilder<Set<SourceIndustry>>(
           future: prefs.preferredIndustries,
           builder: (context, snapshot) {

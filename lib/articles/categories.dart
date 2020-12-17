@@ -78,7 +78,7 @@ class ArticleData {
       image: Constants.basic_plant_image,
     ),
     Category(
-      name: 'CurrentEvents',
+      name: 'Current Events',
       type: ArticleCategories.currentEvents,
       color: Styles.ArrivalPalletteYellowDarken,
       image: Constants.basic_plant_image,

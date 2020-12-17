@@ -33,6 +33,7 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
           fullscreenDialog: true,
         ));
       },
+      upElevation: 3,
       borderRadius: const BorderRadius.all(Radius.circular(18)),
       child: Container(
         color: Styles.ArrivalPalletteCream,

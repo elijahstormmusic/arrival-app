@@ -29,9 +29,13 @@ class _SaleCardState extends State<SaleCard> {
 
   Widget _buildDetails() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 12,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
             height: 90,
@@ -43,22 +47,26 @@ class _SaleCardState extends State<SaleCard> {
                   widget.sale.name,
                   style: Styles.saleTitle,
                 ),
-                SizedBox(height: 12),
-                Text(
-                  widget.sale.info,
-                  style: Styles.saleInfo,
+                SizedBox(height: 8.0),
+                Expanded(
+                  child: Text(
+                    widget.sale.info,
+                    style: Styles.saleInfo,
+                  ),
                 ),
               ],
             ),
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
                 width: 130,
+                margin: EdgeInsets.only(top: 10),
                 child: Text(
-                  widget.sale.partner.name.length > 12
-                  ? (widget.sale.partner.name.substring(0, 12) + '...')
-                  : widget.sale.partner.name,
+                  widget.sale.partner.name,
+                  overflow: TextOverflow.ellipsis,
                   style: Styles.saleOwner,
                 ),
               ),

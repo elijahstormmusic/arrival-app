@@ -55,7 +55,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
 
   @override
   void initState() {
-    socket.delivery = this;
+    socket.delivery.add(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _refreshController = RefreshController(
@@ -74,6 +74,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
   @override
   void dispose() {
     kill_reflow = true;
+    socket.delivery.removeWhere((x) => x==this);
     _scrollController.dispose();
     super.dispose();
   }

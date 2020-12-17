@@ -22,7 +22,7 @@ enum SourceIndustry {
   shoes,
 }
 class StoreImages {
-  static const String source = Constants.meda_source;
+  static const String source = Constants.media_source;
 
   String logo;
   String storefront;

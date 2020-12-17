@@ -4,10 +4,12 @@
 
 import 'package:flutter/material.dart';
 import '../explore.dart';
-import '../../users/page.dart';
 import '../../data/link.dart';
 import '../../data/arrival.dart';
+import '../../users/data.dart';
 import '../../bookmarks/casing.dart';
+import '../../posts/story.dart';
+
 
 class PostFavorites extends CasingFavorites {
   void explore() {
@@ -20,8 +22,8 @@ class PostFavorites extends CasingFavorites {
   @override
   void open(Map<String, dynamic> data) {
     Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => ProfilePage.fromLink(
-        data['link'],
+      builder: (context) => StoryDisplay(
+        data['story'],
       ),
       fullscreenDialog: true,
     ));
@@ -29,11 +31,18 @@ class PostFavorites extends CasingFavorites {
 
   @override
   Map<String, dynamic> generateListData(int i) => {
-            'link': ArrivalData.profiles[i].cryptlink,
-            'icon': ArrivalData.profiles[i].media_href(),
-            'name': ArrivalData.profiles[i].name,
+            'link': Story.TestData.cryptlink,
+            'icon': Story.TestData.icon,
+            'name': Story.TestData.name,
+            'story': Story.TestData,
           };
+  // @override
+  // Map<String, dynamic> generateListData(int i) => {
+  //           'link': UserData.followers[i].cryptlink,
+  //           'icon': UserData.followers[i].media_href(),
+  //           'name': UserData.followers[i].name,
+  //         };
 
   @override
-  int listSize() => ArrivalData.profiles.length;
+  int listSize() => UserData.followers.length + 1;
 }

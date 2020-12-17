@@ -54,7 +54,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
 
   @override
   void initState() {
-    socket.delivery = this;
+    socket.delivery.add(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _refreshController = RefreshController(
@@ -73,6 +73,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
   @override
   void dispose() {
     kill_reflow = true;
+    socket.delivery.removeWhere((x) => x==this);
     _scrollController.dispose();
     super.dispose();
   }

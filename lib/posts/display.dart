@@ -662,18 +662,18 @@ class _PostDisState extends State<PostDisplay> {
 
     return widget.scrollable ? Scaffold(
       body: PhysicalModel(
-        elevation: 5,
+        elevation: 7,
         shape: BoxShape.rectangle,
-        shadowColor: Styles.ArrivalPalletteBlack,
+        shadowColor: Styles.ArrivalPalletteGrey,
         color: Styles.ArrivalPalletteWhite,
         child: ListView(
           children: postContents,
         ),
       ),
     ) : PhysicalModel(
-      elevation: 5,
+      elevation: 7,
       shape: BoxShape.rectangle,
-      shadowColor: Styles.ArrivalPalletteBlack,
+      shadowColor: Styles.ArrivalPalletteGrey,
       color: Styles.ArrivalPalletteWhite,
       child: Column(
         children: postContents,

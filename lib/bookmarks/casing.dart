@@ -18,6 +18,7 @@ class CasingFavorites extends StatefulWidget {
   Map<String, dynamic> generateListData(int index) => {};
   int listSize() => 0;
   void explore() => {};
+  String getExploreText() => 'explore';
 
   @override
   State<CasingFavorites> createState() => _CasingCircle();
@@ -28,6 +29,7 @@ class CasingFavoritesBox extends StatefulWidget {
   Map<String, dynamic> generateListData(int index) => {};
   int listSize() => 0;
   void explore() => {};
+  String getExploreText() => 'explore';
   int bookmarkableType() => 99;
 
   @override
@@ -157,7 +159,7 @@ class _CasingCircle extends State<CasingFavorites> {
                 widget.explore();
               },
               child: Text(
-                'explore',
+                widget.getExploreText(),
                 style: _bookmarkLabel,
               ),
             ),
@@ -168,6 +170,8 @@ class _CasingCircle extends State<CasingFavorites> {
   }
   List<Widget> _generateFavorites(BuildContext context) {
     List<Widget> yourFavs = List<Widget>();
+
+    yourFavs.add(Container(width: 6));
 
     for (int i=0;i<_rowButtonListData.length;i++) {
       yourFavs.add(_buildBookmark(context, i));
@@ -287,10 +291,6 @@ class _CasingBox extends State<CasingFavoritesBox> {
                       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
                       GestureDetector(
                         onTap: () async {
-                          print(widget.bookmarkableType());
-                          print(_rowButtonListData[index]['link']);
-
-
                           await prefs.toggleBookmarked(widget.bookmarkableType(), _rowButtonListData[index]['link']);
                           setState(() => 0);
                         },
@@ -351,7 +351,7 @@ class _CasingBox extends State<CasingFavoritesBox> {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      'explore',
+                      widget.getExploreText(),
                       style: _bookmarkLabel,
                     ),
                   ],

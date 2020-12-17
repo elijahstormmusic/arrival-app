@@ -77,7 +77,7 @@ class _ListState extends State<ForYouPage> {
     );
     _loadingCard = RowLoading();
     _search = Search();
-    socket.delivery = this;
+    socket.delivery.add(this);
     if (ArrivalData.foryou==null) {
       ArrivalData.foryou = List<RowCard>();
     }
@@ -89,6 +89,7 @@ class _ListState extends State<ForYouPage> {
   @override
   void dispose() {
     kill_reflow = true;
+    socket.delivery.removeWhere((x) => x==this);
     _scrollController.dispose();
     super.dispose();
   }

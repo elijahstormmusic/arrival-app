@@ -189,7 +189,7 @@ class _MessagerState extends State<Messager> {
   }
   void _insertMessage(var data) {
     if (data['image']!=null) {
-      data['image'] = Constants.meda_source + data['image'];
+      data['image'] = Constants.media_source + data['image'];
     }
 
     try {
@@ -229,7 +229,7 @@ class _MessagerState extends State<Messager> {
 
       return {
         'link': media_data.secure_url.replaceAll(
-                  Constants.meda_source, ''
+                  Constants.media_source, ''
                 ),
         'height': media_data.height,
         // 'duration': media_data.duration==null ? null : media_data.duration,

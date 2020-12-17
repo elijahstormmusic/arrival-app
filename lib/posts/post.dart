@@ -15,7 +15,7 @@ import 'page.dart';
 
 class Post {
   static final String source =
-    Constants.meda_source;
+    Constants.media_source;
 
   final String caption;
   final String cryptlink;

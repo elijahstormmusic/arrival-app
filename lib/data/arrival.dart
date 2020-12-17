@@ -128,4 +128,7 @@ class DataType {
   static final int post = 2;
   static final int sale = 3;
   static final int profile = 4;
+
+  static final int categories = 10;
+  static final int industry = 11;
 }

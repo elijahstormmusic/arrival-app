@@ -43,5 +43,5 @@ class PartnerFavorites extends CasingFavoritesBox {
   int listSize() => LocalIndustries.all.length;
 
   @override
-  int bookmarkableType() => 11;
+  int bookmarkableType() => DataType.industry;
 }

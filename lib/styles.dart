@@ -73,10 +73,14 @@ abstract class Styles {
   static const ArrivalPalletteCreamDarken = Color(0xffB28118);
   static const ArrivalPalletteYellowDarken = Color(0xff705C00);
   static const ArrivalPalletteBlueDarken = Color(0xff184C71);
-  static const ArrivalPalletteGreenDarken = Color(0xff045407);
+  static const ArrivalPalletteBlueLighten = Color(0xffb0d4ee);
+  static const ArrivalPalletteDarkBlueDarken = Color(0xff4974D9);
+  static const ArrivalPallettePurpleDarken = Color(0xffA35ADB);
+  static const ArrivalPalletteGreenDarken = Color(0xff133e14);
+  static const ArrivalPalletteGreenLighten = Color(0xffb8eab9);
   static const ArrivalPalletteBlackDarken = Color(0xff0F0E0E);
   static const ArrivalPalletteWhiteDarken = Color(0xff646476);
-  static const ArrivalPalletteGreyDarken = Color(0xff655C58);
+  static const ArrivalPalletteGreyDarken = Color(0xff4b4b58);
   static const ArrivalPalletteLightGreyDarken = Color(0xffEEEEE9);
 
   static const _oldArrivalPalletteRed = Color.fromRGBO(243, 72, 62, 1);
@@ -87,6 +91,9 @@ abstract class Styles {
   static const ArrivalPalletteCreamTransparent = Color(0xccF9EDD3);
   static const ArrivalPalletteYellowTransparent = Color(0xccFFCF01);
   static const ArrivalPalletteBlueTransparent = Color(0x595AA6DC);
+  static const ArrivalPalletteDarkBlueTransparent = Color(0xcc4974D9);
+  static const ArrivalPallettePurpleTransparent = Color(0xccA35ADB);
+  static const ArrivalPalletteGreenTransparent = Color(0xcc09BC0F);
   static const ArrivalPalletteGreyTransparent = Color(0xccD9D5D3);
   static const ArrivalPalletteBlackTransparent = Color(0xcc231F20);
   static const ArrivalPalletteWhiteTransparent = Color(0xccF8F8F9);
@@ -110,6 +117,11 @@ abstract class Styles {
       ),
     );
   }
+
+  static const Widget VerifiedUserIcon = Icon(
+            CupertinoIcons.bookmark_fill,
+            color: Styles.ArrivalPalletteRed,
+          );
 
   static const Color mainColor = Styles.ArrivalPalletteRed;
   static const Color activeColor = Styles.ArrivalPalletteYellow;
@@ -274,6 +286,21 @@ abstract class Styles {
       fontSize: 14,
       fontStyle: FontStyle.normal,
       fontWeight: FontWeight.bold,
+  );
+
+  static const partnerCardTitle = TextStyle(
+      color: Styles.ArrivalPalletteBlack,
+      fontFamily: 'Helvetica',
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.bold,
+  );
+  static const partnerCardSub = TextStyle(
+      color: Styles.ArrivalPalletteGreyDarken,
+      fontFamily: 'Helvetica',
+      fontSize: 18,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
   );
 
 
@@ -708,27 +735,11 @@ abstract class Styles {
   static const Color iconMain = mainColor;
   static const Color iconGold = Color(0xffdba800);
 
-  static const preferenceIcon = IconData(
-    0xf443,
-    fontFamily: CupertinoIcons.iconFont,
-    fontPackage: CupertinoIcons.iconFontPackage,
-  );
-  static const profileIcon = IconData(
-    0xf2d8,
-    fontFamily: CupertinoIcons.iconFont,
-    fontPackage: CupertinoIcons.iconFontPackage,
-  );
-  static const calorieIcon = IconData(
-    0xf3bb,
-    fontFamily: CupertinoIcons.iconFont,
-    fontPackage: CupertinoIcons.iconFontPackage,
-  );
-
-  static const checkIcon = IconData(
-    0xf383,
-    fontFamily: CupertinoIcons.iconFont,
-    fontPackage: CupertinoIcons.iconFontPackage,
-  );
+  static const preferenceIcon = CupertinoIcons.building_2_fill;
+  static const profileIcon = CupertinoIcons.person_fill;
+  static const selected = CupertinoIcons.arrowtriangle_right_fill;
+  static const mapRangeIcon = CupertinoIcons.compass;
+  static const checkIcon = CupertinoIcons.sidebar_left;
 
   static const bookmark = CupertinoIcons.bookmark;
   static const bookmark_icon = Icon(
@@ -748,7 +759,7 @@ abstract class Styles {
   static const comment = CupertinoIcons.chat_bubble;// const IconData(0xf3fb,
           // fontFamily: CupertinoIcons.iconFont,
           // fontPackage: CupertinoIcons.iconFontPackage);
-  static const share = CupertinoIcons.location_fill;// const IconData(0xf473,
+  static const share = CupertinoIcons.paperplane_fill;// const IconData(0xf473,
   //         fontFamily: CupertinoIcons.iconFont,
   //         fontPackage: CupertinoIcons.iconFontPackage);
   static const messagesIcon = Icon(CupertinoIcons.bubble_left_bubble_right);

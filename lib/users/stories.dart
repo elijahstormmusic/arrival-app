@@ -7,21 +7,41 @@ import '../bookmarks/casing.dart';
 import '../foryou/explore.dart';
 import '../data/link.dart';
 import '../data/arrival.dart';
+import '../users/data.dart';
+import '../users/profile.dart';
 import '../posts/story.dart';
+import '../posts/story_upload.dart';
+import '../foryou/explore.dart';
 
 class StoriesHighlights extends CasingFavorites {
+  Profile user;
+
+  StoriesHighlights(this.user);
+
+
+  @override
+  String getExploreText() => user == UserData.client ?
+                            'create new' : 'explore';
   void explore() {
-    Arrival.navigator.currentState.push(MaterialPageRoute(
-      builder: (context) => Explore(type: 'posts'),
-      fullscreenDialog: true,
-    ));
+    if (user == UserData.client) {
+      Arrival.navigator.currentState.push(MaterialPageRoute(
+        builder: (context) => StoryUpload(),
+        fullscreenDialog: true,
+      ));
+    }
+    else {
+      Arrival.navigator.currentState.push(MaterialPageRoute(
+        builder: (context) => Explore(type: 'posts'),
+        fullscreenDialog: true,
+      ));
+    }
   }
 
   @override
   void open(Map<String, dynamic> data) {
     Arrival.navigator.currentState.push(MaterialPageRoute(
       builder: (context) => StoryDisplay(
-        data['link'],
+        data['story']
       ),
       fullscreenDialog: true,
     ));
@@ -29,11 +49,12 @@ class StoriesHighlights extends CasingFavorites {
 
   @override
   Map<String, dynamic> generateListData(int i) => {
-            'link': ArrivalData.profiles[i].cryptlink,
-            'icon': ArrivalData.profiles[i].media_href(),
-            'name': ArrivalData.profiles[i].name,
-          };
+          'link': user.storyHighlights[i].cryptlink,
+          'icon': user.storyHighlights[i].icon,
+          'name': user.storyHighlights[i].name,
+          'story': user.storyHighlights[i],
+        };
 
   @override
-  int listSize() => ArrivalData.profiles.length;
+  int listSize() => user.storyHighlights.length;
 }

@@ -29,7 +29,7 @@ class Partner {
   int ratingAmount;
   final LatLng location;
   final StoreImages images;
-  final SourceIndustry industry; // an enum link to the Industy index
+  final SourceIndustry industry;
   final ContactList contact;
   List<Sale> sales = List<Sale>();
   bool isFavorite;

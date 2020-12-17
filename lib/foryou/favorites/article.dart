@@ -43,5 +43,5 @@ class ArticleFavorites extends CasingFavoritesBox {
   int listSize() => ArticleData.all.length;
 
   @override
-  int bookmarkableType() => 10;
+  int bookmarkableType() => DataType.categories;
 }

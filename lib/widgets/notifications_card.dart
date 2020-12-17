@@ -110,19 +110,22 @@ class _NotoCardState extends State<NotificationsCard> {
   Widget build(BuildContext context) {
     var prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(18)),
-        color: Styles.ArrivalPalletteCream,
+    return PhysicalModel(
+      elevation: 3,
+      borderRadius: const BorderRadius.all(Radius.circular(18)),
+      shape: BoxShape.rectangle,
+      shadowColor: Styles.ArrivalPalletteGrey,
+      color: Styles.ArrivalPalletteCream,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        width: MediaQuery.of(context).size.width / 2.5,
+        child: FutureBuilder<Set<NotificationHolder>>(
+            future: prefs.notificationHistory,
+            builder: (context, snapshot) {
+              final data = snapshot.data ?? <NotificationHolder>{};
+              return _displayList(context, data);
+            }),
       ),
-      padding: const EdgeInsets.all(3),
-      width: MediaQuery.of(context).size.width / 2.5,
-      child: FutureBuilder<Set<NotificationHolder>>(
-        future: prefs.notificationHistory,
-        builder: (context, snapshot) {
-          final data = snapshot.data ?? <NotificationHolder>{};
-          return _displayList(context, data);
-        }),
     );
   }
 }

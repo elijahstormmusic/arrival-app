@@ -276,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage>
         _newProfilePic.path,
         filename: image_name,
         folder: 'profile/' + UserData.client.name,
-      )).secure_url.replaceAll(Constants.meda_source, '');
+      )).secure_url.replaceAll(Constants.media_source, '');
 
       if (img_url!=null) {
         socket.emit('userdata update', {
@@ -343,10 +343,7 @@ class _ProfilePageState extends State<ProfilePage>
                           Navigator.of(context).pop();
                         }),
                         SizedBox(width: 16),
-                        Text(
-                          widget.profile.name,
-                          style: Styles.profilePageHeader
-                        ),
+                        widget.profile.clickable_name(),
                       ],
                     ),
                   ),
@@ -384,8 +381,8 @@ class _ProfilePageState extends State<ProfilePage>
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: (_editingProfile && _newProfilePic!=null)
-                    ? FileImage(_newProfilePic)
-                    : NetworkImage(widget.profile.media_href()),
+                      ? FileImage(_newProfilePic)
+                      : NetworkImage(widget.profile.media_href()),
                     child: _editingProfile ? GestureDetector(
                       onTap: () async {
                         _newProfilePic = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -481,22 +478,7 @@ class _ProfilePageState extends State<ProfilePage>
                         _editableName.text = input;
                       },
                     )
-                  ) : Text.rich(
-                    TextSpan(
-                      style: Styles.profilePageText,
-                      children: [
-                        TextSpan(
-                          text: widget.profile.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '', // job title?
-                        ),
-                      ],
-                    ),
-                  ),
+                  ) : widget.profile.clickable_name(),
                   SizedBox(width: 16),
                   _isClientAndEditable() ? GestureDetector(
                     onTap: () {
@@ -702,7 +684,7 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Widget _buildStoryHighlights(BuildContext context, AppState model) {
-    return StoriesHighlights();
+    return StoriesHighlights(widget.profile);
   }
 
   Widget _buildContentDisplayOptions(BuildContext context, AppState model) {

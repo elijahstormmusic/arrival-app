@@ -53,7 +53,7 @@ class _PostFeedState extends State<PostFeed> {
 
   @override
   void initState() {
-    socket.delivery = this;
+    socket.delivery.add(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _refreshController = RefreshController(
@@ -72,6 +72,7 @@ class _PostFeedState extends State<PostFeed> {
   @override
   void dispose() {
     kill_reflow = true;
+    socket.delivery.removeWhere((x) => x==this);
     _scrollController.dispose();
     super.dispose();
   }

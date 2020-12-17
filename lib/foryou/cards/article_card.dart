@@ -57,8 +57,8 @@ class ArticleCard extends StatelessWidget {
       },
       color: Styles.ArrivalPalletteWhite,
       borderRadius: const BorderRadius.all(Radius.circular(0)),
-      upElevation: 5,
-      downElevation: 1,
+      upElevation: 7,
+      downElevation: 3,
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: 200,

@@ -63,13 +63,14 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-    socket.search = this;
+    socket.search.add(this);
     widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
     if (!_searchOpen) _focusNode.requestFocus();
   }
   @override
   void dispose() {
+    socket.search.removeLast();
     _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();

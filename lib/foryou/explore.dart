@@ -47,7 +47,7 @@ class _ExploreState extends State<Explore> {
   @override
   void initState() {
     super.initState();
-    socket.delivery = this;
+    socket.delivery.add(this);
     _scrollController.addListener(_scrollListener);
     widget.currentState = this;
     _textInputController.addListener(_onTextChanged);
@@ -56,6 +56,7 @@ class _ExploreState extends State<Explore> {
   }
   @override
   void dispose() {
+    socket.delivery.removeWhere((x) => x==this);
     _scrollController.dispose();
     super.dispose();
   }

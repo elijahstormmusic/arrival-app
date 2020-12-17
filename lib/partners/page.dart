@@ -133,7 +133,9 @@ class InfoView extends StatelessWidget {
           ),
         ),
         onTap: () {
-          launch('http://${biz.contact.website}');
+          if (biz.contact.website.substring(0, 4) == 'http')
+            launch(biz.contact.website);
+          else launch('http://${biz.contact.website}');
         },
       ));
     }

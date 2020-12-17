@@ -20,7 +20,7 @@ import '../const.dart';
 class socket {
   static IO.Socket _socket;
   static var home, post, profile, chatlist;
-  static var delivery, search;
+  static var delivery = [], search = [];
   static int error_report_time = 3;
   static String authenicator;
   static bool active = false;
@@ -41,15 +41,15 @@ class socket {
          */
 
       if (data['type']==900) { // for you download
-        if (delivery==null) return;
+        if (delivery.length==0) return;
 
-        await delivery.response(data['response']);
+        await delivery.last.response(data['response']);
       }
 
       else if (data['type']==310) { // search content
-        if (search==null) return;
+        if (search.length==0) return;
 
-        await search.response(data['response']);
+        await search.last.response(data['response']);
       }
 
       else if (data['type']==801) { // post data
