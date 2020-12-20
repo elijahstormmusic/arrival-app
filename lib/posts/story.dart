@@ -47,30 +47,6 @@ class Story {
       content: content,
     );
   }
-
-
-  static final Story TestData = Story.json({
-    'content': [
-      {
-        'media': 'v1599325166/sample.jpg',
-        'time': 3,
-        'user': UserData.client.cryptlink,
-      },
-      {
-        'media': 'v1599325166/sample.jpg',
-        'time': 5,
-        'user': UserData.client.cryptlink,
-      },
-      {
-        'media': 'v1599325166/sample.jpg',
-        'time': 9,
-        'user': UserData.client.cryptlink,
-      },
-    ],
-    'link': 'linktest',
-    'name': 'storytest',
-    'icon': 'v1599325166/sample.jpg',
-  });
 }
 
 class StoryContent {
@@ -278,10 +254,9 @@ class _StoriesState extends State<StoryDisplay> {
     _replyText = value;
   }
   void _sendReplyToServer() {
-    print(_replyText);
     if (_replyText != '') socket.emit('message create if new', {
       'sender': UserData.client.cryptlink,
-      'reciever': _currentContent.user,
+      'receiver': _currentContent.user,
       'content': _replyText,
     });
 

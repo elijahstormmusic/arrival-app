@@ -23,7 +23,6 @@ dependencies:
   transparent_image: ^1.0.0
   clipboard: ^0.1.2+8
   permission_handler: ^5.0.1+1
-  camera: ^0.5.8+8
   image_picker: ^0.6.7+11
   flutter_speed_dial: ^1.2.5
   cloudinary_client: ^0.0.9

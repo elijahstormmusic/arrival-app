@@ -24,18 +24,17 @@ class ArticleCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            article.date.substring(2, 10).replaceAll('-', ' / ') + '\n'
-            + 'by ' + article.author,
-            style: Styles.articleCardTitleAuthor,
-          ),
+        Text(
+          article.date.substring(2, 10).replaceAll('-', ' / ') + '\n'
+          + 'by ' + article.author,
+          style: Styles.articleCardTitleAuthor,
         ),
+        SizedBox(height: 16),
         Text(
           article.title,
           style: Styles.articleCardTitleText,
         ),
-        SizedBox(height: 6),
+        SizedBox(height: 8),
         Expanded(
           child: Text(
             article.short_intro,
@@ -70,6 +69,7 @@ class ArticleCard extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width - 140,
               height: 160,
+              padding: EdgeInsets.only(right: 10),
               child: _buildDetails(context),
             ),
             Semantics(

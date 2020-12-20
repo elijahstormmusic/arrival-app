@@ -69,19 +69,28 @@ class SellerView extends StatelessWidget {
   }
 }
 
-class InfoView extends StatelessWidget {
+class InfoView extends StatefulWidget {
   final biz;
 
   const InfoView(this.biz);
 
+  @override
+  _IVState createState() => _IVState();
+}
+class _IVState extends State<InfoView> {
+
   void _rateAtIndex(var prefs, int index) async {
     socket.emit('partners set rating', {
-      'link': biz.cryptlink,
+      'link': widget.biz.cryptlink,
       'user': UserData.client.cryptlink,
-      'rating': index,
+      'rating': index - 1,
     });
 
-    prefs.ratePartner(biz.cryptlink, index);
+    setState(() => widget.biz.rating =
+        (widget.biz.ratingAmount++ * widget.biz.rating + index)
+        / widget.biz.ratingAmount);
+
+    prefs.ratePartner(widget.biz.cryptlink, index);
   }
 
   Widget _drawRatingRow(var prefs, int rating, List<Color> colors, bool hasNotBeenRatedBefore) {
@@ -93,7 +102,7 @@ class InfoView extends StatelessWidget {
             onTap: () {
               _rateAtIndex(prefs, i + 1);
               if (hasNotBeenRatedBefore) {
-                biz.ratingAmount++;
+                widget.biz.ratingAmount++;
               }
             },
             child: Icon(
@@ -120,7 +129,7 @@ class InfoView extends StatelessWidget {
 
     final List<Widget> _contactList = <Widget>[];
 
-    if (biz.contact.website != null) {
+    if (widget.biz.contact.website != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -133,13 +142,13 @@ class InfoView extends StatelessWidget {
           ),
         ),
         onTap: () {
-          if (biz.contact.website.substring(0, 4) == 'http')
-            launch(biz.contact.website);
-          else launch('http://${biz.contact.website}');
+          if (widget.biz.contact.website.substring(0, 4) == 'http')
+            launch(widget.biz.contact.website);
+          else launch('http://${widget.biz.contact.website}');
         },
       ));
     }
-    if (biz.contact.email != null) {
+    if (widget.biz.contact.email != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -152,11 +161,11 @@ class InfoView extends StatelessWidget {
           ),
         ),
         onTap: () {
-          launch('mailto:${biz.contact.email}');
+          launch('mailto:${widget.biz.contact.email}');
         },
       ));
     }
-    if (biz.contact.facebook != null) {
+    if (widget.biz.contact.facebook != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -170,11 +179,11 @@ class InfoView extends StatelessWidget {
           // ),
         ),
         onTap: () {
-          launch('http://facebook.com/${biz.contact.facebook}');
+          launch('http://facebook.com/${widget.biz.contact.facebook}');
         },
       ));
     }
-    if (biz.contact.twitter != null) {
+    if (widget.biz.contact.twitter != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -188,11 +197,11 @@ class InfoView extends StatelessWidget {
           // ),
         ),
         onTap: () {
-          launch('http://twitter.com/${biz.contact.twitter}');
+          launch('http://twitter.com/${widget.biz.contact.twitter}');
         },
       ));
     }
-    if (biz.contact.instagram != null) {
+    if (widget.biz.contact.instagram != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -206,11 +215,11 @@ class InfoView extends StatelessWidget {
           // ),
         ),
         onTap: () {
-          launch('http://instagram.com/${biz.contact.instagram}');
+          launch('http://instagram.com/${widget.biz.contact.instagram}');
         },
       ));
     }
-    if (biz.contact.pinterest != null) {
+    if (widget.biz.contact.pinterest != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -224,11 +233,11 @@ class InfoView extends StatelessWidget {
           // ),
         ),
         onTap: () {
-          launch('http://pinterest.com//${biz.contact.pinterest}');
+          launch('http://pinterest.com//${widget.biz.contact.pinterest}');
         },
       ));
     }
-    if (biz.contact.phoneNumber != null) {
+    if (widget.biz.contact.phoneNumber != null) {
       _contactList.add(GestureDetector(
         child: Container(
           decoration: Styles.backgroundRadiusGradient(6),
@@ -241,7 +250,7 @@ class InfoView extends StatelessWidget {
           ),
         ),
         onTap: () {
-          launch('tel://${biz.contact.phoneNumber}');
+          launch('tel://${widget.biz.contact.phoneNumber}');
         },
       ));
     }
@@ -259,9 +268,9 @@ class InfoView extends StatelessWidget {
                 future: prefs.preferredIndustries,
                 builder: (context, snapshot) {
                   return Text(
-                    LocalIndustries.industryGrabber(biz.industry).name.toUpperCase(),
+                    LocalIndustries.industryGrabber(widget.biz.industry).name.toUpperCase(),
                     style: (snapshot.hasData &&
-                        snapshot.data.contains(biz.industry))
+                        snapshot.data.contains(widget.biz.industry))
                         ? Styles.detailsPreferredCategoryText(themeData)
                         : Styles.detailsCategoryText(themeData),
                   );
@@ -270,16 +279,16 @@ class InfoView extends StatelessWidget {
               Spacer(),
 
               FutureBuilder<int>(
-                future: prefs.hasBeenRated(biz.cryptlink),
+                future: prefs.hasBeenRated(widget.biz.cryptlink),
                 builder: (BuildContext context, AsyncSnapshot<int> snapshot) =>
                 snapshot.hasData && snapshot.data != -1 ?
                   _drawRatingRow(prefs, snapshot.data, Styles.ratingColors, snapshot.data == -1)
-                  : _drawRatingRow(prefs, biz.rating.toInt(), Styles.unratedRatingColors, snapshot.data == -1),
+                  : _drawRatingRow(prefs, widget.biz.rating.toInt(), Styles.unratedRatingColors, snapshot.data == -1),
               ),
 
               Spacer(),
               Text(
-                ' (' + biz.ratingAmount.toString() + ')',
+                ' (' + widget.biz.ratingAmount.toString() + ')',
                 style: Styles.detailsDescriptionText(themeData),
               ),
             ],
@@ -287,7 +296,7 @@ class InfoView extends StatelessWidget {
 
           SizedBox(height: _generalPadding),
           Text(
-            biz.shortDescription,
+            widget.biz.shortDescription,
             style: Styles.detailsDescriptionText(themeData),
           ),
 
@@ -310,7 +319,7 @@ class InfoView extends StatelessWidget {
               ),
               onTap: () {
                 Arrival.navigator.currentState.push(MaterialPageRoute(
-                  builder: (context) => Maps.directions(biz),
+                  builder: (context) => Maps.directions(widget.biz),
                   fullscreenDialog: true,
                 ));
               },
@@ -318,7 +327,7 @@ class InfoView extends StatelessWidget {
           ),
           Center(
               child: Text(
-              biz.contact.address + ', ' + biz.contact.zip,
+              widget.biz.contact.address + ', ' + widget.biz.contact.zip,
               textAlign: TextAlign.center,
               style: Styles.detailsAddressText,
             ),
@@ -336,7 +345,9 @@ class InfoView extends StatelessWidget {
 
               Container(
                 padding: EdgeInsets.all(16),
-                height: _contactList.length <= 3 ? (_flexableThirdWidth * 2 + (_internalSpacing * 1)) : (_flexableThirdWidth * 4 + (_internalSpacing * 3)),
+                height: _contactList.length <= 3
+                  ? (_flexableThirdWidth * 2 + (_internalSpacing * 1))
+                  : (_flexableThirdWidth * 4 + (_internalSpacing * 3)),
                 width: _flexableThirdWidth * 3 + (_internalSpacing * 2),
                 child: Wrap(
                   spacing: _internalSpacing,

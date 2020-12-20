@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+// import '../posts/cloudinary/cloudinary_client.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
 
 import '../data/preferences.dart';
@@ -282,12 +283,12 @@ class SubSettings extends StatefulWidget {
         trailing: SaveButton(() async {
           if (variableState==null) return;
           try {
-            CloudinaryClient cloudinary_client =
+            CloudinaryClient _cloudinary_client =
               new CloudinaryClient('868422847775537',
               'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
 
             String image_name = UserData.client.name + Random().nextInt(1000000).toString();
-            String img_url = (await cloudinary_client.uploadImage(
+            String img_url = (await _cloudinary_client.uploadImage(
               variableState.path,
               filename: image_name,
               folder: 'profile/' + UserData.client.name,

@@ -31,18 +31,39 @@ class PostFavorites extends CasingFavorites {
 
   @override
   Map<String, dynamic> generateListData(int i) => {
-            'link': Story.TestData.cryptlink,
-            'icon': Story.TestData.icon,
-            'name': Story.TestData.name,
-            'story': Story.TestData,
+            'link': UserData.followers[i].cryptlink,
+            'icon': UserData.followers[i].media_href(),
+            'name': UserData.followers[i].name,
           };
-  // @override
-  // Map<String, dynamic> generateListData(int i) => {
-  //           'link': UserData.followers[i].cryptlink,
-  //           'icon': UserData.followers[i].media_href(),
-  //           'name': UserData.followers[i].name,
-  //         };
+
+
+
+          // static final Story TestData = Story.json({
+          //   'content': [
+          //     {
+          //       'media': 'v1599325166/sample.jpg',
+          //       'time': 3,
+          //       'user': UserData.client.cryptlink,
+          //     },
+          //     {
+          //       'media': 'v1599325166/sample.jpg',
+          //       'time': 5,
+          //       'user': UserData.client.cryptlink,
+          //     },
+          //     {
+          //       'media': 'v1599325166/sample.jpg',
+          //       'time': 9,
+          //       'user': UserData.client.cryptlink,
+          //     },
+          //   ],
+          //   'link': 'linktest',
+          //   'name': 'storytest',
+          //   'icon': 'v1599325166/sample.jpg',
+          // });
+
+
+
 
   @override
-  int listSize() => UserData.followers.length + 1;
+  int listSize() => UserData.followers.length;
 }

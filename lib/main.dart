@@ -8,7 +8,6 @@ import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:camera/camera.dart';
 
 import 'data/link.dart';
 import 'data/arrival.dart';
@@ -33,7 +32,6 @@ void main() async {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    cameras = await availableCameras();
   }
   catch (e) {
     print('''

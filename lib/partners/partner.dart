@@ -25,7 +25,7 @@ class Partner {
   final String shortDescription;
   final String cryptlink;
   int yourRating;
-  final double rating;
+  double rating;
   int ratingAmount;
   final LatLng location;
   final StoreImages images;

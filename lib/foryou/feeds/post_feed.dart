@@ -16,6 +16,7 @@ import '../../data/arrival.dart';
 import '../../data/app_state.dart';
 import '../../data/preferences.dart';
 import '../../posts/post.dart';
+import '../../posts/story_upload.dart';
 import '../../data/link.dart';
 import '../../styles.dart';
 import '../favorites/post.dart';
@@ -234,7 +235,36 @@ class _PostFeedState extends State<PostFeed> {
           itemCount: ArrivalData.post_feed.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
-              return PostFavorites();
+              return
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
+                        builder: (context) => StoryUpload(),
+                        fullscreenDialog: true,
+                      )),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Styles.ArrivalPalletteGreyTransparent,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: EdgeInsets.all(8.0),
+                        margin: EdgeInsets.only(
+                          left: 18.0,
+                          top: 28.0,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: Styles.ArrivalPalletteBlack,
+                        ),
+                      ),
+                    ),
+
+                    PostFavorites(),
+                  ],
+                );
             } else if (index <= ArrivalData.post_feed.length) {
               return ArrivalData.post_feed[index-1].generate(prefs);
             } else {

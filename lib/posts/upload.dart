@@ -12,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:media_gallery/media_gallery.dart';
-import 'package:camera/camera.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/scheduler.dart';
@@ -65,7 +64,7 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
   bool _already_uploaded = false;
 
   TextEditingController _captionInput;
-  CloudinaryClient cloudinary_client =
+  CloudinaryClient _cloudinary_client =
     new CloudinaryClient('868422847775537', 'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
 
   @override
@@ -101,13 +100,13 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
       var media_data;
 
       if (isVideo) {
-        media_data = await cloudinary_client.uploadVideo(
+        media_data = await _cloudinary_client.uploadVideo(
           _media.path,
           folder: 'posts/' + UserData.client.name,
         );
       }
       else {
-        media_data = await cloudinary_client.uploadImage(
+        media_data = await _cloudinary_client.uploadImage(
           _media.path,
           folder: 'posts/' + UserData.client.name,
         );
@@ -509,12 +508,6 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
 }
 
 
-
-List<CameraDescription> cameras = [];
-
-
-
-
 class PostUploadScreen extends StatefulWidget {
   @override
   _PostUploadState createState() => new _PostUploadState();
@@ -551,22 +544,11 @@ class _PostUploadState extends State<PostUploadScreen>
     });
   }
 
-  CameraController _cameraController;
-  bool _cameraFailed = false;
-  Future<void> _initializeControllerFuture;
 
   void _initalizeCamera() async {
     return;
 
     try {
-      // _allCameras = await availableCameras();
-      // _cameraController = CameraController(_allCameras[0], ResolutionPreset.medium);
-      // _cameraController.initialize().then((_) {
-      //   if (!mounted) {
-      //     _cameraFailed = true;
-      //   }
-      // });
-      // _initializeControllerFuture = _cameraController.initialize();
     }
     catch (e) {
       print('''
@@ -580,10 +562,6 @@ class _PostUploadState extends State<PostUploadScreen>
   @override
   void initState() {
     super.initState();
-
-    // WidgetsBinding.instance.addObserver(this);
-
-
     _galleryImages = List();
     _galleryImageNames = List();
     _galleryScrollController = ScrollController();
@@ -597,10 +575,6 @@ class _PostUploadState extends State<PostUploadScreen>
   }
   @override
   void dispose() {
-
-    // WidgetsBinding.instance.removeObserver(this);
-
-    _cameraController?.dispose();
     _galleryScrollController.dispose();
     _uploadContainerScrollController.dispose();
     super.dispose();
@@ -860,29 +834,6 @@ class _PostUploadState extends State<PostUploadScreen>
         ),
       ),
     );
-
-    if (!_cameraController.value.isInitialized) {
-      return Container();
-    }
-    return FutureBuilder<void>(
-      future: _initializeControllerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // If the Future is complete, display the preview.
-          return AspectRatio(
-            aspectRatio: _cameraController.value.aspectRatio,
-            child: CameraPreview(_cameraController),
-          );
-        } else if (_cameraFailed) {
-          return Container(
-            color: Styles.ArrivalPalletteBlack,
-          );
-        } else {
-          // Otherwise, display a loading indicator.
-          return Center(child: CircularProgressIndicator());
-        }
-      },
-    );
   }
   Widget _buildCameraDisplayCasing(BuildContext context) {
     return Container(
@@ -904,14 +855,13 @@ class _PostUploadState extends State<PostUploadScreen>
             if (_imageTaken) return;
 
             try {
-              await _initializeControllerFuture;
-
               final path = join(
                 (await getTemporaryDirectory()).path,
                 '${DateTime.now()}.png',
               );
 
-              await _cameraController.takePicture(path);
+              // await _cameraController.takePicture(path);
+              return;
 
               _image = File(path);
               setState(() => _imageTaken = true);

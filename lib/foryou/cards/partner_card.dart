@@ -48,7 +48,7 @@ class PartnerCard extends StatelessWidget {
 
               Container(
                 decoration: BoxDecoration(
-                  color: biz.rating > 4
+                  color: biz.rating > 5
                     ? Styles.ArrivalPalletteGreenLighten
                     : Styles.ArrivalPalletteCream,
                   borderRadius: BorderRadius.circular(99.0),
@@ -57,9 +57,9 @@ class PartnerCard extends StatelessWidget {
                 height: 28,
                 child: Center(
                   child: Text(
-                    ((biz.rating * 10.0).floor() / 10.0).toString(),
+                    (((biz.rating - 1.0) * 10.0).floor() / 10.0).toString(),
                     style: TextStyle(
-                      color: biz.rating > 4
+                      color: biz.rating > 5
                         ? Styles.ArrivalPalletteGreenDarken
                         : Styles.ArrivalPalletteBlack,
                       fontSize: 12,
