@@ -54,6 +54,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
 
   @override
   void initState() {
+    super.initState();
     socket.delivery.add(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
@@ -62,7 +63,6 @@ class _ArticleFeedState extends State<ArticleFeed> {
     );
     _loadingCard = RowLoading();
     _search = Search();
-    super.initState();
     if (ArrivalData.article_feed==null) {
       ArrivalData.article_feed = List<RowCard>();
     }

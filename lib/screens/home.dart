@@ -48,8 +48,8 @@ class _MainAppStates extends State<HomeScreen> {
 
   @override
   void initState() {
-    socket.home = this;
     super.initState();
+    socket.home = this;
   }
 
   void gotoForyou() =>

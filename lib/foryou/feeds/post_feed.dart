@@ -54,6 +54,7 @@ class _PostFeedState extends State<PostFeed> {
 
   @override
   void initState() {
+    super.initState();
     socket.delivery.add(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
@@ -62,13 +63,14 @@ class _PostFeedState extends State<PostFeed> {
     );
     _loadingCard = RowLoading();
     _search = Search();
-    super.initState();
     if (ArrivalData.post_feed==null) {
       ArrivalData.post_feed = List<RowCard>();
     }
     if (ArrivalData.post_feed.length==0) {
       _pullNext(10);
     }
+    
+    _askForStories();
   }
   @override
   void dispose() {
@@ -78,6 +80,11 @@ class _PostFeedState extends State<PostFeed> {
     super.dispose();
   }
 
+  void _askForStories() {
+    socket.emit('story ask', {
+      'user': UserData.client.cryptlink,
+    });
+  }
   void _pullNext(int amount) {
     if (!_allowRequest) return;
     _allowRequest = false;
@@ -109,6 +116,7 @@ class _PostFeedState extends State<PostFeed> {
     if (!_allowRequest) return;
     ArrivalData.post_feed = List<RowCard>();
     _pullNext(REQUEST_AMOUNT);
+    _askForStories();
   }
   void _loadMore() {
     if (!_allowRequest) return;

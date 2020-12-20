@@ -317,6 +317,7 @@ class socket {
         else if (data['code']==5) error_msg = 'Password not correct';
         else if (data['code']==666) {
           await UserData.refresh();
+          if (home==null) return;
           home.forceLogin();
           return;
         }

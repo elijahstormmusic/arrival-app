@@ -55,6 +55,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
 
   @override
   void initState() {
+    super.initState();
     socket.delivery.add(this);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
@@ -63,7 +64,6 @@ class _PartnerFeedState extends State<PartnerFeed> {
     );
     _loadingCard = RowLoading();
     _search = Search();
-    super.initState();
     if (ArrivalData.partner_feed==null) {
       ArrivalData.partner_feed = List<RowCard>();
     }
