@@ -8,7 +8,8 @@ import '../../data/link.dart';
 import '../../data/arrival.dart';
 import '../../users/data.dart';
 import '../../bookmarks/casing.dart';
-import '../../posts/story.dart';
+import '../../posts/story/story.dart';
+import '../../posts/story/display.dart';
 
 
 class PostFavorites extends CasingFavorites {
@@ -31,39 +32,12 @@ class PostFavorites extends CasingFavorites {
 
   @override
   Map<String, dynamic> generateListData(int i) => {
-            'link': UserData.followers[i].cryptlink,
-            'icon': UserData.followers[i].media_href(),
-            'name': UserData.followers[i].name,
+            'link': ArrivalData.story_feed[i].user.cryptlink,
+            'icon': Story.source + ArrivalData.story_feed[i].user.pic,
+            'name': ArrivalData.story_feed[i].user.name,
+            'story': ArrivalData.story_feed[i],
           };
 
-
-
-          // static final Story TestData = Story.json({
-          //   'content': [
-          //     {
-          //       'media': 'v1599325166/sample.jpg',
-          //       'time': 3,
-          //       'user': UserData.client.cryptlink,
-          //     },
-          //     {
-          //       'media': 'v1599325166/sample.jpg',
-          //       'time': 5,
-          //       'user': UserData.client.cryptlink,
-          //     },
-          //     {
-          //       'media': 'v1599325166/sample.jpg',
-          //       'time': 9,
-          //       'user': UserData.client.cryptlink,
-          //     },
-          //   ],
-          //   'link': 'linktest',
-          //   'name': 'storytest',
-          //   'icon': 'v1599325166/sample.jpg',
-          // });
-
-
-
-
   @override
-  int listSize() => UserData.followers.length;
+  int listSize() => ArrivalData.story_feed.length;
 }

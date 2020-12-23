@@ -52,6 +52,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
   final REQUEST_AMOUNT = 10;
   final _scrollTargetDistanceFromBottom = 400.0;
   Search _search;
+  List<RowCard> _filteredPartnerFeed;
 
   @override
   void initState() {
@@ -64,6 +65,8 @@ class _PartnerFeedState extends State<PartnerFeed> {
     );
     _loadingCard = RowLoading();
     _search = Search();
+
+    _filteredPartnerFeed = List<RowCard>();
     if (ArrivalData.partner_feed==null) {
       ArrivalData.partner_feed = List<RowCard>();
     }
@@ -77,6 +80,13 @@ class _PartnerFeedState extends State<PartnerFeed> {
     socket.delivery.removeWhere((x) => x==this);
     _scrollController.dispose();
     super.dispose();
+  }
+  @override
+  void setState(_) async {
+    if (!mounted) return;
+    _();
+    await _createFilteredFeed();
+    super.setState(() {});
   }
 
   void _pullNext(int amount) {
@@ -187,6 +197,57 @@ class _PartnerFeedState extends State<PartnerFeed> {
     await Future.delayed(const Duration(seconds: 1));
     _allowRequest = true;
   }
+  void _createFilteredFeed() async {
+    var prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
+    _filteredPartnerFeed = List<RowCard>();
+
+    List<Sale> filteredSales = List<Sale>();
+
+    for (int i=0;i<ArrivalData.partner_feed.length;i++) {
+      // if (skip) continue;
+
+      if (Partner.link(ArrivalData.partner_feed[i].cryptlink).
+                      priceRange > _optionsPriceRange) continue;
+
+      else if (_optionsBookmarks) {
+        if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
+          var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
+
+          for (int j=0;j<saleCard.sales.length;j++) {
+            if (!(await prefs.isBookmarked(
+                              DataType.sale,
+                              saleCard.sales[j].cryptlink
+                            ))) continue;
+
+            filteredSales.add(saleCard.sales[j]);
+          }
+          continue;
+        }
+        else if (!(await prefs.isBookmarked(
+                              ArrivalData.partner_feed[i].datatype,
+                              ArrivalData.partner_feed[i].cryptlink
+                            ))) continue;
+      }
+
+      else if (_optionsArrivalDiscounts) {
+
+      }
+
+      else if (_optionsAppointments) {
+
+      }
+
+      else if (_optionsPickup) {
+
+      }
+
+      _filteredPartnerFeed.add(ArrivalData.partner_feed[i]);
+    }
+
+    if (!_optionsBookmarks) return;
+    if (_filteredPartnerFeed.length < 1) return;
+    _filteredPartnerFeed.insert(1, RowSale(filteredSales));
+  }
 
   void _scrollListener() {
     if (_scrollController.offset + _scrollTargetDistanceFromBottom
@@ -255,7 +316,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
         },
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: ArrivalData.partner_feed.length + 2,
+          itemCount: _filteredPartnerFeed.length + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
               return Column(
@@ -265,8 +326,8 @@ class _PartnerFeedState extends State<PartnerFeed> {
                   _filterOptions(),
                 ],
               );
-            } else if (index <= ArrivalData.partner_feed.length) {
-              return ArrivalData.partner_feed[index-1].generate(prefs);
+            } else if (index <= _filteredPartnerFeed.length) {
+              return _filteredPartnerFeed[index-1].generate(prefs);
             } else {
               if (_forceFailCurrentState) {
                 return Styles.ArrivalErrorPage('Make sure you are conntected to the internet.');
@@ -310,16 +371,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
                 },
               ),
             ),
-            Container(
-              padding: _padding,
-              child: FilterChip(
-                label: Text('Pickup'),
-                selected: _optionsPickup,
-                onSelected: (bool value) {
-                  setState(() => _optionsPickup = value);
-                },
-              ),
-            ),
+
             Container(
               padding: _padding,
               child: ActionChip(
@@ -372,6 +424,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
                 },
               ),
             ),
+
             Container(
               padding: _padding,
               child: InputChip(
@@ -385,6 +438,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
                 },
               ),
             ),
+
             Container(
               padding: _padding,
               child: FilterChip(

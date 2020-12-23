@@ -8,6 +8,7 @@ import '../partners/partner.dart';
 import '../articles/article.dart';
 import '../partners/sale.dart';
 import '../posts/page.dart';
+import '../posts/story/story.dart';
 import '../users/profile.dart';
 import '../users/data.dart';
 import '../data/local.dart';
@@ -19,18 +20,21 @@ class ArrivalData {
   static List<RowCard> article_feed;
   static List<RowCard> partner_feed;
   static List<RowCard> post_feed;
+  static List<Story> story_feed;
 
   static List<Post> posts;
   static List<Profile> profiles;
   static List<Partner> partners;
   static List<Article> articles;
   static List<Sale> sales;
+  static List<Story> stories;
 
   static Post getPost(String link) => ArrivalData.posts.singleWhere((v) => v.cryptlink == link);
   static Profile getProfile(String link) => ArrivalData.profiles.singleWhere((v) => v.cryptlink == link);
   static Partner getPartner(String link) => ArrivalData.partners.singleWhere((v) => v.cryptlink == link);
   static Article getArticle(String link) => ArrivalData.articles.singleWhere((v) => v.cryptlink == link);
   static Sale getSale(String link) => ArrivalData.sales.singleWhere((v) => v.cryptlink == link);
+  static Story getStory(String link) => ArrivalData.stories.singleWhere((v) => v.user.cryptlink == link);
 
   static final DateTime default_time = new DateTime(1996, 9, 29);
   static final PARTNERS = 'partners.json';
@@ -76,6 +80,8 @@ class ArrivalData {
     ArrivalData.profiles = List<Profile>();
     ArrivalData.articles = List<Article>();
     ArrivalData.sales = List<Sale>();
+    ArrivalData.stories = List<Story>();
+    ArrivalData.story_feed = List<Story>();
 
     try {
       (await ArrivalFiles(PARTNERS).readAll())
@@ -128,6 +134,7 @@ class DataType {
   static final int post = 2;
   static final int sale = 3;
   static final int profile = 4;
+  static final int story = 5;
 
   static final int categories = 10;
   static final int industry = 11;

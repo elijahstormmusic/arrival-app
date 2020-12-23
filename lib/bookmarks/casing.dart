@@ -46,12 +46,12 @@ class _CasingCircle extends State<CasingFavorites> {
 
   Map<String, dynamic> _generateGenericListData(int index) {
     var result = widget.generateListData(index);
-    result['seen'] = false;
+    // result['seen'] = false;
     return result;
   }
   String getNavigationLink(int index) {
     if (index<0 && index>=_rowButtonListData.length) return '';
-    _rowButtonListData[index]['seen'] = true;
+    // _rowButtonListData[index]['seen'] = true;
     return _rowButtonListData[index]['cryptlink'];
   }
   void _openGenericAction(int index) {
@@ -62,14 +62,6 @@ class _CasingCircle extends State<CasingFavorites> {
     int maxSize = 8;
     if (input.length>=maxSize) return input.substring(0, maxSize) + '...';
     return input;
-  }
-
-  @override
-  initState() {
-    super.initState();
-    _rowButtonListData = List<Map<String, dynamic>>.generate(
-                            widget.listSize(), _generateGenericListData
-                          );
   }
 
   Widget _buildBookmarkedIcon(BuildContext context, bool hasBeenSeen, Widget display) {
@@ -104,7 +96,8 @@ class _CasingCircle extends State<CasingFavorites> {
               shadowColor: Styles.ArrivalPalletteBlack,
               child: _buildBookmarkedIcon(
                 context,
-                _rowButtonListData[index]['seen'],
+                _rowButtonListData[index]['story'] == null ? false :
+                  _rowButtonListData[index]['story'].seen,
                 CircleAvatar(
                   radius: 30,
                   backgroundImage: NetworkImage(
@@ -183,6 +176,11 @@ class _CasingCircle extends State<CasingFavorites> {
 
   @override
   Widget build(BuildContext context) {
+
+    _rowButtonListData = List<Map<String, dynamic>>.generate(
+                            widget.listSize(), _generateGenericListData
+                          );
+
     return Container(
       height: 120,
       padding: EdgeInsets.symmetric(
@@ -225,14 +223,6 @@ class _CasingBox extends State<CasingFavoritesBox> {
     int maxSize = 16;
     if (input.length>=maxSize) return input.substring(0, maxSize) + '...';
     return input;
-  }
-
-  @override
-  initState() {
-    super.initState();
-    _rowButtonListData = List<Map<String, dynamic>>.generate(
-      widget.listSize(), _generateGenericListData
-    );
   }
 
   Widget _buildBookmarkedIcon(BuildContext context, bool hasBeenSeen, Widget display) {
@@ -376,6 +366,11 @@ class _CasingBox extends State<CasingFavoritesBox> {
 
   @override
   Widget build(BuildContext context) {
+
+    _rowButtonListData = List<Map<String, dynamic>>.generate(
+                            widget.listSize(), _generateGenericListData
+                          );
+
     return Container(
       height: 120,
       margin: EdgeInsets.only(top: 6),

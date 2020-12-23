@@ -11,8 +11,8 @@ import '../../partners/page.dart';
 import '../../styles.dart';
 import '../../widgets/cards.dart';
 import '../../data/preferences.dart';
-import '../../data/link.dart';
 import '../../data/arrival.dart';
+import '../../data/link.dart';
 import 'row_card.dart';
 
 class SaleCard extends StatefulWidget {
@@ -147,11 +147,19 @@ class _SaleCardState extends State<SaleCard> {
 
 class RowSale extends RowCard {
 
-  final List<Sale> sales;
+  List<Sale> sales;
+
+  int get datatype => DataType.sale;
+  String get cryptlink => '';
 
   RowSale(
     @required this.sales,
   );
+
+  RowSale source;
+  RowSale.source(@required this.source) {
+    sales = source.sales;
+  }
 
   @override
   Widget generate(Preferences prefs) {

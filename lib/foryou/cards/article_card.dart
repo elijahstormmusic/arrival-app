@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../../articles/article.dart';
+import '../../data/arrival.dart';
 import '../../data/link.dart';
 import '../../articles/page.dart';
 import '../../styles.dart';
@@ -97,17 +98,20 @@ class ArticleCard extends StatelessWidget {
 
 class RowArticle extends RowCard {
 
-  final Article post;
+  final Article article;
+
+  int get datatype => DataType.article;
+  String get cryptlink => article.cryptlink;
 
   RowArticle(
-    @required this.post,
+    @required this.article,
   );
 
   @override
   Widget generate(Preferences prefs) {
     return Padding(
       padding: EdgeInsets.only(bottom: 24),
-      child: ArticleCard(post),
+      child: ArticleCard(article),
     );
   }
 }

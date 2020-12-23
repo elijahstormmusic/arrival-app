@@ -1,6 +1,6 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Code written and created by Elijah Storm
+// Copywrite April 5, 2020
+// for use only in ARRIVAL Project
 
 import 'dart:math';
 import 'dart:io';
@@ -58,6 +58,9 @@ class _UserPostsState extends State<UserPosts> {
     if (!widget.has_reached_end) {
       socket.emit('profile get posts', userstate);
     }
+    socket.emit('story get', {
+      'user': widget.cryptlink,
+    });
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     super.initState();
@@ -208,10 +211,11 @@ class _ProfilePageState extends State<ProfilePage>
       curve: Curves.easeOut,
     );
 
+    socket.profile = this;
+
     _editableShortBio = new TextEditingController(text: widget.profile.shortBio);
     _editableName = new TextEditingController(text: widget.profile.name);
     userPosts = List<Post>();
-    socket.profile = this;
     if (widget.profile.email=='') {
       socket.emit('profile get', {
         'link': widget.profile.cryptlink,
@@ -221,6 +225,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   void dispose() {
     _controller.dispose();
+    socket.profile = null;
     super.dispose();
   }
 
@@ -275,7 +280,7 @@ class _ProfilePageState extends State<ProfilePage>
       String img_url = (await cloudinary_client.uploadImage(
         _newProfilePic.path,
         filename: image_name,
-        folder: 'profile/' + UserData.client.name,
+        folder: 'profile/' + UserData.client.cryptlink,
       )).secure_url.replaceAll(Constants.media_source, '');
 
       if (img_url!=null) {
@@ -315,6 +320,29 @@ class _ProfilePageState extends State<ProfilePage>
       return dblNumber.toString() + 'k';
     }
     return input.toString();
+  }
+
+  Widget _profilePictureDisplay(double radius) {
+    return CircleAvatar(
+      radius: radius,
+      backgroundImage: (_editingProfile && _newProfilePic!=null)
+        ? FileImage(_newProfilePic)
+        : NetworkImage(widget.profile.media_href()),
+      child: _editingProfile ? GestureDetector(
+        onTap: () async {
+          _newProfilePic = await ImagePicker.pickImage(source: ImageSource.gallery);
+        },
+        child: CircleAvatar(
+          radius: 16,
+          backgroundColor: Styles.ArrivalPalletteLightGrey,
+          child: Icon(
+            Icons.edit,
+            size: 16,
+            color: Styles.ArrivalPalletteRed,
+          ),
+        ),
+      ) : Container(),
+    );
   }
 
   Widget _buildPersonalDetails(BuildContext context, AppState model) {
@@ -378,25 +406,21 @@ class _ProfilePageState extends State<ProfilePage>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: (_editingProfile && _newProfilePic!=null)
-                      ? FileImage(_newProfilePic)
-                      : NetworkImage(widget.profile.media_href()),
-                    child: _editingProfile ? GestureDetector(
-                      onTap: () async {
-                        _newProfilePic = await ImagePicker.pickImage(source: ImageSource.gallery);
-                      },
+                  widget.profile.story == null ? _profilePictureDisplay(50)
+                  : GestureDetector(
+                    onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
+                      builder: (context) => widget.profile.story.navigateTo(),
+                      fullscreenDialog: true,
+                    )),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Styles.ArrivalPalletteRed,
                       child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Styles.ArrivalPalletteLightGrey,
-                        child: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Styles.ArrivalPalletteRed,
-                        ),
+                        radius: 47,
+                        backgroundColor: Styles.ArrivalPalletteWhite,
+                        child: _profilePictureDisplay(45),
                       ),
-                    ) : Container(),
+                    ),
                   ),
                   Container(),
                   Row(

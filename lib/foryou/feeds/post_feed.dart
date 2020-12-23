@@ -15,8 +15,9 @@ import '../../data/socket.dart';
 import '../../data/arrival.dart';
 import '../../data/app_state.dart';
 import '../../data/preferences.dart';
+import '../../users/data.dart';
 import '../../posts/post.dart';
-import '../../posts/story_upload.dart';
+import '../../posts/story/upload.dart';
 import '../../data/link.dart';
 import '../../styles.dart';
 import '../favorites/post.dart';
@@ -69,7 +70,7 @@ class _PostFeedState extends State<PostFeed> {
     if (ArrivalData.post_feed.length==0) {
       _pullNext(10);
     }
-    
+
     _askForStories();
   }
   @override
@@ -261,7 +262,7 @@ class _PostFeedState extends State<PostFeed> {
                         padding: EdgeInsets.all(8.0),
                         margin: EdgeInsets.only(
                           left: 18.0,
-                          top: 28.0,
+                          top: 26.0,
                         ),
                         child: Icon(
                           Icons.add,

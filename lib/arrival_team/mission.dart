@@ -26,7 +26,7 @@ class OurMission extends StatelessWidget {
             child: ListView(
               children: [
                 Text(
-                  'put in our mission statement...',
+                  'To connect the people to the community, the community to the world, and the world to the people.',
                   style: TextStyle(
                     fontSize: 30,
                   ),

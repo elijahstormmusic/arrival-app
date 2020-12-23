@@ -30,17 +30,20 @@ class PostCard extends StatelessWidget {
 }
 
 class RowPost extends RowCard {
-  final String cryptlink;
+  final String link;
+
+  int get datatype => DataType.post;
+  String get cryptlink => link;
 
   RowPost(
-    @required this.cryptlink,
+    @required this.link,
   );
 
   @override
   Widget generate(Preferences prefs) {
     return Padding(
       padding: EdgeInsets.only(left: 0, right: 0, bottom: 24),
-      child: PostCard(ArrivalData.getPost(cryptlink)),
+      child: PostCard(ArrivalData.getPost(link)),
     );
   }
 }

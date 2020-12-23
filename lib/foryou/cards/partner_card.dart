@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import '../../partners/partner.dart';
 import '../../partners/industries.dart';
+import '../../data/arrival.dart';
 import '../../data/link.dart';
 import '../../partners/page.dart';
 import '../../styles.dart';
@@ -31,7 +32,7 @@ class PartnerCard extends StatelessWidget {
         SizedBox(height: 8.0),
 
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 6.0),
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,10 +75,10 @@ class PartnerCard extends StatelessWidget {
         SizedBox(height: 4.0),
 
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 6.0),
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
           // height: 12,
           child: Text(
-            '\$\$ • ' + biz.shortDescription,
+            biz.priceRangeToString() + ' • ' + biz.shortDescription,
             overflow: TextOverflow.ellipsis,
             style: Styles.partnerCardSub,
           ),
@@ -137,6 +138,9 @@ class RowPartner extends RowCard {
 
   final Partner biz;
   final bool isNear = true;
+
+  int get datatype => DataType.partner;
+  String get cryptlink => biz.cryptlink;
 
   RowPartner(
     @required this.biz,

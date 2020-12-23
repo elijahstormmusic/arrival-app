@@ -8,11 +8,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../data/arrival.dart';
 import '../../data/preferences.dart';
 import '../../styles.dart';
 import '../../widgets/cards.dart';
 
 class RowCard {
+
+  int get datatype => -1;
+  String get cryptlink => '';
+
   Widget generate(Preferences prefs) {
     return Padding(
       child: Styles.ArrivalErrorPage('please input a valid RowCard'),

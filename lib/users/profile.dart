@@ -11,7 +11,7 @@ import '../data/link.dart';
 import '../data/socket.dart';
 import '../const.dart';
 import '../styles.dart';
-import '../posts/story.dart';
+import '../posts/story/story.dart';
 
 import 'page.dart';
 
@@ -29,6 +29,8 @@ class Profile {
   String email;
   int level;
   int points;
+
+  Story story;
 
   List<Story> storyHighlights = <Story>[];
 

@@ -33,6 +33,16 @@ class Partner {
   final ContactList contact;
   List<Sale> sales = List<Sale>();
   bool isFavorite;
+  final int priceRange;
+
+  String priceRangeToString() {
+    const priceText = '\$';
+    String str = priceText;
+    for (int i=0;i<priceRange;i++) {
+      str += priceText;
+    }
+    return str;
+  }
 
   dynamic toJson() {
     return {
@@ -46,6 +56,7 @@ class Partner {
       'industry': industry.index,
       'images': images.toJson(),
       'contact': contact.toJson(),
+      'priceRange': priceRange,
     };
   }
   bool isOpen() {
@@ -64,6 +75,7 @@ class Partner {
     @required this.shortDescription,
     @required this.sales,
     @required this.cryptlink,
+    @required this.priceRange,
     this.isFavorite = false,
   });
 
@@ -79,6 +91,7 @@ class Partner {
       industry: SourceIndustry.values[data['industry']],
       images: StoreImages(data['images']),
       contact: ContactList.json(data['contact']),
+      priceRange: data['priceRange'],
       sales: List<Sale>(),
     );
   }
@@ -95,11 +108,12 @@ class Partner {
       rating: 0,
       ratingAmount: 0,
       location: LatLng(0, 0),
-      images: StoreImages(<String>[]),
+      images: StoreImages(<String>[Constants.loading_placeholder, Constants.loading_placeholder]),
       industry: SourceIndustry.none,
       contact: ContactList(),
       shortDescription: 'description',
       sales: List<Sale>(),
+      priceRange: 2,
     );
     socket.emit('partners link', {
       'link': input,
@@ -123,5 +137,6 @@ class Partner {
     shortDescription: 'description',
     sales: List<Sale>(),
     cryptlink: '',
+    priceRange: 2,
   );
 }

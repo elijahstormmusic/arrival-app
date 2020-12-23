@@ -102,13 +102,13 @@ class _UploadEditingState extends State<PostUploadEditingScreen> {
       if (isVideo) {
         media_data = await _cloudinary_client.uploadVideo(
           _media.path,
-          folder: 'posts/' + UserData.client.name,
+          folder: 'posts/' + UserData.client.cryptlink,
         );
       }
       else {
         media_data = await _cloudinary_client.uploadImage(
           _media.path,
-          folder: 'posts/' + UserData.client.name,
+          folder: 'posts/' + UserData.client.cryptlink,
         );
       }
 

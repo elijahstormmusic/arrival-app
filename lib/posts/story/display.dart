@@ -4,72 +4,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../data/link.dart';
-import '../data/socket.dart';
-import '../users/data.dart';
-import '../users/page.dart';
-import '../users/profile.dart';
-import '../styles.dart';
-import '../const.dart';
+import '../../data/link.dart';
+import '../../data/socket.dart';
+import '../../users/data.dart';
+import '../../users/page.dart';
+import '../../users/profile.dart';
+import '../../styles.dart';
+import '../../const.dart';
 
-import 'story_upload.dart';
-
-
-class Story {
-  static final String source =
-    Constants.media_source;
-
-  final String cryptlink;
-  final String icon;
-  final String name;
-  final List<StoryContent> content;
-  bool seen = false;
-
-  Story({
-    @required this.cryptlink,
-    @required this.icon,
-    @required this.name,
-    @required this.content,
-  });
-
-  static Story json(Map<String, dynamic> data) {
-
-    List<StoryContent> content = <StoryContent>[];
-
-    for (int i=0;i<data['content'].length;i++) {
-      content.add(StoryContent.json(data['content'][i]));
-    }
-
-    return Story(
-      cryptlink: data['link'],
-      icon: source + data['icon'],
-      name: data['name'],
-      content: content,
-    );
-  }
-}
-
-class StoryContent {
-
-  final Profile user;
-  final String media;
-  final int time;
-
-  StoryContent({
-    @required this.user,
-    @required this.media,
-    @required this.time,
-  });
-
-  static StoryContent json(Map<String, dynamic> data) {
-
-    return StoryContent(
-      user: Profile.link(data['user']),
-      media: Story.source + data['media'],
-      time: data['time'],
-    );
-  }
-}
+import 'story.dart';
+import 'upload.dart';
 
 
 class StoryDisplay extends StatefulWidget {
@@ -85,6 +29,7 @@ class _StoriesState extends State<StoryDisplay> {
   int index = 0;
   bool closing = false;
   StoryContent _currentContent;
+  bool _hasLeftStoryView = false;
 
   @override
   void initState() {
@@ -104,7 +49,10 @@ class _StoriesState extends State<StoryDisplay> {
     _gotoBack = true;
   }
   void exit() {
-    Navigator.of(context).pop();
+    _kill = true;
+    closing = true;
+    if (!_hasLeftStoryView) Navigator.of(context).pop();
+    _hasLeftStoryView = true;
   }
   void startAction() {
     if (_currentContent.user==UserData.client) return;
@@ -196,7 +144,6 @@ class _StoriesState extends State<StoryDisplay> {
       _gotoNext = false;
 
       if (index + 1 >= widget.story.content.length) {
-        closing = true;
         exit();
         return;
       }
@@ -364,10 +311,14 @@ class _StoriesState extends State<StoryDisplay> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 GestureDetector(
-                  onTap: () => Arrival.navigator.currentState.push(MaterialPageRoute(
-                    builder: (context) => _currentContent.user.navigateTo(),
-                    fullscreenDialog: true,
-                  )),
+                  onTap: () {
+                    pause();
+                    _hasLeftStoryView = true;
+                    Arrival.navigator.currentState.push(MaterialPageRoute(
+                      builder: (context) => _currentContent.user.navigateTo(),
+                      fullscreenDialog: true,
+                    ));
+                  },
                   child: CircleAvatar(
                     radius: 16.0,
                     backgroundImage: NetworkImage(_currentContent.user.media_href()),

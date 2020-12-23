@@ -291,7 +291,7 @@ class SubSettings extends StatefulWidget {
             String img_url = (await _cloudinary_client.uploadImage(
               variableState.path,
               filename: image_name,
-              folder: 'profile/' + UserData.client.name,
+              folder: 'profile/' + UserData.client.cryptlink,
             )).secure_url.replaceAll(Constants.media_source, '');
 
             if (img_url!=null) {

@@ -9,8 +9,8 @@ import '../data/link.dart';
 import '../data/arrival.dart';
 import '../users/data.dart';
 import '../users/profile.dart';
-import '../posts/story.dart';
-import '../posts/story_upload.dart';
+import '../posts/story/display.dart';
+import '../posts/story/upload.dart';
 import '../foryou/explore.dart';
 
 class StoriesHighlights extends CasingFavorites {
@@ -49,9 +49,9 @@ class StoriesHighlights extends CasingFavorites {
 
   @override
   Map<String, dynamic> generateListData(int i) => {
-          'link': user.storyHighlights[i].cryptlink,
-          'icon': user.storyHighlights[i].icon,
-          'name': user.storyHighlights[i].name,
+          'link': user.storyHighlights[i].user.cryptlink,
+          'icon': user.storyHighlights[i].user.pic,
+          'name': user.storyHighlights[i].user.name,
           'story': user.storyHighlights[i],
         };
 

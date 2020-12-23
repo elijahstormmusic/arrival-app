@@ -8,14 +8,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'cloudinary/cloudinary_client.dart';
+import '../cloudinary/cloudinary_client.dart';
 // import 'package:cloudinary_client/cloudinary_client.dart';
 
-import '../data/socket.dart';
-import '../users/data.dart';
-import '../users/profile.dart';
-import '../styles.dart';
-import '../const.dart';
+import '../../data/socket.dart';
+import '../../users/data.dart';
+import '../../users/profile.dart';
+import '../../styles.dart';
+import '../../const.dart';
 
 
 class StoryUpload extends StatefulWidget {
@@ -69,13 +69,13 @@ class _StoryUploadState extends State<StoryUpload> {
       if (isVideo) {
         media_data = await _cloudinary_client.uploadVideo(
           _media.path,
-          folder: UserData.client.name + '/stories',
+          folder: 'posts/${UserData.client.cryptlink}/stories',
         );
       }
       else {
         media_data = await _cloudinary_client.uploadImage(
           _media.path,
-          folder: UserData.client.name + '/stories',
+          folder: 'posts/${UserData.client.cryptlink}/stories',
         );
       }
 
@@ -114,9 +114,15 @@ class _StoryUploadState extends State<StoryUpload> {
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(9999.0),
+                  color: Styles.ArrivalPalletteBlackTransparent,
+                ),
+                padding: EdgeInsets.all(8.0),
                 margin: EdgeInsets.all(18.0),
                 child: Icon(
                   Icons.close,
+                  size: 20.0,
                   color: Styles.ArrivalPalletteWhite,
                 ),
               ),
@@ -128,9 +134,15 @@ class _StoryUploadState extends State<StoryUpload> {
               child: GestureDetector(
                 onTap: _upload,
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.0),
+                    color: Styles.ArrivalPalletteBlackTransparent,
+                  ),
+                  padding: EdgeInsets.all(8.0),
                   margin: EdgeInsets.all(18.0),
                   child: Icon(
                     Styles.share,
+                    size: 36.0,
                     color: Styles.ArrivalPalletteWhite,
                   ),
                 ),

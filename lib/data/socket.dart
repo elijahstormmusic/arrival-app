@@ -11,8 +11,8 @@ import '../users/data.dart';
 import '../data/arrival.dart';
 import '../partners/partner.dart';
 import '../posts/post.dart';
+import '../posts/story/story.dart';
 import '../users/profile.dart';
-import '../posts/post.dart';
 import '../foryou/foryou.dart';
 import '../screens/home.dart';
 import '../const.dart';
@@ -220,6 +220,55 @@ class socket {
         if (chatlist==null) return;
 
         chatlist.loadData(data['response']);
+      }
+
+      else if (data['type']==850) { // story feed download
+        var list = data['response'];
+
+        if (list==null) return;
+
+        for (int i=0;i<list.length;i++) {
+          Story s = Story.json(list[i]);
+          ArrivalData.innocentAdd(ArrivalData.stories, s);
+          ArrivalData.innocentAdd(ArrivalData.story_feed, s);
+        }
+
+        if (delivery.length==0) return;
+
+        await delivery.last.setState(() => 0);
+      }
+
+      else if (data['type']==851) { // get story for a user
+        var story_data = data['response'];
+
+        if (story_data==null) return;
+
+        Story s = Story.json(story_data);
+
+        ArrivalData.innocentAdd(ArrivalData.stories, s);
+        s.user.story = s;
+
+        if (profile==null) return;
+
+        await profile.setState(() => 0);
+      }
+
+      else if (data['type']==852) { // story highlight download
+        Profile p = Profile.link(data['user']);
+
+        var list = data['response'];
+
+        if (list==null) return;
+
+        for (int i=0;i<list.length;i++) {
+          list[i]['user'] = data['user'];
+
+          ArrivalData.innocentAdd(p.storyHighlights, Story.json(list[i]));
+        }
+
+        if (profile==null) return;
+
+        await profile.setState(() => 0);
       }
 
 
