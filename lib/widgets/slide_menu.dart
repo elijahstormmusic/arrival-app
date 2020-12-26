@@ -29,7 +29,7 @@ class SlideMenu extends StatefulWidget {
     'assets/images/slide_menu/evening/arts.jpg',
   ];
   static const List<Color> coverTextColors = <Color>[
-    Styles.ArrivalPalletteBlack,
+    Styles.ArrivalPalletteWhite,
     Styles.ArrivalPalletteWhite,
     Styles.ArrivalPalletteWhite,
     Styles.ArrivalPalletteWhite,
