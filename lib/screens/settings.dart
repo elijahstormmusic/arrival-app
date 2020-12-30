@@ -1295,21 +1295,21 @@ class ProfileScreen extends StatelessWidget {
         },
       ),
 
-      SettingsItem(
-        label: 'Membership Tier',
-        content: SettingsNavigationIndicator(),
-        onPress: () {
-          Arrival.navigator.currentState.push(
-            CupertinoPageRoute(
-              builder: (context) => SubSettings(
-                buildPage: SubSettings.Membership,
-                initalState: UserData.MembershipTier,
-              ),
-              title: 'Membership Settings',
-            ),
-          );
-        },
-      ),
+      // SettingsItem(
+      //   label: 'Membership Tier',
+      //   content: SettingsNavigationIndicator(),
+      //   onPress: () {
+      //     Arrival.navigator.currentState.push(
+      //       CupertinoPageRoute(
+      //         builder: (context) => SubSettings(
+      //           buildPage: SubSettings.Membership,
+      //           initalState: UserData.MembershipTier,
+      //         ),
+      //         title: 'Membership Settings',
+      //       ),
+      //     );
+      //   },
+      // ),
     ];
 
     var brightness = CupertinoTheme.brightnessOf(context);
