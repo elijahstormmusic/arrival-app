@@ -203,7 +203,7 @@ class _PostDisState extends State<PostDisplay> {
     });
 
     prefs.addNotificationHistory({
-      'icon': Styles.heart_full,
+      'icon': NotificationHolder.heart,
       'label': 'Gave a heart',
       'value': 1,
       'type': 0,

@@ -8,13 +8,11 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../data/preferences.dart';
 import '../data/socket.dart';
-import '../users/data.dart';
 import '../data/link.dart';
 import '../data/socket.dart';
 import '../data/arrival.dart';
 import '../widgets/close_button.dart';
 import '../widgets/cards.dart';
-import '../users/data.dart';
 import '../styles.dart';
 
 import 'article.dart';
@@ -25,7 +23,7 @@ import 'categories.dart';
 class ArticleCategoryDisplay extends StatefulWidget {
   final String index;
 
-  ArticleCategoryDisplay(@required this.index);
+  ArticleCategoryDisplay(this.index);
 
   @override
   _ACDState createState() => _ACDState();

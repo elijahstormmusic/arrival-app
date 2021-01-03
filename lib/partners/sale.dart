@@ -69,4 +69,5 @@ Sale blankSale = Sale(
   name: 'no sale',
   info: 'we apologize, but no sale could be found',
   partner: Partner.blankPartner,
+  pic: Constants.basic_plant_image,
 );

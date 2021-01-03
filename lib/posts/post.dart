@@ -78,6 +78,7 @@ class Post {
     caption: '',
     cryptlink: '',
     cloudlink: 'v1599325166/sample.jpg',
+    userlink: '',
     likes: 0,
     views: 0,
     location: {'name': '', 'lat': 0, 'lng': 0},

@@ -77,7 +77,6 @@ class _ContactState extends State<ContactUs> {
     });
 
     Navigator.of(context).pop();
-    return;
 
     await Future.delayed(const Duration(seconds: 20));
     _allowMessageSend = true;

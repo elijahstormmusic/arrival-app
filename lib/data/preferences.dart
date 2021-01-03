@@ -6,10 +6,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:scoped_model/scoped_model.dart';
-import '../partners/industries.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../partners/industries.dart';
+import '../styles.dart';
 
 
 class BookmarkHolder {
@@ -64,9 +65,9 @@ class NotificationHolder {
     return _value;
   }
   IconData get icon {
-    return IconData(_icon,
-          fontFamily: CupertinoIcons.iconFont,
-          fontPackage: CupertinoIcons.iconFontPackage);
+    if (_icon == NotificationHolder.heart) return Styles.heart_full;
+
+    return Styles.heart_full;
   }
 
   NotificationHolder(this._label, this._value, this._icon);
@@ -85,9 +86,10 @@ class NotificationHolder {
 
   static NotificationHolder fromJson(var data) {
     String icon = data['icon'].toString();
-    return NotificationHolder(data['label'], data['value'],
-          int.parse('0x' + icon.substring(icon.indexOf('(') + 4, icon.indexOf(')'))));
+    return NotificationHolder(data['label'], data['value'], data['icon']);
   }
+
+  static final int heart = 0;
 }
 
 class Preferences extends Model {

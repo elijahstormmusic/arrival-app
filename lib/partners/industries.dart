@@ -62,8 +62,8 @@ class Industry {
   Industry({
     @required this.name,
     @required this.type,
-    @required this.image,
-    @required this.essential,
+    this.essential = false,
+    this.image = Constants.basic_plant_image,
     this.color = Styles.ArrivalPalletteRedDarken,
   });
 }

@@ -7,7 +7,6 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../users/data.dart';
 import '../widgets/close_button.dart';
 import '../styles.dart';
 

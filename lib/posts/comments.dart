@@ -8,14 +8,10 @@ import 'package:flutter/gestures.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../posts/post.dart';
-import '../users/profile.dart';
-import '../users/page.dart';
 import '../users/data.dart';
-import '../data/link.dart';
 import '../data/preferences.dart';
 import '../data/socket.dart';
 import '../styles.dart';
-import '../posts/post.dart';
 
 
 class CommentsPage extends StatefulWidget {
@@ -304,7 +300,7 @@ class CommentAdder extends StatefulWidget {
   dynamic source;
   _CommentAdderState _s;
 
-  CommentAdder(@required this.post, this.source);
+  CommentAdder(this.post, this.source);
 
   void requestFocus() => _s.requestFocus();
 
