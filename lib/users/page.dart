@@ -498,9 +498,6 @@ class _ProfilePageState extends State<ProfilePage>
                       decoration: InputDecoration(
                         labelText: 'name',
                       ),
-                      onChanged: (String input) {
-                        _editableName.text = input;
-                      },
                     )
                   ) : widget.profile.clickable_name(),
                   SizedBox(width: 16),
@@ -536,9 +533,6 @@ class _ProfilePageState extends State<ProfilePage>
                 decoration: InputDecoration(
                   labelText: 'short bio',
                 ),
-                onChanged: (String input) {
-                  _editableShortBio.text = input;
-                },
               ) : Text(
                 widget.profile.shortBio,
                 style: Styles.profilePageText,
