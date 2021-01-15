@@ -146,7 +146,6 @@ flutter:
       fonts:
         - asset: assets/fonts/Apercu/Apercu Medium.otf
           weight: 600
-            fonts:
         - asset: assets/fonts/Apercu/Apercu Regular.otf
           weight: 400
     - family: Montserrat
