@@ -70,6 +70,16 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSContactsUsageDescription</key>
+	<string>In order to perform normal functions, Arrival needs access to your Contacts.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>In order to perform normal functions, Arrival needs access to your Calendars.</string>
+	<key>NSAppleUsageDescription</key>
+	<string>In order to perform normal functions, Arrival needs to see your Apple ID.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>In order to perform normal functions, Arrival needs access to your internal Motion Detector.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>In order to perform normal functions, Arrival needs access to your internal Speech Recognition software.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Arrival would like to let you upload from you library.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
