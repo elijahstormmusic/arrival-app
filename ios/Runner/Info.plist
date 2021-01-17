@@ -26,6 +26,8 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>com.apple.security.network.client</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -70,15 +72,15 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>NSContactsUsageDescription</key> 
+	<key>NSContactsUsageDescription</key>
 	<string>In order to perform normal functions, Arrival needs access to your Contacts.</string>
-	<key>NSCalendarsUsageDescription</key> 
+	<key>NSCalendarsUsageDescription</key>
 	<string>In order to perform normal functions, Arrival needs access to your Calendars.</string>
-	<key>NSAppleMusicUsageDescription</key> 
+	<key>NSAppleMusicUsageDescription</key>
 	<string>In order to perform normal functions, Arrival needs to see your Apple ID.</string>
-	<key>NSMotionUsageDescription</key> 
+	<key>NSMotionUsageDescription</key>
 	<string>In order to perform normal functions, Arrival needs access to your internal Motion Detector.</string>
-	<key>NSSpeechRecognitionUsageDescription</key> 
+	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>In order to perform normal functions, Arrival needs access to your internal Speech Recognition software.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Arrival would like to let you upload from you library.</string>
