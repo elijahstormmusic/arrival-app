@@ -467,17 +467,21 @@ class socket {
   }
 
   static void emit(String _req, Map<String, dynamic> _data) {
+
+print('${_socket==null}, ${active}: IN SOCKET SEND -> ' + _req);
+print(_data);
+
     if (_socket==null) return;
 
-    if (!active) {
-      call_queue.add({
-        'request': _req,
-        'data': _data,
-      });
-      if (attempting_to_execute_queue) return;
-
-      execute_queue();
-    }
+    // if (!active) {
+    //   call_queue.add({
+    //     'request': _req,
+    //     'data': _data,
+    //   });
+    //   if (attempting_to_execute_queue) return;
+    //
+    //   execute_queue();
+    // }
 
     _socket.emit(
       _req, _data

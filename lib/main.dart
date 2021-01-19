@@ -49,7 +49,7 @@ void main() async {
 
   if (UserData.client.cryptlink=='') {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      socket.home.forceLogin();
+      // socket.home.forceLogin();
     });
   } else {
     socket.emit('client set state', {

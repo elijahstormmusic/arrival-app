@@ -303,21 +303,22 @@ class _MainAppStates extends State<HomeScreen> {
         )
       ),
     ), _foryouFloatingSettingsVTwo = FloatingActionButtonLocation.centerDocked;
-    if (UserData.password!='') {
+    // if (UserData.password!='') {
       scaffoldBody = _decideInteriorBody();
-      if (versionTwo) {
-        bottomNav = _buildBottomNavBarVTwo(context);
-      }
-      else {
-        bottomNav = _buildBottomNavBarVOne(context);
-        _foryouFloatingSettingsVTwo = null;
-        _foryouFloatingVTwo = null;
-      }
+    //   if (versionTwo) {
+    //     bottomNav = _buildBottomNavBarVTwo(context);
+    //   }
+    //   else {
+    //     bottomNav = _buildBottomNavBarVOne(context);
+    //     _foryouFloatingSettingsVTwo = null;
+    //     _foryouFloatingVTwo = null;
+    //   }
+    // }
+    // else {
+    //   scaffoldBody = _loadingScreen(context);
+    // }
 
-    }
-    else {
-      scaffoldBody = _loadingScreen(context);
-    }
+    print('DRAWING MAIN HOME SCREEN ');
 
     return Scaffold(
         body: scaffoldBody,
