@@ -30,400 +30,419 @@ class socket {
   static void init() {
     if (_socket!=null) return;
 
-    _socket = IO.io(Constants.site, <dynamic, dynamic>{
-      'transports': ['websocket'],
-    });
+    try {
+      _socket = IO.io(Constants.site, <dynamic, dynamic>{
+        'transports': ['websocket'],
+      });
 
-    _socket.on('message', (data) async {
+      _socket.on('message', (data) async {
+
+        var DATATYPE = data['type'];
+        print('recieved a message ${DATATYPE}');
 
         /***  Content downloading
-         * these functions allow for seemless use of the app
-         */
+        * these functions allow for seemless use of the app
+        */
 
-      if (data['type']==900) { // for you download
-        if (delivery.length==0) return;
+        if (data['type']==900) { // for you download
+          if (delivery.length==0) return;
 
-        await delivery.last.response(data['response']);
-      }
-
-      else if (data['type']==310) { // search content
-        if (search.length==0) return;
-
-        await search.last.response(data['response']);
-      }
-
-      else if (data['type']==801) { // post data
-        if (post==null) {
-          await Future.delayed(const Duration(seconds: 5));
-          if (post==null) return;
+          await delivery.last.response(data['response']);
         }
-        Post postData = Post.json(data['response']);
-        for (int i=0;i<ArrivalData.posts.length;i++) {
-          if (ArrivalData.posts[i].cryptlink==postData.cryptlink) {
-            ArrivalData.posts[i] = postData;
-            break;
+
+        else if (data['type']==310) { // search content
+          if (search.length==0) return;
+
+          await search.last.response(data['response']);
+        }
+
+        else if (data['type']==801) { // post data
+          if (post==null) {
+            await Future.delayed(const Duration(seconds: 5));
+            if (post==null) return;
           }
-        }
-
-        post.responded();
-      }
-
-      else if (data['type']==802) { // comments
-        if (post==null) return;
-
-        try {
-          var commentList = data['response'];
-          var postLink = data['query']['cryptlink'];
-
-
+          Post postData = Post.json(data['response']);
           for (int i=0;i<ArrivalData.posts.length;i++) {
-            if (ArrivalData.posts[i].cryptlink==postLink) {
-              if (ArrivalData.posts[i].commentPage==-1) {
-                ArrivalData.posts[i].comments = [];
-              }
-
-              for (int j=0;j<commentList.length;j++) {
-                commentList[j]['user'] = Profile.link(commentList[j]['userlink']);
-                ArrivalData.posts[i].comments.add(commentList[j]);
-              }
-
-              ArrivalData.posts[i].commentPage++;
+            if (ArrivalData.posts[i].cryptlink==postData.cryptlink) {
+              ArrivalData.posts[i] = postData;
               break;
             }
           }
-        }
-        catch (e)
-        {
-          print('''
-            =======================================
-                      Arrival Error #802
-                $e
-            =======================================
-          ''');
+
+          post.responded();
         }
 
-        post.responded();
-      }
+        else if (data['type']==802) { // comments
+          if (post==null) return;
 
-      else if (data['type']==803) { // profile page download
-        int index;
-
-        try {
-          Profile cur_profile = Profile.json(data['response']);
-          for (var i=0;i<ArrivalData.profiles.length;i++) {
-            if (ArrivalData.profiles[i].cryptlink==cur_profile.cryptlink) {
-              index = i;
-              ArrivalData.profiles[i] = cur_profile;
-              break;
-            }
-          }
-        }
-        catch (e) {
-          print('''
-            =======================================
-                      Arrival Error #803
-                $e
-            =======================================
-          ''');
-          return;
-        }
-
-        if (profile==null) return;
-        profile.responded(index);
-      }
-
-      else if (data['type']==804) { // lite profile
-        try {
-          Profile profile = Profile.litejson(data['response']);
-          for (var i=0;i<ArrivalData.profiles.length;i++) {
-            if (ArrivalData.profiles[i].cryptlink==profile.cryptlink) {
-              if (ArrivalData.profiles[i].name=='') {
-                ArrivalData.profiles[i] = profile;
-              }
-              break;
-            }
-          }
-        }
-        catch (e) {
-          print('''
-            =======================================
-                      Arrival Error #804
-                $e
-            =======================================
-          ''');
-          return;
-        }
-      }
-
-      else if (data['type']==805) { // profile posts download
-        if (profile==null) return;
-
-        List<Post> post_list = List<Post>();
-
-        var json_list = data['response']['list'];
-
-        for (int i=0;i<json_list.length;i++) {
           try {
-            post_list.add(Post.json(json_list[i]));
+            var commentList = data['response'];
+            var postLink = data['query']['cryptlink'];
+
+
+            for (int i=0;i<ArrivalData.posts.length;i++) {
+              if (ArrivalData.posts[i].cryptlink==postLink) {
+                if (ArrivalData.posts[i].commentPage==-1) {
+                  ArrivalData.posts[i].comments = [];
+                }
+
+                for (int j=0;j<commentList.length;j++) {
+                  commentList[j]['user'] = Profile.link(commentList[j]['userlink']);
+                  ArrivalData.posts[i].comments.add(commentList[j]);
+                }
+
+                ArrivalData.posts[i].commentPage++;
+                break;
+              }
+            }
+          }
+          catch (e)
+          {
+            print('''
+            =======================================
+            Arrival Error #802
+            $e
+            =======================================
+            ''');
+          }
+
+          post.responded();
+        }
+
+        else if (data['type']==803) { // profile page download
+          int index;
+
+          try {
+            Profile cur_profile = Profile.json(data['response']);
+            for (var i=0;i<ArrivalData.profiles.length;i++) {
+              if (ArrivalData.profiles[i].cryptlink==cur_profile.cryptlink) {
+                index = i;
+                ArrivalData.profiles[i] = cur_profile;
+                break;
+              }
+            }
           }
           catch (e) {
             print('''
-              =======================================
-                        Arrival Error #805
-                  $e
-              =======================================
+            =======================================
+            Arrival Error #803
+            $e
+            =======================================
+            ''');
+            return;
+          }
+
+          if (profile==null) return;
+          profile.responded(index);
+        }
+
+        else if (data['type']==804) { // lite profile
+          try {
+            Profile profile = Profile.litejson(data['response']);
+            for (var i=0;i<ArrivalData.profiles.length;i++) {
+              if (ArrivalData.profiles[i].cryptlink==profile.cryptlink) {
+                if (ArrivalData.profiles[i].name=='') {
+                  ArrivalData.profiles[i] = profile;
+                }
+                break;
+              }
+            }
+          }
+          catch (e) {
+            print('''
+            =======================================
+            Arrival Error #804
+            $e
+            =======================================
             ''');
             return;
           }
         }
 
-        profile.loadedPosts(post_list, data['response']['at_end']);
-      }
+        else if (data['type']==805) { // profile posts download
+          if (profile==null) return;
 
-      else if (data['type']==810) { // single partner link downoad
-        Partner _Partner;
-        try {
-          _Partner = Partner.json(data['response']);
+          List<Post> post_list = List<Post>();
+
+          var json_list = data['response']['list'];
+
+          for (int i=0;i<json_list.length;i++) {
+            try {
+              post_list.add(Post.json(json_list[i]));
+            }
+            catch (e) {
+              print('''
+              =======================================
+              Arrival Error #805
+              $e
+              =======================================
+              ''');
+              return;
+            }
+          }
+
+          profile.loadedPosts(post_list, data['response']['at_end']);
         }
-        catch (e) {
-          print('''
+
+        else if (data['type']==810) { // single partner link downoad
+          Partner _Partner;
+          try {
+            _Partner = Partner.json(data['response']);
+          }
+          catch (e) {
+            print('''
             =======================================
-                      Arrival Error #E810
-                $e
+            Arrival Error #E810
+            $e
             =======================================
-          ''');
-          return;
-        }
-        for (var i=0;i<ArrivalData.partners.length;i++) {
-          if (ArrivalData.partners[i].cryptlink==_Partner.cryptlink) {
+            ''');
+            return;
+          }
+          for (var i=0;i<ArrivalData.partners.length;i++) {
+            if (ArrivalData.partners[i].cryptlink==_Partner.cryptlink) {
               for (var j=0;j<ArrivalData.partners[i].sales.length;j++) {
                 try {
                   ArrivalData.innocentAdd(_Partner.sales, ArrivalData.partners[i].sales[j]);
                 }
                 catch (e) {
                   print('''
-                    =======================================
-                              Arrival Error #E810
-                        $e
-                    =======================================
+                  =======================================
+                  Arrival Error #E810
+                  $e
+                  =======================================
                   ''');
                 }
+              }
+              ArrivalData.partners[i] = _Partner;
+              return;
             }
-            ArrivalData.partners[i] = _Partner;
-            return;
           }
+          ArrivalData.innocentAdd(ArrivalData.partners, _Partner);
         }
-        ArrivalData.innocentAdd(ArrivalData.partners, _Partner);
-      }
 
-      else if (data['type']==840) { // chatlist download
-        if (chatlist==null) return;
+        else if (data['type']==840) { // chatlist download
+          if (chatlist==null) return;
 
-        chatlist.loadData(data['response']);
-      }
+          chatlist.loadData(data['response']);
+        }
 
-      else if (data['type']==850) { // story feed download
-        var list = data['response'];
+        else if (data['type']==850) { // story feed download
+          var list = data['response'];
 
-        if (list==null) return;
+          if (list==null) return;
 
-        for (int i=0;i<list.length;i++) {
-          Story s = Story.json(list[i]);
+          for (int i=0;i<list.length;i++) {
+            Story s = Story.json(list[i]);
+            ArrivalData.innocentAdd(ArrivalData.stories, s);
+            ArrivalData.innocentAdd(ArrivalData.story_feed, s);
+          }
+
+          if (delivery.length==0) return;
+
+          await delivery.last.setState(() => 0);
+        }
+
+        else if (data['type']==851) { // get story for a user
+          var story_data = data['response'];
+
+          if (story_data==null) return;
+
+          Story s = Story.json(story_data);
+
           ArrivalData.innocentAdd(ArrivalData.stories, s);
-          ArrivalData.innocentAdd(ArrivalData.story_feed, s);
+          s.user.story = s;
+
+          if (profile==null) return;
+
+          await profile.setState(() => 0);
         }
 
-        if (delivery.length==0) return;
+        else if (data['type']==852) { // story highlight download
+          Profile p = Profile.link(data['user']);
 
-        await delivery.last.setState(() => 0);
-      }
+          var list = data['response'];
 
-      else if (data['type']==851) { // get story for a user
-        var story_data = data['response'];
+          if (list==null) return;
 
-        if (story_data==null) return;
+          for (int i=0;i<list.length;i++) {
+            list[i]['user'] = data['user'];
 
-        Story s = Story.json(story_data);
+            ArrivalData.innocentAdd(p.storyHighlights, Story.json(list[i]));
+          }
 
-        ArrivalData.innocentAdd(ArrivalData.stories, s);
-        s.user.story = s;
+          if (profile==null) return;
 
-        if (profile==null) return;
-
-        await profile.setState(() => 0);
-      }
-
-      else if (data['type']==852) { // story highlight download
-        Profile p = Profile.link(data['user']);
-
-        var list = data['response'];
-
-        if (list==null) return;
-
-        for (int i=0;i<list.length;i++) {
-          list[i]['user'] = data['user'];
-
-          ArrivalData.innocentAdd(p.storyHighlights, Story.json(list[i]));
+          await profile.setState(() => 0);
         }
-
-        if (profile==null) return;
-
-        await profile.setState(() => 0);
-      }
 
 
 
         /***  Userdata and Settings sync with device
-         * these make sure the server's userstate and the
-         * device's userstate are always the same
-         */
+        * these make sure the server's userstate and the
+        * device's userstate are always the same
+        */
 
-      else if (data['type']==600) { // client userdata download
-        UserData.refreshClientData(data['response']);
-      }
+        else if (data['type']==600) { // client userdata download
+          UserData.refreshClientData(data['response']);
+        }
 
-      else if (data['type']==601) { // updated user password
-        HomeScreen.openSnackBar({
-          'text': 'Password updated.',
-          'duration': error_report_time,
-        });
-      }
+        else if (data['type']==601) { // updated user password
+          HomeScreen.openSnackBar({
+            'text': 'Password updated.',
+            'duration': error_report_time,
+          });
+        }
 
-      else if (data['type']==602) { // updated user email
-        HomeScreen.openSnackBar({
-          'text': 'A verification email was sent to '+ data['response'] + ' and will expire in 24 hours.',
-          'duration': error_report_time,
-        });
-      }
+        else if (data['type']==602) { // updated user email
+          HomeScreen.openSnackBar({
+            'text': 'A verification email was sent to '+ data['response'] + ' and will expire in 24 hours.',
+            'duration': error_report_time,
+          });
+        }
 
-      else if (data['type']==605) { // updated user email
-        switch (data['response']) {
-          case 0:
+        else if (data['type']==605) { // updated user email
+          switch (data['response']) {
+            case 0:
             authenicator = '>' + data['link'];
             break;
-          case 1:
+            case 1:
             authenicator = 'Incorrect password';
             break;
-          case 2:
+            case 2:
             authenicator = 'That username was not found';
             break;
-          case 3:
+            case 3:
             authenicator = 'That email was not found';
             break;
-          case 4:
+            case 4:
             authenicator = 'No input sent to server';
             break;
-          case 5:
+            case 5:
             authenicator = 'User link not valid';
             break;
-          case 6:
+            case 6:
             authenicator = 'Your email was unable to be processed';
             break;
 
-          case 10:
+            case 10:
             authenicator = '>' + data['link'];
             break;
-          case 11:
+            case 11:
             authenicator = 'Empty inputs found';
             break;
-          case 12:
+            case 12:
             authenicator = 'Your email was unable to be processed';
             break;
-          case 13:
+            case 13:
             authenicator = 'An account with that email already exists';
             break;
 
-          case 20:
+            case 20:
             authenicator = 'A confirmation email was sent to that address';
             break;
-          case 21:
+            case 21:
             authenicator = 'Your email input was empty when it reached our servers';
             break;
-          case 22:
+            case 22:
             authenicator = 'Your email was unable to be processed';
             break;
-          case 23:
+            case 23:
             authenicator = 'Your email does not match any in our records';
             break;
 
-          default:
+            default:
             authenicator = 'Unknown error';
             break;
-        }
-      }
-
-      else if (data['type']==666) { // error with settings update
-        String error_msg = '';
-
-        if (data['code']==0) error_msg = 'Network connection error. Check your data or Wifi.';
-        else if (data['code']==1) {
-          if (data['error']=='password') error_msg = 'The password did not fit formatting standards.';
-          if (data['error']=='pic') error_msg = 'Your picture did not fit file size standards.';
-          if (data['error']=='email') error_msg = 'Your email might have been entered incorrectly.';
-          if (data['error']=='verify email') error_msg = 'Your verification code was entered incorrectly.';
-        }
-        else if (data['code']==2) error_msg = 'Unknown error.';
-        else if (data['code']==5) error_msg = 'Password not correct';
-        else if (data['code']==666) {
-          await UserData.refresh();
-          if (home==null) return;
-          home.forceLogin();
-          return;
+          }
         }
 
-        HomeScreen.openSnackBar({
-          'text': error_msg,
-          'duration': error_report_time,
-        });
-      }
+        else if (data['type']==666) { // error with settings update
+          String error_msg = '';
+
+          if (data['code']==0) error_msg = 'Network connection error. Check your data or Wifi.';
+          else if (data['code']==1) {
+            if (data['error']=='password') error_msg = 'The password did not fit formatting standards.';
+            if (data['error']=='pic') error_msg = 'Your picture did not fit file size standards.';
+            if (data['error']=='email') error_msg = 'Your email might have been entered incorrectly.';
+            if (data['error']=='verify email') error_msg = 'Your verification code was entered incorrectly.';
+          }
+          else if (data['code']==2) error_msg = 'Unknown error.';
+          else if (data['code']==5) error_msg = 'Password not correct';
+          else if (data['code']==666) {
+            await UserData.refresh();
+            if (home==null) return;
+            home.forceLogin();
+            return;
+          }
+
+          HomeScreen.openSnackBar({
+            'text': error_msg,
+            'duration': error_report_time,
+          });
+        }
 
 
 
         /***  Server feedback
-         * these handle background confirmation from the server
-         * of a message's success and the user's actions taken
-         */
+        * these handle background confirmation from the server
+        * of a message's success and the user's actions taken
+        */
 
-      else if (data['type']==500) { // error reporting
-        HomeScreen.openSnackBar({
-          'text': 'Database error ' + data['error_code'].toString(),
-          'duration': error_report_time,
-        });
-      }
-      else if (data['type']==530) { // post successfully uploaded
-        Post.link(data['link']);
-        ForYouPage.scrollToTop();
-        ForYouPage.displayUploadingMediaProgress(data['id'], data['link']);
-      }
-      else if (data['type']==531) { // post failed upload
-        HomeScreen.openSnackBar({
-          'text': 'Post failed',
-          'duration': error_report_time,
-        });
-      }
-      else if (data['type']==532) { // comment made successful
-        // goto comment
-        // HomeScreen.openSnackBar({
-        //   'text': 'Successful upload',
-        //   'duration': error_report_time,
-        // });
-      }
-      else if (data['type']==533) { // comment failed upload
-        HomeScreen.openSnackBar({
-          'text': 'Comment failed',
-          'duration': error_report_time,
-        });
-      }
+        else if (data['type']==500) { // error reporting
+          HomeScreen.openSnackBar({
+            'text': 'Database error ' + data['error_code'].toString(),
+            'duration': error_report_time,
+          });
+        }
+        else if (data['type']==530) { // post successfully uploaded
+          Post.link(data['link']);
+          ForYouPage.scrollToTop();
+          ForYouPage.displayUploadingMediaProgress(data['id'], data['link']);
+        }
+        else if (data['type']==531) { // post failed upload
+          HomeScreen.openSnackBar({
+            'text': 'Post failed',
+            'duration': error_report_time,
+          });
+        }
+        else if (data['type']==532) { // comment made successful
+          // goto comment
+          // HomeScreen.openSnackBar({
+          //   'text': 'Successful upload',
+          //   'duration': error_report_time,
+          // });
+        }
+        else if (data['type']==533) { // comment failed upload
+          HomeScreen.openSnackBar({
+            'text': 'Comment failed',
+            'duration': error_report_time,
+          });
+        }
 
 
 
         /** Socket <-> Server connection confirmation */
 
-      else if (data['type']==1) { // connection test verification
-        active = true;
-        failed_queue_attempts = 0;
-      }
-    });
+        else if (data['type']==1) { // connection test verification logged in
+          active = true;
+          failed_queue_attempts = 0;
+        }
+        else if (data['type']==4) { // connection test verification logged out
+          active = true;
+          failed_queue_attempts = 0;
+        }
+      });
+    }
+    catch (e) {
+      print('''
+      ----------------
+        Arrival Error: Socket
+
+        Error in socket.init()
+          ${e}
+      ----------------
+      ''');
+    }
   }
 
   static void close() {
@@ -467,21 +486,22 @@ class socket {
   }
 
   static void emit(String _req, Map<String, dynamic> _data) {
+    if (_req=='') return;
 
-print('${_socket==null}, ${active}: IN SOCKET SEND -> ' + _req);
-print(_data);
+    print('${_socket==null}, ${active}: IN SOCKET SEND -> ' + _req);
+    print(_data);
 
     if (_socket==null) return;
 
-    // if (!active) {
-    //   call_queue.add({
-    //     'request': _req,
-    //     'data': _data,
-    //   });
-    //   if (attempting_to_execute_queue) return;
-    //
-    //   execute_queue();
-    // }
+    if (!active) {
+      call_queue.add({
+        'request': _req,
+        'data': _data,
+      });
+      if (attempting_to_execute_queue) return;
+
+      execute_queue();
+    }
 
     _socket.emit(
       _req, _data

@@ -47,10 +47,24 @@ void main() async {
   await ArrivalData.refresh();
   await socket.init();
 
+  print('''
+
+
+
+
+  this is the start
+
+
+  ''');
+
+  print(UserData.client.cryptlink);
+  print(UserData.client.cryptlink=='');
+
   if (UserData.client.cryptlink=='') {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      // socket.home.forceLogin();
+      socket.home.forceLogin();
     });
+    socket.emit('client check', {});
   } else {
     socket.emit('client set state', {
       'link': UserData.client.cryptlink,
