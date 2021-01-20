@@ -37,9 +37,6 @@ class socket {
 
       _socket.on('message', (data) async {
 
-        var DATATYPE = data['type'];
-        print('recieved a message ${DATATYPE}');
-
         /***  Content downloading
         * these functions allow for seemless use of the app
         */
@@ -487,9 +484,6 @@ class socket {
 
   static void emit(String _req, Map<String, dynamic> _data) {
     if (_req=='') return;
-
-    print('${_socket==null}, ${active}: IN SOCKET SEND -> ' + _req);
-    print(_data);
 
     if (_socket==null) return;
 
