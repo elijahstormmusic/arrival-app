@@ -154,6 +154,7 @@ class _PostDisState extends State<PostDisplay> {
     List<Widget> shortDisplay = List<Widget>();
 
     for (int i=0;i<commentLimit;i++) {
+      commentsList[i]['user'] = Profile.link(commentsList[i]['userlink']);
       shortDisplay.add(_buildComment(commentsList[i]));
     }
 
@@ -431,6 +432,12 @@ class _PostDisState extends State<PostDisplay> {
       physics: ClampingScrollPhysics(),
       itemCount: commentsList.length + 1,
       itemBuilder: (context, index) {
+        if (index!=0) commentsList[index - 1]['user']
+              = Profile.link(commentsList[index - 1]['userlink']);
+
+
+              print(commentsList);
+
         return index==0
           ? Column(
             children: <Widget>[

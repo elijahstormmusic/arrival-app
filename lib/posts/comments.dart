@@ -40,6 +40,7 @@ class _CommentsPState extends State<CommentsPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    super.dispose();
   }
 
   void redraw() {
@@ -84,6 +85,7 @@ class _CommentsPState extends State<CommentsPage> {
     List<Widget> shortDisplay = List<Widget>();
 
     for (int i=0;i<commentLimit;i++) {
+      commentsList[i]['user'] = Profile.link(commentsList[i]['userlink']);
       shortDisplay.add(_buildComment(commentsList[i]));
     }
 
@@ -145,6 +147,9 @@ class _CommentsPState extends State<CommentsPage> {
         physics: ClampingScrollPhysics(),
         itemCount: commentsList.length + 1,
         itemBuilder: (context, index) {
+          if (index!=0) commentsList[index - 1]['user']
+                = Profile.link(commentsList[index - 1]['userlink']);
+
           return index==0
           ? Column(
             children: <Widget>[

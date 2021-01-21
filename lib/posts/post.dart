@@ -115,7 +115,7 @@ class Post {
 
     if (commentList!=null) {
       for (int j=0;j<commentList.length;j++) {
-        commentList[j]['user'] = Profile.link(commentList[j]['userlink']);
+        // commentList[j]['user'] = Profile.link(commentList[j]['userlink']);
         _comment_data.add(commentList[j]);
       }
     }
