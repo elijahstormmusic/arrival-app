@@ -3,7 +3,7 @@ description: Connecting local businesses with loyal customers.
 
 publish_to: 'none'
 
-version: 0.0.1+1
+version: 0.0.1
 
 environment:
   sdk: ">=2.9.0 <3.0.0"
