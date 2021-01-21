@@ -47,19 +47,6 @@ void main() async {
   await ArrivalData.refresh();
   await socket.init();
 
-  print('''
-
-
-
-
-  this is the start
-
-
-  ''');
-
-  print(UserData.client.cryptlink);
-  print(UserData.client.cryptlink=='');
-
   if (UserData.client.cryptlink=='') {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       socket.home.forceLogin();

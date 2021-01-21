@@ -9,6 +9,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../posts/post.dart';
 import '../users/data.dart';
+import '../users/profile.dart';
 import '../data/preferences.dart';
 import '../data/socket.dart';
 import '../styles.dart';
@@ -57,8 +58,7 @@ class _CommentsPState extends State<CommentsPage> {
         style: Styles.postText,
         children: [
           TextSpan(
-            text: _comment['username']
-            + '  ',
+            text: _comment['user'].name + '  ',
             style: CommentsPage.usernameTextStyle,
             recognizer: new TapGestureRecognizer()..onTap = ()
                               => _comment['user'].navigateToProfile(),

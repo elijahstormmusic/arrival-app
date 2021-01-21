@@ -123,8 +123,7 @@ class _PostDisState extends State<PostDisplay> {
         style: Styles.postText,
         children: [
           TextSpan(
-            text: _comment['username']
-            + '  ',
+            text: _comment['user'].name + '  ',
             style: CommentsPage.usernameTextStyle,
             recognizer: new TapGestureRecognizer()..onTap = ()
                               => _comment['user'].navigateToProfile(),
@@ -380,12 +379,24 @@ class _PostDisState extends State<PostDisplay> {
         GestureDetector(
           onTap: () async {
             await prefs.toggleBookmarked(DataType.profile, widget.post.user.cryptlink);
+
+            var toggle = await prefs.isBookmarked(DataType.profile, widget.post.user.cryptlink);
+
+            if (toggle) {
+              widget.post.user.followersCount++;
+              UserData.client.followingCount++;
+            }
+            else {
+              widget.post.user.followersCount--;
+              UserData.client.followingCount--;
+            }
+
             setState(() => 0);
 
             socket.emit('userdata follow', {
               'user': UserData.client.cryptlink,
               'follow': widget.post.user.cryptlink,
-              'action': await prefs.isBookmarked(DataType.profile, widget.post.user.cryptlink),
+              'action': toggle,
             });
           },
           child: FutureBuilder<bool>(

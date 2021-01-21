@@ -30,6 +30,9 @@ class Profile {
   int level;
   int points;
 
+  int followersCount;
+  int followingCount;
+
   Story story;
 
   List<Story> storyHighlights = <Story>[];
@@ -56,6 +59,9 @@ class Profile {
     @required this.cryptlink,
     @required this.level,
     @required this.points,
+
+    this.followersCount = 0,
+    this.followingCount = 0,
   });
   static final Profile empty = Profile(
     name: '',
@@ -146,7 +152,9 @@ class Profile {
       email: input['email'],
       shortBio: input['shortBio'],
       level: input['level'],
-      points: input['points']
+      points: input['points'],
+      followersCount: input['followersCount'],
+      followingCount: input['followingCount'],
     );
   }
   static Profile litejson(var input) {

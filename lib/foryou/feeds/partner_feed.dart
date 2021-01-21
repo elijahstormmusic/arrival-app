@@ -158,11 +158,25 @@ class _PartnerFeedState extends State<PartnerFeed> {
                   ArrivalData.innocentAdd(ArrivalData.sales, result);
                 }
                 catch (e) {
+                  print('''
+                  ==========================
+                    Sale.json Data Parse Error ${i}
+                  --------------------------
+                        $e
+                  ==========================
+                  ''');
                   continue;
                 }
               }
               card = RowSale(result_list);
             } catch (e) {
+              print('''
+              ==========================
+                RowSale Data Parse Error ${i}
+              --------------------------
+                    $e
+              ==========================
+              ''');
               continue;
             }
           }
@@ -178,6 +192,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
         }
 
         list.add(card);
+        print('adding in type of : ${(data[i]['type']==DataType.sale)}');
       }
       _refreshController.loadComplete();
       _refreshController.refreshCompleted();
@@ -204,44 +219,70 @@ class _PartnerFeedState extends State<PartnerFeed> {
     List<Sale> filteredSales = List<Sale>();
 
     for (int i=0;i<ArrivalData.partner_feed.length;i++) {
-      // if (skip) continue;
+      try {
+        // if (skip) continue;  // note to developer -> if should skip
 
-      if (Partner.link(ArrivalData.partner_feed[i].cryptlink).
-                      priceRange > _optionsPriceRange) continue;
+        if (Partner.link(ArrivalData.partner_feed[i].cryptlink).
+          priceRange > _optionsPriceRange) continue;
 
-      else if (_optionsBookmarks) {
-        if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
-          var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
+        else if (_optionsBookmarks) {
+          if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
+            var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
 
-          for (int j=0;j<saleCard.sales.length;j++) {
-            if (!(await prefs.isBookmarked(
-                              DataType.sale,
-                              saleCard.sales[j].cryptlink
-                            ))) continue;
+            for (int j=0;j<saleCard.sales.length;j++) {
+              if (!(await prefs.isBookmarked(
+                DataType.sale,
+                saleCard.sales[j].cryptlink
+              ))) continue;
 
-            filteredSales.add(saleCard.sales[j]);
+              filteredSales.add(saleCard.sales[j]);
+            }
+            continue;
           }
-          continue;
+          else if (!(await prefs.isBookmarked(
+            ArrivalData.partner_feed[i].datatype,
+            ArrivalData.partner_feed[i].cryptlink
+          ))) continue;
         }
-        else if (!(await prefs.isBookmarked(
-                              ArrivalData.partner_feed[i].datatype,
-                              ArrivalData.partner_feed[i].cryptlink
-                            ))) continue;
+
+        else if (_highRatingFilter) {
+          if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
+            var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
+
+            for (int j=0;j<saleCard.sales.length;j++) {
+              if (Partner.link(saleCard.sales[j].cryptlink).rating < 5.0) continue;
+
+              filteredSales.add(saleCard.sales[j]);
+            }
+            continue;
+          }
+          else if (Partner.link(ArrivalData.partner_feed[i].cryptlink).rating < 5.0) continue;
+        }
+
+        else if (_optionsArrivalDiscounts) {
+          if (ArrivalData.partner_feed[i].datatype==DataType.sale) print('WE FOUND ONE BOYS ${i}');
+          if (ArrivalData.partner_feed[i].datatype!=DataType.sale) continue;
+        }
+
+        else if (_optionsAppointments) {
+
+        }
+
+        else if (_optionsPickup) {
+
+        }
+
+        _filteredPartnerFeed.add(ArrivalData.partner_feed[i]);
       }
-
-      else if (_optionsArrivalDiscounts) {
-
+      catch (e) {
+        print('''
+        ==========================
+        Filter List Error ${i}
+        --------------------------
+        $e
+        ==========================
+        ''');
       }
-
-      else if (_optionsAppointments) {
-
-      }
-
-      else if (_optionsPickup) {
-
-      }
-
-      _filteredPartnerFeed.add(ArrivalData.partner_feed[i]);
     }
 
     if (!_optionsBookmarks) return;
@@ -342,7 +383,7 @@ class _PartnerFeedState extends State<PartnerFeed> {
 
 
 
-  bool _optionsPickup = false, _optionsBookmarks = false,
+  bool _optionsPickup = false, _optionsBookmarks = false, _highRatingFilter = false,
     _optionsArrivalDiscounts = false, _optionsAppointments = false;
   int _optionsPriceRange = 1;
   String _optionsPriceText = '\$\$';
@@ -442,10 +483,10 @@ class _PartnerFeedState extends State<PartnerFeed> {
             Container(
               padding: _padding,
               child: FilterChip(
-                label: Text('Book Appointments'),
-                selected: _optionsAppointments,
+                label: Text('4.0 +'),
+                selected: _highRatingFilter,
                 onSelected: (bool value) {
-                  setState(() => _optionsAppointments = value);
+                  setState(() => _highRatingFilter = value);
                 },
               ),
             ),

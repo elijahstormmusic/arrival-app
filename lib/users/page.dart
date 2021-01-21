@@ -436,7 +436,7 @@ class _ProfilePageState extends State<ProfilePage>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              _followersNumberDisplay(1900),
+                              _followersNumberDisplay(widget.profile.followersCount),
                               style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
@@ -461,7 +461,7 @@ class _ProfilePageState extends State<ProfilePage>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              _followersNumberDisplay(20000),
+                              _followersNumberDisplay(widget.profile.followingCount),
                               style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
@@ -571,9 +571,13 @@ class _ProfilePageState extends State<ProfilePage>
 
               if (toggle) {
                 _controller.forward(from: 0.0);
+                widget.profile.followersCount++;
+                UserData.client.followingCount++;
               }
               else {
                 _controller.reverse(from: .25);
+                widget.profile.followersCount--;
+                UserData.client.followingCount--;
               }
 
               socket.emit('userdata follow', {
