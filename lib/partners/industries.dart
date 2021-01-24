@@ -20,6 +20,14 @@ enum SourceIndustry {
   hair,
   clothing,
   shoes,
+
+  // TO ADD
+  // Entertainment
+  // Events
+  // Moving
+  // Event Spaces
+  // Family Fun
+  // Home Improvement
 }
 class StoreImages {
   static const String source = Constants.media_source;
