@@ -10,7 +10,7 @@
         android:label="Arrival KC"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-          android:value="AIzaSyDGiAXusfesRoqC7Nmanca3F1bHY0poyxc"/>
+          android:value="AIzaSyCqJdPRFAlRbXl3w3AV9y5fiIT390UxHHA"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
