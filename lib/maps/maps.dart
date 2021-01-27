@@ -291,7 +291,9 @@ class _MapState extends State<Maps> {
               child: _localMap,
             ),
 
-            _buildBackButton(),
+            widget.partner != null
+              ? _buildBackButton()
+              : Container(width: 0, height: 0),
 
             GestureDetector(
               onDoubleTap: () {
