@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../styles.dart';
 import '../data/arrival.dart';
 import '../data/socket.dart';
+import '../widgets/close_button.dart';
 import 'locator.dart';
 import '../partners/partner.dart';
 import 'partner_markers.dart';
@@ -32,7 +33,7 @@ class Maps extends StatefulWidget {
 
   Maps();
   Maps.directions(this.partner);
-  
+
   @override
   _MapState createState() => _MapState();
 }
@@ -92,6 +93,17 @@ class _MapState extends State<Maps> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  Widget _buildBackButton() =>
+          Positioned(
+            top: 16,
+            left: 16,
+            child: SafeArea(
+              child: ArrCloseButton(() {
+                Navigator.of(context).pop();
+              }),
+            ),
+          );
 
   void _setMainCardToTop() {
     if (_bottomCardVerticalPosition==_bottomCardTopValue) return;
@@ -278,6 +290,9 @@ class _MapState extends State<Maps> {
               color: Styles.ArrivalPalletteCream,
               child: _localMap,
             ),
+
+            _buildBackButton(),
+
             GestureDetector(
               onDoubleTap: () {
                 if (_bottomCardVerticalPosition==_bottomCardBottomValue) {
