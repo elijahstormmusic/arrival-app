@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../styles.dart';
@@ -41,7 +42,7 @@ class Maps extends StatefulWidget {
 class _MapState extends State<Maps> {
   MyLocation myself;
   ScrollController _scrollController;
-  double _bottomCardVerticalPosition = 400;
+  double _bottomCardVerticalPosition = 600;
   final double _bottomCardTopValue = 0;
   double _bottomCardBottomValue = 400;
   double _bottomCardOutValue = 500;
@@ -275,9 +276,11 @@ class _MapState extends State<Maps> {
       _bottomCardBottomValue = (MediaQuery.of(context).size.height / 200).ceil().toDouble() * 100;
       _bottomCardOutValue = MediaQuery.of(context).size.height
                 - MediaQuery.of(context).padding.top - 110;
-      _bottomCardVerticalPosition = _bottomCardBottomValue;
-      _localMap.padding = _bottomCardOutValue - _bottomCardBottomValue;
+      _bottomCardVerticalPosition = _bottomCardOutValue;
+      _localMap.padding = 0;
       initating = false;
+
+      SchedulerBinding.instance.addPostFrameCallback((_) => _setMainCardToBottom());
     }
 
     return Scaffold(

@@ -268,7 +268,7 @@ class _IVState extends State<InfoView> {
                 future: prefs.preferredIndustries,
                 builder: (context, snapshot) {
                   return Text(
-                    LocalIndustries.industryGrabber(widget.biz.industry).name.toUpperCase(),
+                    widget.biz.priceRangeToString() + ' • ' + LocalIndustries.industryGrabber(widget.biz.industry).name.toUpperCase(),
                     style: (snapshot.hasData &&
                         snapshot.data.contains(widget.biz.industry))
                         ? Styles.detailsPreferredCategoryText(themeData)

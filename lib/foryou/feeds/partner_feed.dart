@@ -192,7 +192,6 @@ class _PartnerFeedState extends State<PartnerFeed> {
         }
 
         list.add(card);
-        print('adding in type of : ${(data[i]['type']==DataType.sale)}');
       }
       _refreshController.loadComplete();
       _refreshController.refreshCompleted();
@@ -216,59 +215,60 @@ class _PartnerFeedState extends State<PartnerFeed> {
     var prefs = ScopedModel.of<Preferences>(context, rebuildOnChange: true);
     _filteredPartnerFeed = List<RowCard>();
 
-    List<Sale> filteredSales = List<Sale>();
-
     for (int i=0;i<ArrivalData.partner_feed.length;i++) {
       try {
         // if (skip) continue;  // note to developer -> if should skip
 
-        if (Partner.link(ArrivalData.partner_feed[i].cryptlink).
-          priceRange > _optionsPriceRange) continue;
+        if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
+          List<Sale> filteredSales = List<Sale>();
+          var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
 
-        else if (_optionsBookmarks) {
-          if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
-            var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
+          for (int j=0;j<saleCard.sales.length;j++) {
 
-            for (int j=0;j<saleCard.sales.length;j++) {
+            if (saleCard.sales[j].partner.priceRange > _optionsPriceRange) continue;
+
+            if (_optionsBookmarks) {
               if (!(await prefs.isBookmarked(
                 DataType.sale,
                 saleCard.sales[j].cryptlink
               ))) continue;
-
-              filteredSales.add(saleCard.sales[j]);
             }
-            continue;
+
+            if (_highRatingFilter) {
+              if (Partner.link(saleCard.sales[j].cryptlink).rating < 5.0) continue;
+            }
+
+            filteredSales.add(saleCard.sales[j]);
           }
-          else if (!(await prefs.isBookmarked(
+
+          _filteredPartnerFeed.add(RowSale(filteredSales));
+
+          continue;
+        }
+
+        if (Partner.link(ArrivalData.partner_feed[i].cryptlink).
+          priceRange > _optionsPriceRange) continue;
+
+        if (_optionsBookmarks) {
+          if (!(await prefs.isBookmarked(
             ArrivalData.partner_feed[i].datatype,
             ArrivalData.partner_feed[i].cryptlink
           ))) continue;
         }
 
-        else if (_highRatingFilter) {
-          if (ArrivalData.partner_feed[i].datatype==DataType.sale) {
-            var saleCard = RowSale.source(ArrivalData.partner_feed[i]);
-
-            for (int j=0;j<saleCard.sales.length;j++) {
-              if (Partner.link(saleCard.sales[j].cryptlink).rating < 5.0) continue;
-
-              filteredSales.add(saleCard.sales[j]);
-            }
-            continue;
-          }
-          else if (Partner.link(ArrivalData.partner_feed[i].cryptlink).rating < 5.0) continue;
+        if (_highRatingFilter) {
+          if (Partner.link(ArrivalData.partner_feed[i].cryptlink).rating < 5.0) continue;
         }
 
-        else if (_optionsArrivalDiscounts) {
-          if (ArrivalData.partner_feed[i].datatype==DataType.sale) print('WE FOUND ONE BOYS ${i}');
+        if (_optionsArrivalDiscounts) {
           if (ArrivalData.partner_feed[i].datatype!=DataType.sale) continue;
         }
 
-        else if (_optionsAppointments) {
+        if (_optionsAppointments) {
 
         }
 
-        else if (_optionsPickup) {
+        if (_optionsPickup) {
 
         }
 
@@ -284,10 +284,6 @@ class _PartnerFeedState extends State<PartnerFeed> {
         ''');
       }
     }
-
-    if (!_optionsBookmarks) return;
-    if (_filteredPartnerFeed.length < 1) return;
-    _filteredPartnerFeed.insert(1, RowSale(filteredSales));
   }
 
   void _scrollListener() {
