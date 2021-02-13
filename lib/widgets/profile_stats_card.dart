@@ -10,7 +10,7 @@ import '../styles.dart';
 import '../users/data.dart';
 import '../users/page.dart';
 import '../data/link.dart';
-import 'chat/chat_list.dart';
+// import 'chat/chat_list.dart';
 import 'level_progress_bar.dart';
 import 'cards.dart';
 

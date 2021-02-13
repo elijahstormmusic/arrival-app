@@ -28,17 +28,17 @@ class PostOptions extends StatelessWidget {
   Widget build(BuildContext context) =>
     post.user.cryptlink == UserData.client.cryptlink ?
       SimpleDialog(
-        title: Text('Actions for Your Post (* = dosnt work yet)'),
+        title: Text('Actions for Your Post (* = doesnt work yet)'),
         children: [
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.person,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Tag Someone *',
+            text: 'Tag Someone * (WIP)',
             onPressed: () {
               // socket
             },
           ),
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.content_copy,
             color: Styles.ArrivalPalletteGrey,
             text: 'Copy Link',
@@ -51,7 +51,7 @@ class PostOptions extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.folder_open,
             color: Styles.ArrivalPalletteGrey,
             text: 'Archive',
@@ -63,15 +63,15 @@ class PostOptions extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.edit,
             color: Styles.ArrivalPalletteGrey,
-            text: 'Edit *',
+            text: 'Edit * (WIP)',
             onPressed: () {
               // socket
             },
           ),
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.comment,
             color: Styles.ArrivalPalletteGrey,
             text: 'Stop Comments',
@@ -83,7 +83,7 @@ class PostOptions extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.delete,
             color: Styles.ArrivalPalletteGrey,
             text: 'Delete',
@@ -123,9 +123,9 @@ class PostOptions extends StatelessWidget {
         ],
       )
       : SimpleDialog(
-        title: Text('Post Actions'),
+        title: Text('Post Actions (* = doesnt work yet)'),
         children: [
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.warning,
             color: Styles.ArrivalPalletteGrey,
             text: 'Report this Post',
@@ -133,12 +133,12 @@ class PostOptions extends StatelessWidget {
               Navigator.of(context).pop();
 
               Arrival.navigator.currentState.push(MaterialPageRoute(
-                builder: (context) => ReportItemContactSheet(post.cryptlink),
+                builder: (context) => ReportItemContactSheet.post(post.cryptlink),
                 fullscreenDialog: true,
               ));
             },
           ),
-          SimpleDialogItem(
+          ArrivalDialogItem(
             icon: Icons.content_copy,
             color: Styles.ArrivalPalletteGrey,
             text: 'Copy Link',
@@ -151,7 +151,20 @@ class PostOptions extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
-          // SimpleDialogItem(
+          ArrivalDialogItem(
+            icon: Icons.warning,
+            color: Styles.ArrivalPalletteGrey,
+            text: 'Block this User',
+            onPressed: () {
+              socket.emit('userdata block', {
+                'user': UserData.client.cryptlink,
+                'block': post.user.cryptlink,
+                'action': true,
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+          // ArrivalDialogItem(
           //   icon: Icons.person_remove,
           //   color: Styles.ArrivalPalletteGrey,
           //   text: 'Unfollow User',

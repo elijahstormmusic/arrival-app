@@ -20,12 +20,16 @@ class UserData {
   static int MembershipTier = 0;
   static bool LocationOn = true;
   static bool NewsLetterSubscription = true;
+  static bool UGC_Agreement = false;
+  static bool GeneralUse = false;
 
   static void refreshClientData(var input_data) {
-    UserData.MembershipTier = input_data['settings']['membership']['tier'];
+    // UserData.MembershipTier = input_data['settings']['membership']['tier'];
     UserData.DefaultTip = input_data['settings']['membership']['default_tip'];
     UserData.LocationOn = input_data['settings']['legal']['location'];
     UserData.NewsLetterSubscription = input_data['settings']['membership']['newsletter'];
+    UserData.UGC_Agreement = input_data['settings']['legal']['UGC_agreement'];
+    UserData.GeneralUse = input_data['settings']['legal']['general_use'];
 
     UserData.client = Profile.json(input_data);
     ArrivalData.innocentAdd(ArrivalData.profiles, UserData.client);

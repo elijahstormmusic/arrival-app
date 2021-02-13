@@ -11,8 +11,20 @@ import '../styles.dart';
 
 class ReportItemContactSheet extends StatefulWidget {
   final String cryptlink;
+  String type;
 
-  ReportItemContactSheet(this.cryptlink);
+  ReportItemContactSheet(this.cryptlink) {
+    type = 'none';
+  }
+  ReportItemContactSheet.post(this.cryptlink) {
+    type = 'post';
+  }
+  ReportItemContactSheet.user(this.cryptlink) {
+    type = 'user';
+  }
+  ReportItemContactSheet.chatMessage(this.cryptlink) {
+    type = 'chatMessage';
+  }
 
   @override
   _ReportState createState() => _ReportState();
@@ -80,6 +92,7 @@ class _ReportState extends State<ReportItemContactSheet> {
       },
       'item': {
         'link': widget.cryptlink,
+        'type': widget.type,
       },
     });
 

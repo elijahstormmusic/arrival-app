@@ -432,25 +432,25 @@ class _PartnerFeedState extends State<PartnerFeed> {
                   showDialog<void>(context: context, builder: (context) => SimpleDialog(
                     title: Text('Choose Price Range'),
                     children: [
-                      SimpleDialogItem(
+                      ArrivalDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 0 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$',
                         onPressed: () => _action(context, 0),
                       ),
-                      SimpleDialogItem(
+                      ArrivalDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 1 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$\$',
                         onPressed: () => _action(context, 1),
                       ),
-                      SimpleDialogItem(
+                      ArrivalDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 2 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$\$\$',
                         onPressed: () => _action(context, 2),
                       ),
-                      SimpleDialogItem(
+                      ArrivalDialogItem(
                         icon: Icons.attach_money,
                         color: _optionsPriceRange == 3 ? Styles.ArrivalPalletteRed : Styles.ArrivalPalletteGrey,
                         text: '\$\$\$\$',

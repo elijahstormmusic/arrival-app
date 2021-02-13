@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import '../arrival_team/agreements.dart';
 import '../users/data.dart';
 import '../data/arrival.dart';
 import '../partners/partner.dart';
@@ -351,6 +352,15 @@ class socket {
             authenicator = 'Unknown error';
             break;
           }
+        }
+
+        else if (data['type']==610) { // download extra user preference data
+          print('downloaded the extra pref data');
+          print('''
+            ----
+              ${data['response']}
+            ----
+          ''');
         }
 
         else if (data['type']==666) { // error with settings update

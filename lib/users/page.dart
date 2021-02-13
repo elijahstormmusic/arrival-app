@@ -25,7 +25,7 @@ import '../posts/post.dart';
 import '../posts/page.dart';
 import '../widgets/close_button.dart';
 import '../widgets/cards.dart';
-import '../widgets/chat/messager.dart';
+// import '../widgets/chat/messager.dart';
 import '../const.dart';
 import 'data.dart';
 import 'profile.dart';

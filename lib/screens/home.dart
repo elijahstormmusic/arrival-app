@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 
 import '../data/socket.dart';
 import '../data/link.dart';
+import '../arrival_team/agreements.dart';
 import '../users/data.dart';
 import '../foryou/foryou.dart';
 import '../foryou/feeds/article_feed.dart';
@@ -28,6 +29,7 @@ class HomeScreen extends StatefulWidget {
 
   static void gotoForyou() => _s.gotoForyou();
   static void forceLogin() => _s.forceLogin();
+  static void forceQuit() => _s.forceQuit();
   static void toggleVerion() => _s.toggleVerion();
   static void reflow() => _s.reflow();
 
@@ -44,7 +46,7 @@ class _MainAppStates extends State<HomeScreen> {
   int _selectedIndex = 2;
   bool _pulltoforyou = false,
         _runningLoginScreen = false,
-        _forcelogin = false;
+        _forcelogin = false, _forcequit = false;
 
   @override
   void initState() {
@@ -52,12 +54,10 @@ class _MainAppStates extends State<HomeScreen> {
     socket.home = this;
   }
 
-  void gotoForyou() =>
-    setState(() => _pulltoforyou = true);
-  void forceLogin() =>
-    setState(() => _forcelogin = true);
-  void refresh() =>
-    setState(() => true);
+  void gotoForyou() => setState(() => _pulltoforyou = true);
+  void forceLogin() => setState(() => _forcelogin = true);
+  void forceQuit() => setState(() => _forcequit = true);
+  void refresh() => setState(() => true);
 
   bool versionTwo = true;
   void toggleVerion() => setState(() => versionTwo = !versionTwo);
@@ -265,7 +265,13 @@ class _MainAppStates extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    if (_forcelogin) {
+    if (_pulltoforyou) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _selectedTab(2);
+      });
+      _pulltoforyou = false;
+    }
+    else if (_forcelogin) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Arrival.navigator.currentState.popUntil((route) => route.isFirst);
         Arrival.navigator.currentState.push(MaterialPageRoute(
@@ -275,11 +281,21 @@ class _MainAppStates extends State<HomeScreen> {
       });
       _forcelogin = false;
     }
-    else if (_pulltoforyou) {
+    else if (_forcequit) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        _selectedTab(2);
+        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
+        Arrival.navigator.currentState.pop();
       });
-      _pulltoforyou = false;
+      _forcequit = false;
+    }
+    else if (!UserData.UGC_Agreement) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Arrival.navigator.currentState.popUntil((route) => route.isFirst);
+        Arrival.navigator.currentState.push(MaterialPageRoute(
+          builder: (context) => LegalAgreements.UGC(),
+          fullscreenDialog: true,
+        ));
+      });
     }
 
     var scaffoldBody, bottomNav;

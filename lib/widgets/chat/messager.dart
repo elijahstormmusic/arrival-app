@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:dash_chat/dash_chat.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../../posts/cloudinary/cloudinary_client.dart';
 
 import '../../data/socket.dart';
+import '../../data/preferences.dart';
 import '../../users/data.dart';
 import '../../users/profile.dart';
 import '../../styles.dart';
 import '../../const.dart';
+
+import 'options.dart';
 
 
 class Messager extends StatefulWidget {
@@ -82,7 +86,7 @@ class Messager extends StatefulWidget {
   _MessagerState createState() => _MessagerState();
 }
 
-class _MessagerState extends State<Messager> {
+class _MessagerState extends State<Messager> with SingleTickerProviderStateMixin {
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
 
   var _messagesStream;
@@ -93,6 +97,10 @@ class _MessagerState extends State<Messager> {
     new CloudinaryClient('868422847775537', 'QZeAt-YmyaViOSNctnmCR0FF61A', 'arrival-kc');
 
   var i = 0;
+  double _messageScale = 1.0, _selectedScale = 1.4;
+  AnimationController _messageController;
+  Animation<double> _messageAnimation;
+  String _selectedMessageId = '';
 
   @override
   void initState() {
@@ -105,6 +113,15 @@ class _MessagerState extends State<Messager> {
       'link': UserData.client.cryptlink,
       'thread': widget.thread,
     });
+
+    _messageController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    _messageAnimation = CurvedAnimation(
+      parent: _messageController,
+      curve: Curves.fastOutSlowIn,
+    );
   }
   @override
   void dispose() {
@@ -261,6 +278,28 @@ class _MessagerState extends State<Messager> {
           || extension=='.wmv');
   }
 
+  Widget _messageBuilder(ChatMessage message) => Padding(
+      padding: EdgeInsets.all(5.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Styles.ArrivalPalletteBlue, width: 1),
+          borderRadius: BorderRadius.all(
+            Radius.circular(5.0),
+          ),
+        ),
+        child: ListTile(
+          title: Text(
+            message.text,
+            // textAlign: textAlign,
+          ),
+          // subtitle: Text(
+          //   message.user.name,
+          //   // textAlign: textAlign,
+          // ),
+        ),
+      ),
+    );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -300,11 +339,35 @@ class _MessagerState extends State<Messager> {
             showAvatarForEveryMessage: false,
             scrollToBottom: true,
             onPressAvatar: (ChatUser user) {
-              print("OnPressAvatar: ${user.name}");
+              Profile.link(user.uid).navigateToProfile();
             },
             onLongPressAvatar: (ChatUser user) {
-              print("OnLongPressAvatar: ${user.name}");
+              showDialog<void>(context: context, builder: (context) =>
+                ChatAvatarOptions(ScopedModel.of<Preferences>(context), user.uid));
             },
+            onLongPressMessage: (ChatMessage message) {
+              // setState(() => _messageScale = _selectedScale);
+              // _messageController. // undone
+              showDialog<void>(context: context, builder: (context) =>
+                ChatMessageOptions(ScopedModel.of<Preferences>(context), message));
+            },
+
+
+
+
+
+            messageBuilder: (ChatMessage message) {
+              if (message.id == _selectedMessageId) return ScaleTransition(
+                scale: _messageAnimation,
+                child: _messageBuilder(message),
+              );
+
+              return Container(
+                // scale: _messageAnimation,
+                child: _messageBuilder(message),
+              );
+            },
+
             inputMaxLines: 5,
             messageContainerPadding: EdgeInsets.only(left: 5.0, right: 5.0),
             alwaysShowSend: true,
