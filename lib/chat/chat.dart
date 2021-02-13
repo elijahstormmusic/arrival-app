@@ -22,33 +22,29 @@ final chatPersistentClient = StreamChatPersistenceClient(
   connectionMode: ConnectionMode.background,
 );
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final secureStorage = FlutterSecureStorage();
+class ChatApp extends StatelessWidget {
+  StreamChatClient _client;
 
-  final apiKey = await secureStorage.read(key: kStreamApiKey);
-  final userId = await secureStorage.read(key: kStreamUserId);
+  ChatApp() {
+    WidgetsFlutterBinding.ensureInitialized();
+    final secureStorage = FlutterSecureStorage();
 
-  final client = StreamChatClient(
-    apiKey ?? kDefaultStreamApiKey,
-    logLevel: Level.INFO,
-  )..chatPersistenceClient = chatPersistentClient;
+    final apiKey = await secureStorage.read(key: kStreamApiKey);
+    final userId = await secureStorage.read(key: kStreamUserId);
 
-  if (userId != null) {
-    final token = await secureStorage.read(key: kStreamToken);
-    await client.connectUser(
-      User(id: userId),
-      token,
-    );
+    _client = StreamChatClient(
+      apiKey ?? kDefaultStreamApiKey,
+      logLevel: Level.INFO,
+    )..chatPersistenceClient = chatPersistentClient;
+
+    if (userId != null) {
+      final token = await secureStorage.read(key: kStreamToken);
+      await _client.connectUser(
+        User(id: userId),
+        token,
+      );
+    }
   }
-
-  runApp(MyApp(client));
-}
-
-class MyApp extends StatelessWidget {
-  final StreamChatClient client;
-
-  MyApp(this.client);
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +62,9 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) => MaterialApp(
             builder: (context, child) {
               return StreamChat(
-                client: client,
+                client: _client,
                 onBackgroundEventReceived: (e) =>
-                    showLocalNotification(e, client.state.user.id),
+                    showLocalNotification(e, _client.state.user.id),
                 child: Builder(
                   builder: (context) => AnnotatedRegion<SystemUiOverlayStyle>(
                     child: child,
@@ -94,7 +90,7 @@ class MyApp extends StatelessWidget {
             }[snapshot],
             onGenerateRoute: AppRoutes.generateRoute,
             initialRoute:
-                client.state.user == null ? Routes.CHOOSE_USER : Routes.HOME,
+                _client.state.user == null ? Routes.CHOOSE_USER : Routes.HOME,
           ),
         );
       },
@@ -102,12 +98,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class ChatMainPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _ChatMainPageState createState() => _ChatMainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ChatMainPageState extends State<ChatMainPage> {
   int _currentIndex = 0;
 
   bool _isSelected(int index) => _currentIndex == index;

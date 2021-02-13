@@ -11,6 +11,7 @@ import '../users/data.dart';
 import '../users/page.dart';
 import '../data/link.dart';
 // import 'chat/chat_list.dart';
+import '../chat/chat.dart';
 import 'level_progress_bar.dart';
 import 'cards.dart';
 
@@ -68,7 +69,7 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
                   child: GestureDetector(
                     onTap: () {
                       Arrival.navigator.currentState.push(MaterialPageRoute(
-                        builder: (context) => ChatList(),
+                        builder: (context) => ChatApp(),
                         fullscreenDialog: true,
                       ));
                     },
