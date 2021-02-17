@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../choose_user_page.dart';
 import '../advanced_options_page.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
-import '../main.dart';
+import '../chat.dart';
 import '../group_chat_details_screen.dart';
 import '../new_group_chat_screen.dart';
 import '../new_chat_screen.dart';
@@ -19,13 +19,13 @@ class AppRoutes {
         return MaterialPageRoute(
             settings: const RouteSettings(name: Routes.APP),
             builder: (_) {
-              return MyApp(args);
+              return ChatApp(args);
             });
       case Routes.HOME:
         return MaterialPageRoute(
             settings: const RouteSettings(name: Routes.HOME),
             builder: (_) {
-              return HomePage();
+              return ChatMainPage();
             });
       case Routes.CHOOSE_USER:
         return MaterialPageRoute(

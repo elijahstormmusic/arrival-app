@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:example/chat_info_screen.dart';
-import 'package:example/choose_user_page.dart';
-import 'package:example/group_info_screen.dart';
+import 'chat_info_screen.dart';
+import 'choose_user_page.dart';
+import 'group_info_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,26 +25,7 @@ final chatPersistentClient = StreamChatPersistenceClient(
 class ChatApp extends StatelessWidget {
   StreamChatClient _client;
 
-  ChatApp() {
-    WidgetsFlutterBinding.ensureInitialized();
-    final secureStorage = FlutterSecureStorage();
-
-    final apiKey = await secureStorage.read(key: kStreamApiKey);
-    final userId = await secureStorage.read(key: kStreamUserId);
-
-    _client = StreamChatClient(
-      apiKey ?? kDefaultStreamApiKey,
-      logLevel: Level.INFO,
-    )..chatPersistenceClient = chatPersistentClient;
-
-    if (userId != null) {
-      final token = await secureStorage.read(key: kStreamToken);
-      await _client.connectUser(
-        User(id: userId),
-        token,
-      );
-    }
-  }
+  ChatApp(this._client);
 
   @override
   Widget build(BuildContext context) {

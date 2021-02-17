@@ -10,6 +10,7 @@ import '../styles.dart';
 import '../users/data.dart';
 import '../users/page.dart';
 import '../data/link.dart';
+import '../data/arrival.dart';
 // import 'chat/chat_list.dart';
 import '../chat/chat.dart';
 import 'level_progress_bar.dart';
@@ -69,7 +70,7 @@ class _StateProfileCard extends State<UserProfilePlacecard> {
                   child: GestureDetector(
                     onTap: () {
                       Arrival.navigator.currentState.push(MaterialPageRoute(
-                        builder: (context) => ChatApp(),
+                        builder: (context) => ChatApp(ArrivalData.chatStreamClient),
                         fullscreenDialog: true,
                       ));
                     },

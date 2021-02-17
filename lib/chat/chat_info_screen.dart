@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
-import 'main.dart';
+import 'chat.dart';
 import 'routes/routes.dart';
 
 /// Detail screen for a 1:1 chat correspondence

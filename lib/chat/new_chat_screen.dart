@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 import 'chips_input_text_field.dart';
-import 'main.dart';
+import 'chat.dart';
 import 'routes/routes.dart';
 
 class NewChatScreen extends StatefulWidget {

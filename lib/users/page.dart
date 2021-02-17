@@ -381,16 +381,19 @@ class _ProfilePageState extends State<ProfilePage>
                   _isClientAndEditable() ? Container() :
                   GestureDetector(
                     onTap: () {
-                      Arrival.navigator.currentState.push(MaterialPageRoute(
-                        builder: (context) => Messager.create({
-                            'group': [widget.profile.cryptlink],
-                          }),
-                        fullscreenDialog: true,
-                      ));
+                      // Arrival.navigator.currentState.push(MaterialPageRoute(
+                      //   builder: (context) => Messager.create({
+                      //       'group': [widget.profile.cryptlink],
+                      //     }),
+                      //   fullscreenDialog: true,
+                      // ));
+
+                      // show here
+                      // showDialog<void>(context: context, builder: (context) => PostOptions(prefs, widget.post));
                     },
                     child: Icon(
-                      Icons.message,
-                      color: Styles.ArrivalPalletteRed,
+                      Icons.more_vert,
+                      color: Styles.ArrivalPalletteBlackTransparent,
                     ),
                   ),
                 ],

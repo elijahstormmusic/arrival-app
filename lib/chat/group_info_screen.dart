@@ -8,7 +8,7 @@ import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 import 'chat_info_screen.dart';
-import 'main.dart';
+import 'chat.dart';
 import 'routes/routes.dart';
 
 class GroupInfoScreen extends StatefulWidget {

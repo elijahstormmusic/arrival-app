@@ -16,8 +16,8 @@ dependencies:
   socket_io_client: ^0.9.12
   flutter_login: ^1.0.14
   photo_view: ^0.10.2
-  video_player: ^0.10.0
-  chewie: ^0.10.3+1
+  video_player: ^1.0.1
+  chewie: ^0.12.1+1
   media_gallery: ^0.1.4
   exif: ^1.0.3
   transparent_image: ^1.0.0

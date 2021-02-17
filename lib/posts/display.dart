@@ -657,7 +657,7 @@ class _PostDisState extends State<PostDisplay> {
               margin: EdgeInsets.only(right: 10.0),
               child: Icon(
                 Icons.more_vert,
-                color: Styles.ArrivalPalletteGrey,
+                color: Styles.ArrivalPalletteBlackTransparent,
               ),
             )
           ),

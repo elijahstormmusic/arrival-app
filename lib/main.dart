@@ -8,6 +8,10 @@ import 'package:flutter/services.dart' show DeviceOrientation, SystemChrome;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:stream_chat_persistence/stream_chat_persistence.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import 'data/link.dart';
 import 'data/arrival.dart';
@@ -20,6 +24,8 @@ import 'users/data.dart';
 import 'users/profile.dart';
 import 'login/login.dart';
 import 'login/transition_route_observer.dart';
+import 'chat/chat.dart';
+import 'chat/choose_user_page.dart';
 
 import 'styles.dart';
 import 'posts/upload.dart';
@@ -32,6 +38,24 @@ void main() async {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
+    final secureStorage = FlutterSecureStorage();
+
+    final apiKey = await secureStorage.read(key: kStreamApiKey);
+    final userId = await secureStorage.read(key: kStreamUserId);
+
+    ArrivalData.chatStreamClient = StreamChatClient(
+      apiKey ?? kDefaultStreamApiKey,
+      logLevel: Level.INFO,
+    )..chatPersistenceClient = chatPersistentClient;
+
+    if (userId != null) {
+      final token = await secureStorage.read(key: kStreamToken);
+      await ArrivalData.chatStreamClient.connectUser(
+        User(id: userId),
+        token,
+      );
+    }
   }
   catch (e) {
     print('''

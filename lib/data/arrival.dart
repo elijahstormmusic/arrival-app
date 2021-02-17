@@ -2,6 +2,7 @@
 // Copywrite April 5, 2020
 // for use only in ARRIVAL Project
 
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'dart:convert';
 import '../posts/post.dart';
 import '../partners/partner.dart';
@@ -39,6 +40,7 @@ class ArrivalData {
   static final DateTime default_time = new DateTime(1996, 9, 29);
   static final PARTNERS = 'partners.json';
   static final ARTICLES = 'articles.json';
+  static StreamChatClient chatStreamClient;
 
   static int innocentAdd(List<dynamic> _list, dynamic _input) {
     for (int i=0;i<_list.length;i++) {
