@@ -1,8 +1,6 @@
 name: arrival_kc
 description: Connecting local businesses with loyal customers.
-
 publish_to: 'none'
-
 version: 0.0.1
 
 environment:
@@ -26,17 +24,17 @@ dependencies:
   image_picker: ^0.6.7+11
   flutter_speed_dial: ^1.2.5
   cloudinary_client: ^0.0.9
-  stream_chat_flutter: ^1.0.2-beta
-  stream_chat_persistence: ^1.0.2-beta
-  flutter_local_notifications: ^2.0.2
-  flutter_svg: ^0.19.1
+
+  stream_chat_flutter: ^1.2.0-beta
+  stream_chat_persistence: ^1.2.0-beta
+  flutter_local_notifications: ^4.0.1
+  # flutter_svg: ^0.19.2+1 #0.20.0-nullsafety.3
   flutter_secure_storage: ^3.3.5
   yaml: ^2.2.1
   uuid: ^2.2.2
   streaming_shared_preferences: ^1.0.2
-  crypto: ^2.0.6
-  # encrypt: ^4.1.0
-  pull_to_refresh: ^1.6.1
+
+  pull_to_refresh: ^1.6.4
   drop_cap_text: ^1.0.7
   toast: ^0.1.5
   google_maps_flutter: ^1.0.6
@@ -45,17 +43,21 @@ dependencies:
   geolocator: ^5.1.4+2
   intl: ^0.16.1
   share: any
-  scoped_model: ^1.0.1
+  scoped_model: ^1.1.0
   shared_preferences: ^0.5.7
   url_launcher: ^5.7.2
   path_provider: ^1.6.11
+  crypto: ^2.0.6
+  # encrypt: ^4.1.0
   # dash_chat: ^1.1.15
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  # flutter_driver:
+  #   sdk: flutter
   flutter_launcher_icons: ^0.8.1
+  test: any
 
 flutter_icons:
   android: true
@@ -67,7 +69,6 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
-
   assets:
     - assets/arrival/titleasset.png
     - assets/images/slide_menu/city.jpg

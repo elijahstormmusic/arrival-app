@@ -339,7 +339,7 @@ class _MainAppStates extends State<HomeScreen> {
         floatingActionButton: _foryouFloatingVTwo,
         floatingActionButtonLocation: _foryouFloatingSettingsVTwo,
         bottomNavigationBar: bottomNav,
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset : false,
       );
   }
 }

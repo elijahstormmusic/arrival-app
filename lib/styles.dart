@@ -7,8 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_svg/avd.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/avd.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/close_button.dart';
 import 'const.dart';
 
@@ -166,11 +166,11 @@ abstract class Styles {
     ),
   );
 
-  static Widget ArrivalBlobRed = SvgPicture.asset('assets/design/blobs/red.svg');
-  static Widget ArrivalBlobCream = SvgPicture.asset('assets/design/blobs/cream.svg');
-  static Widget ArrivalBlobBlack = SvgPicture.asset('assets/design/blobs/black.svg');
-  static Widget ArrivalBlobYellow = SvgPicture.asset('assets/design/blobs/yellow.svg');
-  static Widget ArrivalBlobBlue = SvgPicture.asset('assets/design/blobs/blue.svg');
+  // static Widget ArrivalBlobRed = SvgPicture.asset('assets/design/blobs/red.svg');
+  // static Widget ArrivalBlobCream = SvgPicture.asset('assets/design/blobs/cream.svg');
+  // static Widget ArrivalBlobBlack = SvgPicture.asset('assets/design/blobs/black.svg');
+  // static Widget ArrivalBlobYellow = SvgPicture.asset('assets/design/blobs/yellow.svg');
+  // static Widget ArrivalBlobBlue = SvgPicture.asset('assets/design/blobs/blue.svg');
 
   static Image ArrivalBucketLoading = Image.asset('assets/loading/Bucket-1s-200px.gif');
 
@@ -178,9 +178,9 @@ abstract class Styles {
   static Image ArrivalPaintDropBlue = Image.asset('assets/icon/paint/blue.png');
   static Image ArrivalPaintDropYellow = Image.asset('assets/icon/paint/yellow.png');
 
-  static SvgPicture ArrivalPaintSplashRed(int i) => SvgPicture.asset('assets/icon/paint/splash/red${i}.svg');
-  static SvgPicture ArrivalPaintSplashBlue(int i) => SvgPicture.asset('assets/icon/paint/splash/blue${i}.svg');
-  static SvgPicture ArrivalPaintSplashYellow(int i) => SvgPicture.asset('assets/icon/paint/splash/yellow${i}.svg');
+  // static SvgPicture ArrivalPaintSplashRed(int i) => SvgPicture.asset('assets/icon/paint/splash/red${i}.svg');
+  // static SvgPicture ArrivalPaintSplashBlue(int i) => SvgPicture.asset('assets/icon/paint/splash/blue${i}.svg');
+  // static SvgPicture ArrivalPaintSplashYellow(int i) => SvgPicture.asset('assets/icon/paint/splash/yellow${i}.svg');
   static Image ArrivalPaintSprayRed(int i) => Image.asset('assets/icon/paint/spray/red${i}.png');
   static Image ArrivalPaintSprayBlue(int i) => Image.asset('assets/icon/paint/spray/blue${i}.png');
   static Image ArrivalPaintSprayYellow(int i) => Image.asset('assets/icon/paint/spray/yellow${i}.png');
@@ -763,10 +763,10 @@ abstract class Styles {
   //         fontFamily: CupertinoIcons.iconFont,
   //         fontPackage: CupertinoIcons.iconFontPackage);
   static const messagesIcon = Icon(CupertinoIcons.bubble_left_bubble_right);
-  static final facebookIcon = SvgPicture.asset('assets/icon/social/icons8-facebook.svg');
-  static final twitterIcon = SvgPicture.asset('assets/icon/social/icons8-twitter.svg');
-  static final instagramIcon = SvgPicture.asset('assets/icon/social/icons8-instagram.svg');
-  static final pinterestIcon = SvgPicture.asset('assets/icon/social/icons8-pinterest.svg');
+  // static final facebookIcon = SvgPicture.asset('assets/icon/social/icons8-facebook.svg');
+  // static final twitterIcon = SvgPicture.asset('assets/icon/social/icons8-twitter.svg');
+  // static final instagramIcon = SvgPicture.asset('assets/icon/social/icons8-instagram.svg');
+  // static final pinterestIcon = SvgPicture.asset('assets/icon/social/icons8-pinterest.svg');
 
   static const servingInfoBorderColor = Color(0xffb0b0b0);
 

@@ -322,7 +322,7 @@ class UserMentionPage extends StatelessWidget {
         ],
         paginationParams: PaginationParams(limit: 20),
         showResultCount: false,
-        emptyBuilder: (_, __) {
+        emptyBuilder: (_) {
           return LayoutBuilder(
             builder: (context, viewportConstraints) {
               return SingleChildScrollView(
@@ -469,7 +469,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
                         ],
                         pullToRefresh: false,
                         paginationParams: PaginationParams(limit: 20),
-                        emptyBuilder: (_, query) {
+                        emptyBuilder: (_) {
                           return LayoutBuilder(
                             builder: (context, viewportConstraints) {
                               return SingleChildScrollView(
@@ -489,7 +489,8 @@ class _ChannelListPageState extends State<ChannelListPage> {
                                           ),
                                         ),
                                         Text(
-                                          'No results for \"$query\"...',
+                                          'No results found',
+                                          // 'No results for \"$query\"...',
                                         ),
                                       ],
                                     ),

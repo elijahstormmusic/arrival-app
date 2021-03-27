@@ -471,7 +471,7 @@ class _ListState extends State<ForYouPage> {
               backgroundColor: Styles.ArrivalPalletteBlue,
             ),
           ),
-          resizeToAvoidBottomPadding: false,
+          resizeToAvoidBottomInset : false,
           backgroundColor: Styles.transparentColor,
           body: SafeArea(
             bottom: false,
