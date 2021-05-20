@@ -59,7 +59,7 @@ class _PIDState extends State<PartnerIndustryDisplay> {
 
     socket.delivery.add(this);
 
-    if (ArrivalData.articles.length<=5) {
+    if (ArrivalData.partners.length<=5) {
       _pullNext(REQUEST_AMOUNT);
     }
 
